@@ -1,0 +1,450 @@
+/* Définir les polices personnalisées */
+@font-face {
+    font-family: 'INGAME';
+    src: url('pol/INGAME.ttf');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+@font-face {
+    font-family: 'Robot-Rebels';
+    src: url('pol/Robot-Rebels.ttf');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+@font-face {
+    font-family: 'Roboto-Regular';
+    src: url('pol/Roboto-Regular.ttf');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+@font-face {
+    font-family: 'Boul';
+    src: url('pol/Boul.otf');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+@font-face {
+    font-family: 'Sobatyan-Regular';
+    src: url('pol/Sobatyan-Regular.otf');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+@font-face {
+    font-family: 'Roboto-MediumItalic';
+    src: url('pol/Roboto-MediumItalic.ttf');
+    font-weight: normal;
+    font-style: normal;
+}
+@font-face {
+    font-family: 'MilestoneBrush';
+    src: url('pol/MilestoneBrush.otf');
+    font-weight: normal;
+    font-style: normal;
+}
+@font-face {
+    font-family: 'Rostack';
+    src: url('pol/Rostack.otf');
+    font-weight: normal;
+    font-style: normal;
+}
+@font-face {
+    font-family: 'Roboto-Black';
+    src: url('pol/Roboto-Black.ttf');
+    font-weight: normal;
+    font-style: normal;
+}
+@font-face {
+    font-family: 'Matemasie-Regular';
+    src: url('pol/Matemasie-Regular.ttf');
+    font-weight: normal;
+    font-style: normal;
+}
+@font-face {
+    font-family: 'NewAmsterdam-Regular';
+    src: url('pol/NewAmsterdam-Regular.ttf');
+    font-weight: normal;
+    font-style: normal;
+}
+@font-face {
+    font-family: 'NerkoOne-Regular';
+    src: url('pol/NerkoOne-Regular.ttf');
+    font-weight: normal;
+    font-style: normal;
+}
+@font-face {
+    font-family: 'Roboto-Bold';
+    src: url('pol/Roboto-Bold.ttf');
+    font-weight: normal;
+    font-style: normal;
+}
+@font-face {
+    font-family: 'DMSerifText-Regular';
+    src: url('pol/DMSerifText-Regular.ttf');
+    font-weight: normal;
+    font-style: normal;
+}
+
+/* Styles de base pour le corps de la page */
+body {
+    font-family: Arial, sans-serif; /* Police de caractères par défaut */
+    margin: 0; /* Supprime la marge par défaut */
+    padding: 0; /* Supprime le padding par défaut */
+    background-color: #f4f4f4; /* Couleur de fond */
+    background: url('images/p02.jpg') no-repeat center center; /* Image de fond */
+    background-size: cover; /* L'image couvre entièrement */
+}
+
+/* En-tête du site */
+header {
+    background: url('images/p4.jpg') no-repeat center center; /* Image de fond */
+    background-size: cover; /* L'image couvre entièrement */
+    color: white; /* Couleur du texte */
+    padding: 10px 0; /* Espacement vertical */
+    text-align: center; /* Centre le texte */
+}
+
+/* Navigation principale */
+/* Styles pour la barre de navigation */
+nav {
+    background: url('images/p4.jpg') no-repeat center center; /* Image de fond */
+    background-size: cover; /* L'image couvre entièrement */
+    padding: 0 1rem; /* Padding pour le contenu de la barre de navigation */
+}
+
+nav ul {
+    font-family: 'Roboto-Black', 'Roboto-Rebels', Arial, sans-serif; /* Police principale */
+    list-style-type: none; /* Supprime les puces des listes */
+    margin: 0; /* Supprime la marge par défaut */
+    padding: 0; /* Supprime le padding par défaut */
+    display: flex; /* Utilise Flexbox pour l'agencement horizontal */
+    justify-content: center; /* Centre les éléments horizontalement */
+    position: relative; /* Nécessaire pour le positionnement des éléments enfants */
+}
+
+nav ul li {
+    margin: 0 1rem; /* Marge horizontale entre les éléments */
+    position: relative; /* Position relative pour le menu déroulant */
+}
+
+/* Styles pour les liens du menu principal */
+nav ul li a {
+    color: #fff; /* Couleur du texte */
+    text-decoration: none; /* Pas de soulignement */
+    display: block; /* Prend toute la largeur de l'élément parent */
+    padding: 15px 20px; /* Espacement interne */
+    font-weight: bold; /* Texte en gras */
+    border-radius: 5px; /* Arrondit les coins */
+    background-color: #003366; /* Fond bleu foncé */
+    transition: background-color 0.3s ease, color 0.3s ease; /* Transition douce */
+}
+
+/* Changement de couleur au survol du lien */
+nav ul li a:hover {
+    background-color: rgb(118,12,31); /* Fond au survol */
+}
+
+/* Styles pour le sous-menu */
+nav ul li ul {
+    display: none; /* Masquer le sous-menu par défaut */
+    position: absolute; /* Positionnement absolu */
+    left: 0; /* Aligner à gauche de l'élément parent */
+    top: 100%; /* Aligner en dessous de l'élément parent */
+    background: #003366; /* Fond du sous-menu */
+    min-width: 300px; /* Largeur minimale du sous-menu */
+    list-style-type: none; /* Supprimer les puces */
+    padding: 0; /* Supprimer le padding */
+    margin: 0; /* Supprimer la marge */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Ombre pour le sous-menu */
+    z-index: 1000; /* Assure que le sous-menu est au-dessus des autres éléments */
+}
+
+/* Styles pour les éléments du sous-menu */
+nav ul li ul li {
+    margin: 0; /* Pas de marge entre les éléments du sous-menu */
+}
+
+/* Styles pour les liens du sous-menu */
+nav ul li ul li a {
+    padding: 10px 20px; /* Espacement interne du sous-menu */
+    color: #fff; /* Couleur du texte du sous-menu */
+}
+
+/* Changement de couleur au survol du lien du sous-menu */
+nav ul li ul li a:hover {
+    background-color: rgb(118,12,31); /* Fond du sous-menu au survol */
+}
+
+/* Afficher le sous-menu au survol de l'élément parent */
+nav ul li:hover > ul {
+    display: block; /* Afficher le sous-menu */
+}
+
+@media (max-width: 768px) {
+    nav ul {
+        flex-direction: column; /* Passe les éléments de navigation en colonne sur les petits écrans */
+    }
+    nav ul li {
+        margin: 0; /* Réduit la marge entre les éléments */
+    }
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+.animated {
+    animation: fadeIn 1s ease-in;
+}
+
+
+/* Styles pour le menu déroulant */
+.dropdown-content {
+    display: none; /* Cache le menu déroulant par défaut */
+    position: absolute; /* Positionne le menu déroulant par rapport à l'élément parent */
+    background-color: #333; /* Couleur de fond du menu déroulant */
+    min-width: 200px; /* Largeur minimale du menu déroulant */
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2); /* Ombre */
+    z-index: 1; /* Assure que le menu déroulant est au-dessus des autres éléments */
+    top: 100%; /* Positionne le menu déroulant directement sous l'élément parent */
+    left: 0; /* Aligne le menu déroulant avec le côté gauche de l'élément parent */
+    opacity: 0; /* Initialement invisible */
+     visibility: hidden; /* Cacher par défaut */
+    transition: opacity 0.3s ease, visibility 0.3s ease; /* Effet de transition pour l'apparition/disparition */
+}
+
+.dropdown-content li {
+    width: 100%; /* Les éléments de la liste prennent toute la largeur du menu */
+}
+
+.dropdown-content li a {
+    padding: 12px 16px; /* Espacement interne des éléments du menu déroulant */
+    color: white; /* Couleur du texte des éléments du menu déroulant */
+    text-decoration: none; /* Supprime le soulignement du texte */
+}
+
+.dropdown-content li a:hover {
+    background-color: #575757; /* Fond au survol des éléments du menu */
+}
+
+.dropdown:hover .dropdown-content {
+    display: block; /* Affiche le menu déroulant */
+    opacity: 1; /* Rends le menu déroulant visible */
+    visibility: visible; /* Afficher lors du survol */
+}
+
+/* Grille pour organiser les cartes */
+.grid {
+    display: grid; /* Définit la grille */
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); /* Grille réactive avec des colonnes minimales de 250px */
+    gap: 1rem; /* Espace entre les éléments */
+}
+/* Style des cartes */
+.card:hover {
+    transform: scale(1.05); /* Agrandit légèrement la carte au survol */
+    transition: transform 0.3s ease;
+}
+.card {
+    background: #ffffff; /* Fond blanc pour les cartes */
+    border-radius: 8px; /* Arrondit les coins des cartes */
+    padding: 1.5rem; /* Ajoute un padding interne */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Ajoute une ombre subtile */
+    text-align: left; /* Aligne le texte à gauche */
+}
+
+/* Styles généraux pour les images */
+.image-propos {
+    width: 100%; /* Prend toute la largeur disponible */
+    height: 200px; /* Fixe la hauteur à 200px */
+    object-fit: cover; /* Adapte l'image pour couvrir tout le conteneur sans déformer */
+    border-radius: 8px; /* Arrondit les coins */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Ajoute une ombre subtile */
+}
+
+/* Styles pour le conteneur */
+.grid1, .grid2 {
+    display: flex;
+    align-items: center; /* Aligne les éléments au centre */
+    justify-content: space-between; /* Espace égal entre les éléments */
+    gap: 20px; /* Espace entre les éléments */
+}
+
+.c1, .c2 {
+    flex: 1; /* Les textes prennent autant de place que possible */
+    padding: 20px; /* Espace autour du texte */
+}
+
+.c11, .c21 {
+    flex: 1; /* Les images prennent également autant de place que possible */
+    max-width: 400px; /* Limite la largeur des images */
+}
+.c1 a {
+    font-family: 'Matemasie-Regular', 'MilestoneBrush', Arial, sans-serif;
+    border: 2px solid transparent;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+    text-decoration: none;
+    padding: 10px 20px;
+    color: #333;
+    background-color: #f0f0f0;
+    /*transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease;*/
+}
+
+.c1 a:hover {
+    background-color: #333;
+    color: #fff;
+    border-color: #fff;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.6);
+    transform: scale(1.05); /* Agrandit légèrement la carte au survol */
+    transition: transform 0.3s ease;
+}
+
+
+input[type="text"], 
+input[type="email"], 
+textarea {
+    width: 100%; /* Les champs de texte prennent toute la largeur disponible */
+    padding: 0.8rem; /* Ajoute un padding interne de 0.8rem */
+    border: 1px solid #ddd; /* Bordure grise claire de 1px */
+    border-radius: 4px; /* Arrondit légèrement les coins des champs */
+    box-sizing: border-box; /* Assure que le padding et la bordure sont inclus dans la largeur totale */
+}
+
+/* Pied de page */
+footer {
+    background: url('images/p2.jpg') no-repeat center center; /* Image de fond */
+    background-size: cover; /* L'image couvre entièrement */
+    color: white; /* Couleur du texte */
+    padding: 10px 0; /* Espacement vertical */
+    text-align: center; /* Centre le texte */
+}
+
+/* Animation (à personnaliser en fonction de votre contenu) */
+@keyframes slideIn {
+    from {
+        transform: translateX(-100%);
+    }
+    to {
+        transform: translateX(0);
+    }
+}
+
+.animated {
+    animation: slideIn 0.5s ease-out;
+}
+/* Styles pour les sections */
+.section {
+    position: relative; /* Permet de positionner l'image de fond via pseudo-élément */
+    margin: 0 auto 2rem; /* Centre la section horizontalement et ajoute une marge inférieure de 2rem */
+    background-color: rgba(211, 211, 211, 0.); /* Gris clair avec 50% de transparence */
+    padding: 1rem; /* Ajoute un padding interne de 1rem */
+    font-family: 'Roboto-Regular',Arial, sans-serif; /* Police neutre */
+    color: #333; /* Couleur de texte gris foncé */
+    /*box-shadow: 0 0 5px rgba(0, 0, 0, 0.1); /* Ajoute une petite ombre autour de la section */
+    max-width: 1200px; /* Définit une largeur maximale pour la section (ajuste la valeur selon tes besoins) */
+}
+
+.section h1,
+.section h2,
+.section h3,
+.section h4,
+.section h5,
+.section h6 {
+    color: #333; /* Couleur des titres gris foncé */
+    margin-bottom: 1rem; /* Ajoute une marge inférieure pour les titres */
+}
+
+.section p {
+    line-height: 1.6; /* Définit l'espacement entre les lignes de texte */
+    margin-bottom: 1rem; /* Ajoute une marge inférieure pour les paragraphes */
+}
+
+.section::before {
+    content: ''; /* Crée un pseudo-élément vide pour l'image de fond */
+    position: absolute; /* Positionne le pseudo-élément en fonction de son parent */
+    top: 0; /* Positionne le pseudo-élément en haut de la section */
+    left: 0; /* Positionne le pseudo-élément à gauche de la section */
+    width: 100%; /* Le pseudo-élément couvre toute la largeur de la section */
+    height: 100%; /* Le pseudo-élément couvre toute la hauteur de la section */
+    opacity: 0.8; /* Rend l'image de fond semi-transparente avec une opacité de 50% */
+    z-index: -1; /* Positionne le pseudo-élément derrière le contenu de la section */
+    pointer-events: none; /* Assure que l'image de fond ne bloque pas les interactions avec le contenu */
+}
+
+.product-container {
+    display: flex; /* Utilise Flexbox pour organiser les éléments enfants en ligne ou en colonne */
+    flex-wrap: wrap; /* Permet aux éléments de passer à la ligne suivante si l'espace est insuffisant */
+    justify-content: space-around; /* Distribue l'espace entre les éléments de manière égale, avec des marges à gauche et à droite */
+    padding: 20px; /* Ajoute un espace autour du conteneur pour le séparer des bords de la page */
+}
+
+.product-card {
+    background-color: #fff; /* Définit un fond blanc pour chaque carte produit */
+    border: 1px solid #ddd; /* Ajoute une bordure gris clair autour de chaque carte produit */
+    border-radius: 5px; /* Arrondit légèrement les coins de la carte pour un effet visuel agréable */
+    width: 200px; /* Fixe la largeur de chaque carte produit à 200px */
+    margin: 15px; /* Ajoute un espace extérieur autour de chaque carte pour les séparer les unes des autres */
+    padding: 15px; /* Ajoute un espace intérieur entre le contenu de la carte et ses bords */
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1); /* Ajoute une ombre légère pour donner un effet de profondeur */
+    text-align: center; /* Centre le texte à l'intérieur de chaque carte produit */
+}
+
+.product-image {
+    width: 100%; /* Définit la largeur de l'image pour qu'elle occupe toute la largeur de la carte */
+    height: auto; /* Ajuste automatiquement la hauteur de l'image en fonction de sa largeur pour maintenir les proportions */
+    border-bottom: 1px solid #ddd; /* Ajoute une bordure en bas de l'image pour la séparer visuellement du reste du contenu */
+    margin-bottom: 15px; /* Ajoute un espace en dessous de l'image pour séparer l'image du texte en dessous */
+}
+
+/* Styles pour les titres */
+h1 {
+    margin: 0; /* Supprime la marge par défaut autour des titres */
+    padding-bottom: 0.5rem; /* Ajoute un padding inférieur de 0.5rem sous les titres */
+}
+ h2 {
+    margin: 0; /* Supprime la marge par défaut autour des titres */
+    padding-bottom: 0.5rem; /* Ajoute un padding inférieur de 0.5rem sous les titres */
+    border-bottom: 2px solid #1abc9c; /* Ajoute une bordure inférieure de 2px sous les titres avec une couleur vert clair */
+}
+.social-icons {
+    display: flex; /* Affiche les icônes sur une seule ligne */
+    justify-content: center; /* Centre les icônes horizontalement */
+}
+.social-icon {
+    margin: 0 10px; /* Ajoute un espace entre les icônes */
+    color: #fff; /* Couleur des icônes */
+    font-size: 25px; /* Taille des icônes */
+    transition: color 0.3s ease; /* Transition pour le changement de couleur au survol */
+}
+
+.social-icon:hover {
+    color: rgb(114,165,168); /* Couleur des icônes au survol */
+}
+/* Styles pour les liens vers des fichiers PDF */
+.pdf-link {
+    display: flex; /* Affiche le lien et son icône sur une seule ligne (flexbox) */
+    align-items: center; /* Aligne le contenu verticalement au centre */
+    margin: 0.5rem 0; /* Ajoute une marge verticale de 0.5rem */
+    color: #1abc9c; /* Définit la couleur du texte en vert clair */
+    text-decoration: none; /* Supprime le soulignement par défaut des liens */
+    transition: color 0.3s ease; /* Ajoute une transition pour les changements de couleur */
+}
+
+.pdf-link:hover {
+    color: #16a085; /* Change la couleur du texte au survol en un vert plus foncé */
+}
+
+.pdf-icon {
+    width: 24px; /* Définit la largeur de l'icône PDF à 24px */
+    height: 24px; /* Définit la hauteur de l'icône PDF à 24px */
+    margin-right: 8px; /* Ajoute une marge droite de 8px entre l'icône et le texte du lien */
+}
