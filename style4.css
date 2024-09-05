@@ -431,20 +431,42 @@ h1 {
 }
 /* Styles pour les liens vers des fichiers PDF */
 .pdf-link {
-    display: flex; /* Affiche le lien et son icône sur une seule ligne (flexbox) */
-    align-items: center; /* Aligne le contenu verticalement au centre */
-    margin: 0.5rem 0; /* Ajoute une marge verticale de 0.5rem */
-    color: #1abc9c; /* Définit la couleur du texte en vert clair */
-    text-decoration: none; /* Supprime le soulignement par défaut des liens */
-    transition: color 0.3s ease; /* Ajoute une transition pour les changements de couleur */
+    display: inline-block; /* Assure que le lien ait un comportement de bouton */
+    padding: 10px 20px; /* Ajoute du remplissage pour donner l'apparence d'un bouton */
+    font-size: 14px; /* Taille du texte pour les boutons PDF */
+    background-color: #4CAF50; /* Couleur de fond du bouton (vert par exemple) */
+    color: white; /* Couleur du texte en blanc */
+    text-decoration: none; /* Supprime le soulignement du lien */
+    border-radius: 5px; /* Arrondit les coins du bouton */
+    border: none; /* Supprime les bordures */
+    cursor: pointer; /* Change le curseur pour indiquer un élément cliquable */
+    word-wrap: break-word; /* Gère les longs textes */
+    word-break: break-word; /* Coupe les mots si nécessaire */
 }
 
 .pdf-link:hover {
-    color: #16a085; /* Change la couleur du texte au survol en un vert plus foncé */
+    background-color: #45a049; /* Change la couleur du bouton au survol */
 }
 
 .pdf-icon {
     width: 24px; /* Définit la largeur de l'icône PDF à 24px */
     height: 24px; /* Définit la hauteur de l'icône PDF à 24px */
     margin-right: 8px; /* Ajoute une marge droite de 8px entre l'icône et le texte du lien */
+}
+.btn {
+    display: inline-block; /* Assure que le lien ait un comportement de bouton */
+    padding: 10px 20px; /* Ajoute du remplissage pour donner l'apparence d'un bouton */
+    font-size: 14px; /* Taille du texte pour les boutons PDF */
+    background-color: #4CAF50; /* Couleur de fond du bouton (vert par exemple) */
+    color: white; /* Couleur du texte en blanc */
+    text-decoration: none; /* Supprime le soulignement du lien */
+    border-radius: 5px; /* Arrondit les coins du bouton */
+    border: none; /* Supprime les bordures */
+    cursor: pointer; /* Change le curseur pour indiquer un élément cliquable */
+    word-wrap: break-word; /* Gère les longs textes */
+    word-break: break-word; /* Coupe les mots si nécessaire */
+}
+
+.btn:hover {
+    background-color: #45a049; /* Change la couleur du bouton au survol */
 }
