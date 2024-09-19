@@ -28,6 +28,13 @@
     font-display: swap;
 }
 @font-face {
+    font-family: 'PlayfairDisplaySC-Bold';
+    src: url('pol/PlayfairDisplaySC-Bold.ttf');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+@font-face {
     font-family: 'Sobatyan-Regular';
     src: url('pol/Sobatyan-Regular.otf');
     font-weight: normal;
@@ -107,6 +114,75 @@ header {
     padding: 10px 0; /* Espacement vertical */
     text-align: center; /* Centre le texte */
 }
+header h1 {
+    font-size: 80px; /* Taille du texte sur les grands écrans */
+    font-family: 'PlayfairDisplaySC-Bold','Roboto-Black', 'Roboto-Rebels', Arial, sans-serif; /* Police principale */
+    color: #FFFFFF; /* Couleur du texte */
+    text-align: center; /* Centrer le texte */
+    letter-spacing: 2px; /* Espacement entre les lettres */
+    text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3); /* Ombre légère */
+}
+
+@media (max-width: 768px) {
+    header h1 {
+        font-size: 50px; /* Taille plus petite pour les tablettes et petits écrans */
+    }
+}
+
+@media (max-width: 480px) {
+    header h1 {
+        font-size: 35px; /* Taille encore plus petite pour les très petits écrans comme les téléphones */
+    }
+}
+
+/* Style des boutons fléchés */
+.scroll-button {
+    position: fixed; /* Positionne le bouton de manière fixe par rapport à la fenêtre d'affichage, donc il reste en place lorsqu'on fait défiler la page. */
+    right: 20px; /* Distance du côté droit de la fenêtre d'affichage, positionne le bouton à 20 pixels du bord droit. */
+    background-color: rgb(153,217,234); /* Couleur de fond du bouton (bleu). Tu peux changer cette couleur selon tes préférences. */
+    color: white; /* Couleur du texte à l'intérieur du bouton (blanc). */
+    border: none; /* Supprime les bordures par défaut du bouton pour un aspect plus propre. */
+    padding: 10px; /* Espace autour du texte à l'intérieur du bouton, augmentant la taille du bouton. */
+    border-radius: 20%; /* Rend les coins du bouton arrondis et le transforme en cercle. */
+    cursor: pointer; /* Change le curseur en une main lorsqu'il survole le bouton, indiquant qu'il est cliquable. */
+    font-size: 24px; /* Taille du texte à l'intérieur du bouton. Ajuste cette taille pour améliorer la lisibilité. */
+    z-index: 1000; /* Définit la priorité d'affichage du bouton pour qu'il soit au-dessus des autres éléments de la page. */
+    display: none; /* Caché par défaut. Les boutons seront affichés dynamiquement en fonction du défilement de la page. */
+}
+
+/* Positionne le bouton pour défiler vers le haut */
+#scrollUp {
+    bottom: 80%; /* Positionne le bouton à 20% de la hauteur de la fenêtre d'affichage, ce qui le place au centre verticalement. */
+    transform: translateY(20%); /* Décale le bouton vers le bas de 50% de sa propre hauteur pour qu'il soit parfaitement centré verticalement. */
+}
+
+/* Positionne le bouton pour défiler vers le bas */
+#scrollDown {
+    bottom: 20%; /* Positionne le bouton à 20% de la hauteur de la fenêtre d'affichage, ce qui le place au centre verticalement. */
+    transform: translateY(-20%); /* Décale le bouton vers le haut de 20% de sa propre hauteur pour qu'il soit parfaitement centré verticalement. */
+}
+
+/* Animation de survol */
+.scroll-button:hover {
+    background-color: rgb(16,64,75) /* Couleur de fond du bouton lorsqu'il est survolé (bleu plus foncé) pour donner un effet de survol. */
+}
+
+/* Styles spécifiques pour les téléphones mobiles */
+@media (max-width: 767px) {
+    .scroll-button {
+        width: 60px; /* Largeur du bouton ajustée pour les petits écrans, assurant qu'il est suffisamment grand pour être cliqué facilement. */
+        height: 60px; /* Hauteur du bouton ajustée pour les petits écrans, garantissant que le bouton reste proportionnel. */
+        padding: 10px; /* Moins de padding pour éviter que le bouton ne devienne trop grand sur les petits écrans. */
+        font-size: 30px; /* Augmente la taille du texte pour améliorer la visibilité sur les petits écrans. */
+    }
+
+    /* Ajuste les positions pour les mobiles */
+    #scrollUp, #scrollDown {
+        right: 10px; /* Réduit la distance du côté droit pour que le bouton ne soit pas trop éloigné du bord de l'écran sur les petits écrans. */
+    }
+}
+
+
 
 /* Navigation principale */
 /* Styles pour la barre de navigation */
@@ -139,7 +215,7 @@ nav ul li a {
     padding: 15px 20px; /* Espacement interne */
     font-weight: bold; /* Texte en gras */
     border-radius: 5px; /* Arrondit les coins */
-    background-color: #003366; /* Fond bleu foncé */
+    background-color: rgb(52,94,143); /* Fond bleu foncé */
     transition: background-color 0.3s ease, color 0.3s ease; /* Transition douce */
 }
 
@@ -185,11 +261,17 @@ nav ul li:hover > ul {
 }
 
 @media (max-width: 768px) {
-    nav ul {
-        flex-direction: column; /* Passe les éléments de navigation en colonne sur les petits écrans */
+    nav {
+        height: auto; /* Sur petits écrans, la hauteur s'ajuste automatiquement */
     }
-    nav ul li {
-        margin: 0; /* Réduit la marge entre les éléments */
+    
+    nav ul {
+        flex-direction: column; /* Les éléments sont empilés en colonne sur petits écrans */
+    }
+    
+    nav ul li a {
+        padding: 10px 15px; /* Réduction du padding pour une meilleure lisibilité */
+        font-size: 1.2em; /* Taille de texte réduite sur les petits écrans */
     }
 }
 
@@ -453,11 +535,10 @@ h1 {
     height: 24px; /* Définit la hauteur de l'icône PDF à 24px */
     margin-right: 8px; /* Ajoute une marge droite de 8px entre l'icône et le texte du lien */
 }
-.btn {
+.btn, .btn1, .btn2, .btn3, .btn4 {
     display: inline-block; /* Assure que le lien ait un comportement de bouton */
     padding: 10px 20px; /* Ajoute du remplissage pour donner l'apparence d'un bouton */
     font-size: 14px; /* Taille du texte pour les boutons PDF */
-    background-color: #4CAF50; /* Couleur de fond du bouton (vert par exemple) */
     color: white; /* Couleur du texte en blanc */
     text-decoration: none; /* Supprime le soulignement du lien */
     border-radius: 5px; /* Arrondit les coins du bouton */
@@ -467,6 +548,33 @@ h1 {
     word-break: break-word; /* Coupe les mots si nécessaire */
 }
 
+.btn {
+     background-color: #4CAF50; /* Couleur de fond du bouton (vert par exemple) */
+}
 .btn:hover {
     background-color: #45a049; /* Change la couleur du bouton au survol */
+}
+.btn1 {
+    background-color: rgb(40,108,164); /* Couleur de fond du bouton (vert par exemple) */
+}
+.btn1:hover {
+    background-color: rgb(16,44,67); /* Change la couleur du bouton au survol */
+}
+.btn2 {
+    background-color: rgb(189,196,64); /* Couleur de fond du bouton (vert par exemple) */
+}
+.btn2:hover {
+    background-color: rgb(68,70,21); /* Change la couleur du bouton au survol */
+}
+.btn3 {
+    background-color: rgb(221,11,48); /* Couleur de fond du bouton (vert par exemple) */
+}
+.btn3:hover {
+    background-color: rgb(134,6,29); /* Change la couleur du bouton au survol */
+}
+.btn4 {
+    background-color: rgb(206,129,77); /* Couleur de fond du bouton (vert par exemple) */
+}
+.btn4:hover {
+    background-color: rgb(96,53,26); /* Change la couleur du bouton au survol */
 }
