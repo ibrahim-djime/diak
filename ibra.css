@@ -96,6 +96,13 @@
     font-style: normal;
     font-display: swap;
 }
+
+/*Style de base du corps*/
+body{
+    background-color: #f4f4f4; /* Couleur de fond */
+    background: url('images/p02.jpg') no-repeat center center; /* Image de fond */
+    background-size: cover; /* L'image couvre entièrement */
+}
 /* Styles pour le bouton du menu hamburger */
 .menu-icon {
     font-size: 30px; /* Taille de l'icône du menu hamburger */
@@ -170,12 +177,12 @@
     transition: margin-left 0.5s; /* Transition douce pour le décalage lors de l'ouverture de la barre latérale */
     padding: 20px; /* Espacement autour du contenu */
     font-family: 'Roboto-Regular', Arial, sans-serif; /* Police utilisée */
-    background-color: #ecf0f1; /* Couleur d'arrière-plan du contenu */
+    /*background-color: #ecf0f1; /* Couleur d'arrière-plan du contenu */
 }
 
 /* Styles pour les sections de contenu */
 .section {
-    background-color: #fff; /* Fond blanc pour les sections */
+    background: #fff; /*Couleur de fond blanc*/
     padding: 20px; /* Espacement interne */
     border-radius: 10px; /* Coins arrondis */
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); /* Ombre légère pour la profondeur */
@@ -183,6 +190,9 @@
 }
 header{
     font-family: 'Sobatyan-Regular','MilestoneBrush', Arial, sans-serif; /* Police utilisée */
+    font-size: 40px; /* Taille du texte */
+    text-align: center; /* Centrer le texte */
+    color: #34a853; /* Couleur verte pour les sous-titres */
 }
 /* Styles pour les titres principaux (h1) */
 h1 {
@@ -295,7 +305,6 @@ h3 {
     display: inline-block; /* Assure que le lien ait un comportement de bouton */
     padding: 10px 20px; /* Ajoute du remplissage pour donner l'apparence d'un bouton */
     font-size: 14px; /* Taille du texte pour les boutons PDF */
-    background-color: #4CAF50; /* Couleur de fond du bouton (vert par exemple) */
     color: white; /* Couleur du texte en blanc */
     text-decoration: none; /* Supprime le soulignement du lien */
     border-radius: 5px; /* Arrondit les coins du bouton */
@@ -305,9 +314,46 @@ h3 {
     word-break: break-word; /* Coupe les mots si nécessaire */
 }
 
+.pdf-link{
+    background-color: #4CAF50; /* Couleur de fond du bouton (vert par exemple) */
+}
+
 .pdf-link:hover {
     background-color: #45a049; /* Change la couleur du bouton au survol */
 }
+
+.btn1, .btn2, .btn3 {
+    display: inline-block; /* Assure que le lien ait un comportement de bouton */
+    padding: 10px 20px; /* Ajoute du remplissage pour donner l'apparence d'un bouton */
+    font-size: 14px; /* Taille du texte pour les boutons PDF */
+    color: white; /* Couleur du texte en blanc */
+    text-decoration: none; /* Supprime le soulignement du lien */
+    border-radius: 5px; /* Arrondit les coins du bouton */
+    border: none; /* Supprime les bordures */
+    cursor: pointer; /* Change le curseur pour indiquer un élément cliquable */
+    word-wrap: break-word; /* Gère les longs textes */
+    word-break: break-word; /* Coupe les mots si nécessaire */
+}
+
+.btn1 {
+    background-color: rgb(40,108,164); /* Couleur de fond du bouton (vert par exemple) */
+}
+.btn1:hover {
+    background-color: rgb(16,44,67); /* Change la couleur du bouton au survol */
+}
+.btn2 {
+    background-color: rgb(189,196,64); /* Couleur de fond du bouton (vert par exemple) */
+}
+.btn2:hover {
+    background-color: rgb(68,70,21); /* Change la couleur du bouton au survol */
+}
+.btn3 {
+    background-color: rgb(221,11,48); /* Couleur de fond du bouton (vert par exemple) */
+}
+.btn3:hover {
+    background-color: rgb(134,6,29); /* Change la couleur du bouton au survol */
+}
+
 /* Animation (à personnaliser en fonction de votre contenu) */
 @keyframes slideIn {
     from {
@@ -317,7 +363,7 @@ h3 {
         transform: translateX(0);
     }
 }
-c'est quoi ca :
+
 @media (max-width: 768px) {
     nav ul {
         flex-direction: column; /* Passe les éléments de navigation en colonne sur les petits écrans */
