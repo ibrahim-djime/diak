@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Connaissances et Partages</title>
+    <title>Le Portail des Savoirs et Téléchargements Utiles</title>
     <link rel="stylesheet" href="style4.css"> <!-- Lien vers le fichier CSS -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 <body>
     <header>
-        <h1>CONNAISSANCES</h1>
+        <h1>L U M I N A</h1>
         <nav>
             <ul>
                 <li><a href="#home">Accueil</a></li>
@@ -17,20 +17,13 @@
                     <a href="#concours">Concours</a>
                     <ul class="dropdown-content">
                         <li><a href="#concours-nationaux">Concours Nationaux</a></li>
-                        <li><a href="#concours-internationaux">Concours Internationaux</a></li>
-                        <li><a href="#preparation-concours">Préparation aux Concours</a></li>
-                        <li><a href="#resultats-annonces">Résultats et Annonces</a></li>
-                        <li><a href="#guides-telechargements">Guides et Téléchargements</a></li>
+                        <li><a href="sujets-concours">Sujets de Concours</a></li>
+                        <li><a href="#resultats">Résultats</a></li>
+                        
                     </ul>
                 </li>
                 <li><a href="#informations">Informations</a></li>
-                <li class="dropdown">
-                    <a href="#contacts">Contacts</a>
-                    <ul class="dropdown-content">
-                        <li><a href="#coordonnees">Coordonnées</a></li>
-                        <li><a href="#formulaire">Formulaire de Contact</a></li>
-                    </ul>
-                </li>
+                
                 <li class="dropdown">
                     <a href="#downloads">Téléchargements</a>
                     <ul class="dropdown-content">
@@ -50,13 +43,12 @@
                         
                     </ul>
                 </li>
+                <li><a href="#contacts">Contacts</a></li>
                 <li class="dropdown">
                     <a href="#about">À Propos</a>
                     <ul class="dropdown-content">
-                        <li><a href="#parcours">Mon Parcours</a></li>
-                        <li><a href="#vision">Vision et Mission</a></li>
-                        <li><a href="#realisations">Réalisations</a></li>
-                        <li><a href="#collaborations">Collaborations</a></li>
+                        <li><a href="page5.html#parcours">Presentation</a></li>
+                        <li><a href="page5.html#vision">Vision et Mission</a></li>
                     </ul>
                 </li>
             </ul>
@@ -71,13 +63,25 @@
             </div>
         </section>
 
+        <!-- Flèche de défilement vers le haut -->
+    <div id="scrollToTop" onclick="scrollToTop()">
+        &#8679;
+    </div>
+
+    <!-- Flèche de défilement vers le bas -->
+    <div id="scrollToBottom" onclick="scrollToBottom()">
+        &#8681;
+    </div>
+
+
         <section id="ConcoursRecrutement" class="container">
             <div class="section">
                 <h2>Concours</h2>
                 <p><strong>Trouvez toutes les informations dont vous avez besoin sur les concours et le recrutement !</strong> 🎓 Nous avons rassemblé pour vous des sujets d'examen gratuits et des conseils pour vous aider à vous préparer efficacement. Que vous soyez en quête d’opportunités ou simplement désireux de vous améliorer, nous avons ce qu'il vous faut. Explorez nos ressources et maximisez vos chances de succès. Bonne chance dans vos préparations ! 🍀</p>
-                <a href="https://example.com/guide-technologique" class="btn-telecharger" target="_blank">Téléchargez notre guide technologique</a>
+                <p> Touve tous les sujets de concours du site ici: <br />
+                    <a href=ibra.html#sujets-concours class="btn1" title="Cliquez pour telecharger les sujets qui vous intéressent" target="_blank">Sujets de concours</a>
+                </p>
             </div>
-                                    <div class="section">
                       <div class="section">
     <h2>Recrutements</h2>
     <p><strong>Accédez à toutes les informations essentielles sur les opportunités de recrutement !</strong> 🎓 Nous vous guidons vers des plateformes spécialisées qui publient régulièrement des offres d'emploi. Consultez nos ressources pour maximiser vos chances de trouver l'opportunité qui vous correspond. Que vous soyez en recherche active ou simplement à la découverte de nouvelles perspectives, explorez les sites ci-dessous et lancez votre carrière. Bonne chance dans vos démarches ! 🍀</p>
@@ -89,7 +93,7 @@
         </section>
             
         
-         <script type="text/javascript"> var infolinks_pid = 3425402; var infolinks_wsid = 0; </script> <script type="text/javascript" src="//resources.infolinks.com/js/infolinks_main.js"></script>
+
         <section id="informations" class="container">
             <div class="section">
                 <h2>Information</h2>
@@ -108,28 +112,28 @@
             <div class="card">
                 <h3 id="documents-educatifs">Documents Éducatifs</h3>
                 <p>Accédez à des manuels scolaires, guides et cours pour l'enseignement fondamental, secondaire, technique, et supérieur.</p>
-                <a href="Ibra.html" target="_blank" class="btn">Télécharger les Documents Éducatifs</a>
+                <a href="Ibra.html" target="_blank" class="btn1">Télécharger les Documents Éducatifs</a>
             </div>
             
             <!-- Carte Ressources Professionnelles -->
             <div class="card">
                 <h3 id="documents-professionnelles">Documents Professionnelles</h3>
                 <p>Trouvez des guides de carrière, des études de cas et des conseils pour le développement professionnel.</p>
-                <a href="Ibra.html" target="_blank" class="btn">Accéder aux Ressources Professionnelles</a>
+                <a href="Ibra.html#documents-professionnels" target="_blank" class="btn">Accéder aux Ressources Professionnelles</a>
             </div>
             
             <!-- Carte Documents Administratifs -->
             <div class="card">
                 <h3 id="documents-administratifs">Documents Administratifs</h3>
                 <p>Documents pour l'enseignement fondamental, secondaire, supérieur et toutes vos démarches administratives.</p>
-                <a href="Ibra.html" target="_blank" class="btn">Télécharger les Documents Administratifs</a>
+                <a href="Ibra.html#documents-administratifs" target="_blank" class="btn2">Télécharger les Documents Administratifs</a>
             </div>
             
             <!-- Carte Ressources Diverses -->
             <div class="card">
                 <h3 id="documents-divers">Documents Divers</h3>
                 <p>Explorez des astuces de gestion de projet, articles d'actualité, et outils pour votre développement personnel.</p>
-                <a href="Ibra.html" target="_blank" class="btn">Découvrir les Ressources Diverses</a>
+                <a href="Ibra.html#documents-divers" target="_blank" class="btn3">Découvrir les Ressources Diverses</a>
             </div>
         </div>
     </div>
@@ -168,6 +172,8 @@
                 <ul>
                     <li><strong>Téléphone :</strong> 📞 76 85 66 31 | 65 64 78 72</li>
                 </ul>
+                <p><strong>Email :</strong> dibrahimdjime@gmail.com</p>
+                 <p><strong>Adresse :</strong> Kalaban Coura, Bamako, Mali</p>
                 </div>
             </div>
         </section>
@@ -178,7 +184,7 @@
                 <p>Accédez à tous les articles qui vous intéressent en un clic. Achetez votre commande et faites-vous livrer dans les plus brefs délais.</p>
                 <!-- Formulaire de contact -->
                 <p>
-                    <a href="page7.html">Farafina'a</a>
+                    <a href="page7.html" class="btn2" target="_blank">Farafina'art</a>
                 </p>
             </div>
              <div class="section">
@@ -186,7 +192,7 @@
                 <p>Accédez à tous les articles qui vous intéressent en un clic. Achetez votre commande et faites-vous livrer dans les plus brefs délais.</p>
                 <!-- Formulaire de contact -->
                 <p>
-                    <a href="https://ibrahdi.github.io/diala-services/">Diala Services</a>
+                    <a href="https://ibrahdi.github.io/diala-services/" class="btn1" target="_blank">Diala Services</a>
                 </p>
             </div>
         </section>
@@ -196,7 +202,7 @@
         <h2>À Propos</h2>
         <div class="grid1">
             <div class="c1">
-                <h3>À propos de moi :</h3>
+                <h3 id="">À propos de moi :</h3>
                 <p>Bonjour à tous ! Je suis Ibrahim Djime Diakite, un étudiant en master Énergie et Thermique à l’Université de Bamako. Ma passion pour la technologie et l’information m’a poussé à créer ce site. Mon objectif est simple : partager mes connaissances et aider autant les étudiants que les professionnels à travers des ressources précieuses et des conseils pratiques.</p>
                 <p>Ce site, c’est plus qu’un simple projet pour moi, c’est un rêve devenu réalité, où chaque visiteur peut apprendre, se développer et réussir.</p>
                 <a href="page5.html" class="btn-en-savoir-plus">En savoir plus</a>
@@ -219,7 +225,43 @@
 </section>
 
     </main>
+        <!-- Bouton pour faire défiler vers le haut -->
+    <button id="scrollUp" class="scroll-button" onclick="scrollToTop()">&#8679;</button>
 
+    <!-- Bouton pour faire défiler vers le bas -->
+    <button id="scrollDown" class="scroll-button" onclick="scrollToBottom()">&#8681;</button>
+
+    <script>
+        // Fonction pour faire défiler vers le haut
+        function scrollToTop() {
+            window.scrollTo({top: 0, behavior: 'smooth'});
+        }
+
+        // Fonction pour faire défiler vers le bas
+        function scrollToBottom() {
+            window.scrollTo({top: document.body.scrollHeight, behavior: 'smooth'});
+        }
+
+        // Affiche ou cache les boutons en fonction du défilement
+        window.onscroll = function() {
+            var scrollUpButton = document.getElementById('scrollUp');
+            var scrollDownButton = document.getElementById('scrollDown');
+
+            // Affiche le bouton de défilement vers le haut lorsqu'on défile vers le bas
+            if (window.scrollY > 100) {
+                scrollUpButton.style.display = 'block';
+            } else {
+                scrollUpButton.style.display = 'none';
+            }
+
+            // Affiche le bouton de défilement vers le bas lorsqu'on est suffisamment haut dans la page
+            if ((window.innerHeight + window.scrollY) < document.body.offsetHeight - 100) {
+                scrollDownButton.style.display = 'block';
+            } else {
+                scrollDownButton.style.display = 'none';
+            }
+        };
+    </script>
     <footer>
         <div class="social-icons">
             <a href="https://web.facebook.com/ibrahimdjime.diakite.3" target="_blank" class="social-icon">
