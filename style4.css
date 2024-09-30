@@ -46,54 +46,63 @@
     src: url('pol/Roboto-MediumItalic.ttf');
     font-weight: normal;
     font-style: normal;
+    font-display: swap;
 }
 @font-face {
     font-family: 'MilestoneBrush';
     src: url('pol/MilestoneBrush.otf');
     font-weight: normal;
     font-style: normal;
+    font-display: swap;
 }
 @font-face {
     font-family: 'Rostack';
     src: url('pol/Rostack.otf');
     font-weight: normal;
     font-style: normal;
+    font-display: swap;
 }
 @font-face {
     font-family: 'Roboto-Black';
     src: url('pol/Roboto-Black.ttf');
     font-weight: normal;
     font-style: normal;
+    font-display: swap;
 }
 @font-face {
     font-family: 'Matemasie-Regular';
     src: url('pol/Matemasie-Regular.ttf');
     font-weight: normal;
     font-style: normal;
+    font-display: swap;
 }
 @font-face {
     font-family: 'NewAmsterdam-Regular';
     src: url('pol/NewAmsterdam-Regular.ttf');
     font-weight: normal;
     font-style: normal;
+    font-display: swap;
 }
 @font-face {
     font-family: 'NerkoOne-Regular';
     src: url('pol/NerkoOne-Regular.ttf');
     font-weight: normal;
     font-style: normal;
+    font-display: swap;
 }
 @font-face {
     font-family: 'Roboto-Bold';
     src: url('pol/Roboto-Bold.ttf');
     font-weight: normal;
     font-style: normal;
+    font-display: swap;
 }
 @font-face {
     font-family: 'DMSerifText-Regular';
     src: url('pol/DMSerifText-Regular.ttf');
     font-weight: normal;
     font-style: normal;
+    font-display: swap;
 }
 
 /* Styles de base pour le corps de la page */
@@ -169,6 +178,26 @@ header h1 {
 
 /* Styles spécifiques pour les téléphones mobiles */
 @media (max-width: 767px) {
+     /* Exemple : Réduire la taille des titres */
+  h1, h2, h3, h4, h5, h6 {
+    font-size: 18px;
+  }
+
+  /* Ajuster les marges et espacements */
+  .container {
+    padding: 10px;
+  }
+
+  /* Les cartes prennent 100% de la largeur sur petits écrans */
+  .card {
+    width: 100%;
+    margin-bottom: 15px;
+  }
+
+  /* Centrer les textes ou les ajuster selon l'espace */
+  .centered-title {
+    text-align: center;
+  }
     .scroll-button {
         width: 60px; /* Largeur du bouton ajustée pour les petits écrans, assurant qu'il est suffisamment grand pour être cliqué facilement. */
         height: 60px; /* Hauteur du bouton ajustée pour les petits écrans, garantissant que le bouton reste proportionnel. */
@@ -389,6 +418,26 @@ nav ul li:hover > ul {
     transform: scale(1.05); /* Agrandit légèrement la carte au survol */
     transition: transform 0.3s ease;
 }
+.c2 a {
+    font-family: 'Matemasie-Regular', 'MilestoneBrush', Arial, sans-serif;
+    border: 2px solid transparent;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+    text-decoration: none;
+    padding: 10px 20px;
+    color: #333;
+    background-color: #f0f0f0;
+    /*transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease;*/
+}
+
+.c2 a:hover {
+    background-color: #333;
+    color: #fff;
+    border-color: #fff;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.6);
+    transform: scale(1.05); /* Agrandit légèrement la carte au survol */
+    transition: transform 0.3s ease;
+}
 
 
 input[type="text"], 
@@ -485,6 +534,39 @@ footer {
     height: auto; /* Ajuste automatiquement la hauteur de l'image en fonction de sa largeur pour maintenir les proportions */
     border-bottom: 1px solid #ddd; /* Ajoute une bordure en bas de l'image pour la séparer visuellement du reste du contenu */
     margin-bottom: 15px; /* Ajoute un espace en dessous de l'image pour séparer l'image du texte en dessous */
+}
+.external-link {
+    margin: 15px;
+     display: inline-block; /* Assure que le lien ait un comportement de bouton */
+    padding: 10px 20px; /* Ajoute du remplissage pour donner l'apparence d'un bouton */
+    font-size: 14px; /* Taille du texte pour les boutons PDF */
+    background-color: #CFCFCF; /* Couleur de fond du bouton (gris par exemple) */
+    text-decoration: none; /* Supprime le soulignement du lien */
+    border-radius: 5px; /* Arrondit les coins du bouton */
+    border: none; /* Supprime les bordures */
+    cursor: pointer; /* Change le curseur pour indiquer un élément cliquable */
+    word-wrap: break-word; /* Gère les longs textes */
+    word-break: break-word; /* Coupe les mots si nécessaire */
+  color: #007bff; /* Bleu clair */
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.external-link:hover {
+    transform: scale(1.05); /* Agrandit légèrement la carte au survol */
+    transition: transform 0.3s ease;
+ background-color: #0056b2; /* Bleu plus foncé */
+  color: white; /* Couleur du texte en blanc */
+}
+
+.lien-info {
+  display: flex;
+  justify-content: space-between; /* Aligne les éléments horizontalement */
+  flex-wrap: wrap; /* Permet aux éléments de passer à la ligne si nécessaire */
+}
+
+.lien-info a {
+  /* ... votre style pour les liens ... */
 }
 
 /* Styles pour les titres */
