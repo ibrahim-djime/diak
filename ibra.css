@@ -7,6 +7,13 @@
     font-display: swap;
 }
 @font-face {
+    font-family: 'PlayfairDisplaySC-Black';
+    src: url('pol/PlayfairDisplaySC-Black.ttf');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+@font-face {
     font-family: 'Robot-Rebels';
     src: url('pol/Robot-Rebels.ttf');
     font-weight: normal;
@@ -28,6 +35,13 @@
     font-display: swap;
 }
 @font-face {
+    font-family: 'PlayfairDisplaySC-Bold';
+    src: url('pol/PlayfairDisplaySC-Bold.ttf');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+@font-face {
     font-family: 'Sobatyan-Regular';
     src: url('pol/Sobatyan-Regular.otf');
     font-weight: normal;
@@ -39,6 +53,7 @@
     src: url('pol/Roboto-MediumItalic.ttf');
     font-weight: normal;
     font-style: normal;
+    font-display: swap;
 }
 @font-face {
     font-family: 'MilestoneBrush';
@@ -96,6 +111,7 @@
     font-style: normal;
     font-display: swap;
 }
+
 
 /*Style de base du corps*/
 body{
@@ -215,18 +231,43 @@ h2 {
 }
 
 /* Styles pour les sous-titres (h3) */
-h3 {
-    font-size: 24px; /* Taille du texte */
-    color: #34a853; /* Couleur verte pour les sous-titres */
-    text-align: left; /* Aligné à gauche */
-    margin-bottom: 15px; /* Espace en dessous du sous-titre */
+h3, h4 {
     font-family: 'Sobatyan-Regular','Arial', sans-serif;
     font-weight: bold;
     text-transform: uppercase; /* Tout en majuscules */
     padding-left: 10px; /* Décalage du texte vers la droite */
+    
+}
+h3{
+    text-align: left; /* Aligné à gauche */
     border-left: 5px solid #34a853; /* Bordure verte sur le côté gauche pour accentuer le titre */
+    font-size: 24px; /* Taille du texte */
+    margin-bottom: 15px; /* Espace en dessous du sous-titre */
+    color: #34a853; /* Couleur verte pour les sous-titres */
 }
 
+h4{
+    text-decoration: underline; /*Souligner le texte*/
+     text-decoration-thickness: 2px; /* Définit l'épaisseur du soulignement à 2 pixels */
+    text-align: center; /*Centrer le texte*/
+    margin-left: 8px; /*Espace a gauche du texte*/
+    font-size: 18px; /* Taille du texte */
+    margin-bottom: 13px; /* Espace en dessous du sous-titre */
+    color: rgb(57,100,64); /* Couleur verte foncee pour les sous-titres */
+}
+h5, h6{
+     margin-left: 12px; /*Espace a gauche du texte*/
+    font-family:'PlayfairDisplaySC-Black','Sobatyan-Regular','Arial', sans-serif;;
+    border-bottom:1px solid rgb(57,100,64); /*Bordure verte foncee en bas*/
+    margin-bottom:10px; /*Espace en dessous du sous titre*/
+    color: #34a853; /* Couleur verte pour les sous-titres */
+}
+h5{
+    font-size:15px; /*Taille du texte*/
+}
+h6{
+    font-size:13px;/*Taille du texte*/
+}
 /* Ajout de styles supplémentaires pour les conteneurs de section */
 .section {
     margin-bottom: 40px; /* Espace supplémentaire en dessous de chaque section */
@@ -365,6 +406,26 @@ h3 {
 }
 
 @media (max-width: 768px) {
+     /* Exemple : Réduire la taille des titres */
+  h1, h2, h3, h4, h5, h6 {
+    font-size: 18px;
+  }
+
+  /* Ajuster les marges et espacements */
+  .container {
+    padding: 10px;
+  }
+
+  /* Les cartes prennent 100% de la largeur sur petits écrans */
+  .card {
+    width: 100%;
+    margin-bottom: 15px;
+  }
+
+  /* Centrer les textes ou les ajuster selon l'espace */
+  .centered-title {
+    text-align: center;
+  }
     nav ul {
         flex-direction: column; /* Passe les éléments de navigation en colonne sur les petits écrans */
     }
