@@ -132,17 +132,6 @@ header h1 {
     text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3); /* Ombre légère */
 }
 
-@media (max-width: 768px) {
-    header h1 {
-        font-size: 50px; /* Taille plus petite pour les tablettes et petits écrans */
-    }
-}
-
-@media (max-width: 480px) {
-    header h1 {
-        font-size: 35px; /* Taille encore plus petite pour les très petits écrans comme les téléphones */
-    }
-}
 
 /* Style des boutons fléchés */
 .scroll-button {
@@ -176,9 +165,27 @@ header h1 {
     background-color: rgb(16,64,75) /* Couleur de fond du bouton lorsqu'il est survolé (bleu plus foncé) pour donner un effet de survol. */
 }
 
+@media (max-width: 768px) {
+    /*Reduire la taille des boutrons en savoir plus*/
+    .c2 a{font-size: 15px; /* Taille des icônes */}
+    header h1 {
+        font-size: 50px; /* Taille plus petite pour les tablettes et petits écrans */
+    }
+}
+
+@media (max-width: 480px) {
+    header h1 {
+        font-size: 35px; /* Taille encore plus petite pour les très petits écrans comme les téléphones */
+    }
+}
+
 /* Styles spécifiques pour les téléphones mobiles */
 @media (max-width: 767px) {
-     /* Exemple : Réduire la taille des titres */
+    /*Reduire la taille des boutrons en savoir plus*/
+    .c2 a{font-size: 13px; /* Taille des icônes */} 
+    
+
+    /* Exemple : Réduire la taille des titres */
   h1, h2, h3, h4, h5, h6 {
     font-size: 18px;
   }
@@ -190,7 +197,7 @@ header h1 {
 
   /* Les cartes prennent 100% de la largeur sur petits écrans */
   .card {
-    width: 100%;
+    width: 80%;
     margin-bottom: 15px;
   }
 
@@ -211,7 +218,31 @@ header h1 {
     }
 }
 
+@media (max-width: 768px) {
+    /*Reduire la taille des boutrons en savoir plus*/
+    .c2 a{font-size: 15px; /* Taille des icônes */}
+    nav {
+        height: auto; /* Sur petits écrans, la hauteur s'ajuste automatiquement */
+    }
+    
+    nav ul {
+        flex-direction: column; /* Les éléments sont empilés en colonne sur petits écrans */
+    }
+    
+    nav ul li a {
+        padding: 10px 15px; /* Réduction du padding pour une meilleure lisibilité */
+        font-size: 1.2em; /* Taille de texte réduite sur les petits écrans */
+    }
+}
 
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
 
 /* Navigation principale */
 /* Styles pour la barre de navigation */
@@ -289,29 +320,7 @@ nav ul li:hover > ul {
     display: block; /* Afficher le sous-menu */
 }
 
-@media (max-width: 768px) {
-    nav {
-        height: auto; /* Sur petits écrans, la hauteur s'ajuste automatiquement */
-    }
-    
-    nav ul {
-        flex-direction: column; /* Les éléments sont empilés en colonne sur petits écrans */
-    }
-    
-    nav ul li a {
-        padding: 10px 15px; /* Réduction du padding pour une meilleure lisibilité */
-        font-size: 1.2em; /* Taille de texte réduite sur les petits écrans */
-    }
-}
 
-@keyframes fadeIn {
-    from {
-        opacity: 0;
-    }
-    to {
-        opacity: 1;
-    }
-}
 
 .animated {
     animation: fadeIn 1s ease-in;
@@ -484,6 +493,17 @@ footer {
     max-width: 1200px; /* Définit une largeur maximale pour la section (ajuste la valeur selon tes besoins) */
 }
 
+/* Styles pour les titres */
+h1 {
+    margin: 0; /* Supprime la marge par défaut autour des titres */
+    padding-bottom: 0.5rem; /* Ajoute un padding inférieur de 0.5rem sous les titres */
+}
+ h2 {
+    margin: 0; /* Supprime la marge par défaut autour des titres */
+    padding-bottom: 0.5rem; /* Ajoute un padding inférieur de 0.5rem sous les titres */
+    border-bottom: 2px solid #1abc9c; /* Ajoute une bordure inférieure de 2px sous les titres avec une couleur vert clair */
+}
+
 .section h1,
 .section h2,
 .section h3,
@@ -569,16 +589,7 @@ footer {
   /* ... votre style pour les liens ... */
 }
 
-/* Styles pour les titres */
-h1 {
-    margin: 0; /* Supprime la marge par défaut autour des titres */
-    padding-bottom: 0.5rem; /* Ajoute un padding inférieur de 0.5rem sous les titres */
-}
- h2 {
-    margin: 0; /* Supprime la marge par défaut autour des titres */
-    padding-bottom: 0.5rem; /* Ajoute un padding inférieur de 0.5rem sous les titres */
-    border-bottom: 2px solid #1abc9c; /* Ajoute une bordure inférieure de 2px sous les titres avec une couleur vert clair */
-}
+
 .social-icons {
     display: flex; /* Affiche les icônes sur une seule ligne */
     justify-content: center; /* Centre les icônes horizontalement */
@@ -617,7 +628,7 @@ h1 {
     height: 24px; /* Définit la hauteur de l'icône PDF à 24px */
     margin-right: 8px; /* Ajoute une marge droite de 8px entre l'icône et le texte du lien */
 }
-.btn, .btn1, .btn2, .btn3, .btn4 {
+.btn, .btn1, .btn2, .btn3, .btn4, .btn5 {
     display: inline-block; /* Assure que le lien ait un comportement de bouton */
     padding: 10px 20px; /* Ajoute du remplissage pour donner l'apparence d'un bouton */
     font-size: 14px; /* Taille du texte pour les boutons PDF */
@@ -659,4 +670,10 @@ h1 {
 }
 .btn4:hover {
     background-color: rgb(96,53,26); /* Change la couleur du bouton au survol */
+}
+.btn5 {
+    background-color: rgb(153,217,234); /* Couleur de fond du bouton (vert par exemple) */
+}
+.btn5:hover {
+    background-color: rgb(29,119,141); /* Change la couleur du bouton au survol */
 }
