@@ -164,74 +164,36 @@ header h1 {
 .scroll-button:hover {
     background-color: rgb(16,64,75) /* Couleur de fond du bouton lorsqu'il est survolé (bleu plus foncé) pour donner un effet de survol. */
 }
-
-@media (max-width: 768px) {
-    /*Reduire la taille des boutrons en savoir plus*/
-    .c2 a{font-size: 15px; /* Taille des icônes */}
-    header h1 {
-        font-size: 50px; /* Taille plus petite pour les tablettes et petits écrans */
-    }
-}
-
+/* Pour les petits écrans de téléphone (en dessous de 480px de large) */
 @media (max-width: 480px) {
+    body {
+        background: none; /* Supprime l'image de fond pour une meilleure performance sur les petits écrans */
+        background-color: #f4f4f4; /* Garde juste une couleur de fond */
+    }
+
     header h1 {
-        font-size: 35px; /* Taille encore plus petite pour les très petits écrans comme les téléphones */
-    }
-}
-
-/* Styles spécifiques pour les téléphones mobiles */
-@media (max-width: 767px) {
-    /*Reduire la taille des boutrons en savoir plus*/
-    .c2 a{font-size: 13px; /* Taille des icônes */} 
-    
-
-    /* Exemple : Réduire la taille des titres */
-  h1, h2, h3, h4, h5, h6 {
-    font-size: 18px;
-  }
-
-  /* Ajuster les marges et espacements */
-  .container {
-    padding: 10px;
-  }
-
-  /* Les cartes prennent 100% de la largeur sur petits écrans */
-  .card {
-    width: 80%;
-    margin-bottom: 15px;
-  }
-
-  /* Centrer les textes ou les ajuster selon l'espace */
-  .centered-title {
-    text-align: center;
-  }
-    .scroll-button {
-        width: 60px; /* Largeur du bouton ajustée pour les petits écrans, assurant qu'il est suffisamment grand pour être cliqué facilement. */
-        height: 60px; /* Hauteur du bouton ajustée pour les petits écrans, garantissant que le bouton reste proportionnel. */
-        padding: 10px; /* Moins de padding pour éviter que le bouton ne devienne trop grand sur les petits écrans. */
-        font-size: 30px; /* Augmente la taille du texte pour améliorer la visibilité sur les petits écrans. */
+        font-size: 28px; /* Ajuste la taille du texte pour les très petits écrans */
     }
 
-    /* Ajuste les positions pour les mobiles */
-    #scrollUp, #scrollDown {
-        right: 10px; /* Réduit la distance du côté droit pour que le bouton ne soit pas trop éloigné du bord de l'écran sur les petits écrans. */
-    }
-}
-
-@media (max-width: 768px) {
-    /*Reduire la taille des boutrons en savoir plus*/
-    .c2 a{font-size: 15px; /* Taille des icônes */}
-    nav {
-        height: auto; /* Sur petits écrans, la hauteur s'ajuste automatiquement */
-    }
-    
-    nav ul {
-        flex-direction: column; /* Les éléments sont empilés en colonne sur petits écrans */
-    }
-    
     nav ul li a {
-        padding: 10px 15px; /* Réduction du padding pour une meilleure lisibilité */
-        font-size: 1.2em; /* Taille de texte réduite sur les petits écrans */
+        padding: 10px 5px; /* Réduit encore l'espacement des liens de navigation */
+        font-size: 1em; /* Réduit la taille de la police pour un meilleur ajustement */
+    }
+
+    .card {
+        width: 100%; /* Les cartes prennent toute la largeur */
+        margin: 10px 0; /* Réduit l'espacement vertical entre les cartes */
+    }
+
+    .scroll-button {
+        width: 50px; /* Réduit la taille des boutons de défilement */
+        height: 50px;
+        font-size: 24px; /* Réduit un peu la taille du texte du bouton */
+    }
+
+    footer {
+        background-size: cover; /* Ajuste l'image de fond du pied de page */
+        font-size: 12px; /* Réduit la taille du texte du pied de page */
     }
 }
 
@@ -407,57 +369,6 @@ nav ul li:hover > ul {
     flex: 1; /* Les images prennent également autant de place que possible */
     max-width: 400px; /* Limite la largeur des images */
 }
-.c1 a {
-    font-family: 'Matemasie-Regular', 'MilestoneBrush', Arial, sans-serif;
-    border: 2px solid transparent;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
-    text-decoration: none;
-    padding: 10px 20px;
-    color: #333;
-    background-color: #f0f0f0;
-    /*transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease;*/
-}
-
-.c1 a:hover {
-    background-color: #333;
-    color: #fff;
-    border-color: #fff;
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.6);
-    transform: scale(1.05); /* Agrandit légèrement la carte au survol */
-    transition: transform 0.3s ease;
-}
-.c2 a {
-    font-family: 'Matemasie-Regular', 'MilestoneBrush', Arial, sans-serif;
-    border: 2px solid transparent;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
-    text-decoration: none;
-    padding: 10px 20px;
-    color: #333;
-    background-color: #f0f0f0;
-    /*transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease;*/
-}
-
-.c2 a:hover {
-    background-color: #333;
-    color: #fff;
-    border-color: #fff;
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.6);
-    transform: scale(1.05); /* Agrandit légèrement la carte au survol */
-    transition: transform 0.3s ease;
-}
-
-
-input[type="text"], 
-input[type="email"], 
-textarea {
-    width: 100%; /* Les champs de texte prennent toute la largeur disponible */
-    padding: 0.8rem; /* Ajoute un padding interne de 0.8rem */
-    border: 1px solid #ddd; /* Bordure grise claire de 1px */
-    border-radius: 4px; /* Arrondit légèrement les coins des champs */
-    box-sizing: border-box; /* Assure que le padding et la bordure sont inclus dans la largeur totale */
-}
 
 /* Pied de page */
 footer {
@@ -628,7 +539,7 @@ h1 {
     height: 24px; /* Définit la hauteur de l'icône PDF à 24px */
     margin-right: 8px; /* Ajoute une marge droite de 8px entre l'icône et le texte du lien */
 }
-.btn, .btn1, .btn2, .btn3, .btn4, .btn5 {
+.btn,.btn6 , .btn1, .btn2, .btn3, .btn4, .btn5 {
     display: inline-block; /* Assure que le lien ait un comportement de bouton */
     padding: 10px 20px; /* Ajoute du remplissage pour donner l'apparence d'un bouton */
     font-size: 14px; /* Taille du texte pour les boutons PDF */
@@ -642,10 +553,20 @@ h1 {
 }
 
 .btn {
-     background-color: #4CAF50; /* Couleur de fond du bouton (vert par exemple) */
+     background-color: #f0f0f0; /* Couleur de fond du bouton (vert par exemple) */
 }
 .btn:hover {
     background-color: #45a049; /* Change la couleur du bouton au survol */
+}
+.btn6 {
+    background-color: rgb(228,228,228);
+    color: black;
+    font-family: 'Matemasie-Regular', 'MilestoneBrush', Arial, sans-serif;
+     background-color: #4CAF50; /* Couleur de fond du bouton (vert par exemple) */
+}
+.btn6:hover {
+    background-color: #333;
+    color: #fff; /* Change la couleur du bouton au survol */
 }
 .btn1 {
     background-color: rgb(40,108,164); /* Couleur de fond du bouton (vert par exemple) */
@@ -676,4 +597,99 @@ h1 {
 }
 .btn5:hover {
     background-color: rgb(29,119,141); /* Change la couleur du bouton au survol */
+}
+/* Pour les écrans de taille moyenne (en dessous de 768px de large) */
+@media (max-width: 768px) {
+    header h1 {
+        font-size: 40px; /* Ajuste la taille du texte pour les tablettes et petits écrans */
+    }
+
+    nav ul {
+        flex-direction: column; /* Transforme la navigation en une colonne */
+    }
+
+    .card {
+        width: 80%; /* Les cartes prennent plus de place sur les tablettes */
+    }
+
+    .scroll-button {
+        width: 60px;
+        height: 60px;
+        font-size: 30px; /* Ajuste la taille des boutons de défilement pour les tablettes */
+    }
+
+    footer {
+        font-size: 14px; /* Ajuste légèrement la taille du texte du pied de page */
+    }
+}
+
+
+@media (max-width: 768px) {
+    /*Reduire la taille des boutrons en savoir plus*/
+    .c2 a{font-size: 15px; /* Taille des icônes */}
+    header h1 {
+        font-size: 50px; /* Taille plus petite pour les tablettes et petits écrans */
+    }
+}
+
+@media (max-width: 480px) {
+    header h1 {
+        font-size: 35px; /* Taille encore plus petite pour les très petits écrans comme les téléphones */
+    }
+}
+
+/* Styles spécifiques pour les téléphones mobiles */
+@media (max-width: 767px) {
+    /*Reduire la taille des boutrons en savoir plus*/
+    .c2 a{font-size: 13px; /* Taille des icônes */} 
+    
+
+    /* Exemple : Réduire la taille des titres */
+  h1, h2, h3, h4, h5, h6 {
+    font-size: 18px;
+  }
+
+  /* Ajuster les marges et espacements */
+  .container {
+    padding: 10px;
+  }
+
+  /* Les cartes prennent 100% de la largeur sur petits écrans */
+  .card {
+    width: 80%;
+    margin-bottom: 15px;
+  }
+
+  /* Centrer les textes ou les ajuster selon l'espace */
+  .centered-title {
+    text-align: center;
+  }
+    .scroll-button {
+        width: 60px; /* Largeur du bouton ajustée pour les petits écrans, assurant qu'il est suffisamment grand pour être cliqué facilement. */
+        height: 60px; /* Hauteur du bouton ajustée pour les petits écrans, garantissant que le bouton reste proportionnel. */
+        padding: 10px; /* Moins de padding pour éviter que le bouton ne devienne trop grand sur les petits écrans. */
+        font-size: 30px; /* Augmente la taille du texte pour améliorer la visibilité sur les petits écrans. */
+    }
+
+    /* Ajuste les positions pour les mobiles */
+    #scrollUp, #scrollDown {
+        right: 10px; /* Réduit la distance du côté droit pour que le bouton ne soit pas trop éloigné du bord de l'écran sur les petits écrans. */
+    }
+}
+
+@media (max-width: 768px) {
+    /*Reduire la taille des boutrons en savoir plus*/
+    .c2 a{font-size: 15px; /* Taille des icônes */}
+    nav {
+        height: auto; /* Sur petits écrans, la hauteur s'ajuste automatiquement */
+    }
+    
+    nav ul {
+        flex-direction: column; /* Les éléments sont empilés en colonne sur petits écrans */
+    }
+    
+    nav ul li a {
+        padding: 10px 15px; /* Réduction du padding pour une meilleure lisibilité */
+        font-size: 1.2em; /* Taille de texte réduite sur les petits écrans */
+    }
 }
