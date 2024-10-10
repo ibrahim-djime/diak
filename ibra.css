@@ -311,6 +311,7 @@ h6{
 
 /* Conteneur pour organiser les cartes produit */
 .product-container {
+    
     display: flex; /* Affiche les cartes en ligne */
     justify-content: space-around; /* Espace égal autour des cartes */
     flex-wrap: wrap; /* Permet aux cartes de passer à la ligne si nécessaire */
@@ -456,3 +457,127 @@ footer {
     padding: 10px 0; /* Espacement vertical dans le pied de page */
     text-align: center; /* Centre le texte */
 }
+
+@media only screen and (max-width: 480px) and (min-width: 320px) {
+    /* Cartes visibles deux par deux sur Android */
+    .product-card {
+        width: 48%; /* Chaque carte prend environ 48% de la largeur */
+        margin: 10px 0; /* Espacement réduit entre les cartes */
+    }
+
+    .product-container {
+        display: flex;
+        flex-wrap: wrap; /* Les cartes s'enroulent si nécessaire */
+        justify-content: space-between; /* Espace égal entre les cartes */
+    }
+
+    /* Réduction de la taille des titres et des textes pour les petits écrans Android */
+    h1, h2, h3, h4, h5, h6 {
+        font-size: 20px; /* Taille ajustée pour les petits écrans */
+    }
+
+    /* Taille des images dans les cartes */
+    .product-image {
+        width: 50px; /* Taille plus petite pour les images */
+        height: auto; /* Conserver les proportions */
+    }
+
+    /* Ajustement des marges et espacement */
+    .content {
+        padding: 10px; /* Réduire l'espacement interne pour s'adapter aux petits écrans */
+    }
+
+    /* Styles pour les éléments de la barre latérale */
+    .sidebar ul li {
+        font-size: 14px; /* Texte plus petit pour les écrans Android */
+    }
+
+    /* Taille de l'icône du menu hamburger pour Android */
+    .menu-icon {
+        font-size: 26px; /* Taille réduite pour s'adapter aux petits écrans Android */
+        padding: 6px; /* Espacement ajusté */
+    }
+}
+
+@media only screen and (min-width: 481px) and (max-width: 767px) {
+    /* Cartes visibles deux par deux */
+    .product-card {
+        width: 45%; /* Chaque carte prend environ 45% de la largeur */
+        margin: 15px 0; /* Espacement ajusté entre les cartes */
+    }
+
+    .product-container {
+        display: flex;
+        flex-wrap: wrap; /* Les cartes s'enroulent si nécessaire */
+        justify-content: space-between; /* Espace égal entre les cartes */
+    }
+
+    /* Taille des titres et des textes pour les écrans moyens */
+    h1, h2, h3, h4, h5, h6 {
+        font-size: 22px; /* Taille ajustée pour ces écrans */
+    }
+
+    /* Taille des images dans les cartes */
+    .product-image {
+        width: 60px; /* Taille plus grande pour les images */
+        height: auto; /* Conserver les proportions */
+    }
+
+    /* Ajustement des marges et espacement */
+    .content {
+        padding: 15px; /* Espacement ajusté pour s'adapter à ces écrans */
+    }
+
+    /* Styles pour les éléments de la barre latérale */
+    .sidebar ul li {
+        font-size: 16px; /* Texte plus grand pour les écrans moyens */
+    }
+
+    /* Taille de l'icône du menu hamburger pour ces écrans */
+    .menu-icon {
+        font-size: 28px; /* Taille ajustée de l'icône */
+        padding: 8px; /* Espacement ajusté */
+    }
+}
+
+@media only screen and (min-width: 768px) and (max-width: 1024px) {
+    /* Cartes visibles trois par trois */
+    .product-card {
+        width: 30%; /* Chaque carte prend environ 30% de la largeur */
+        margin: 20px 0; /* Espacement ajusté entre les cartes */
+    }
+
+    .product-container {
+        display: flex;
+        flex-wrap: wrap; /* Les cartes s'enroulent si nécessaire */
+        justify-content: space-between; /* Espace égal entre les cartes */
+    }
+
+    /* Taille des titres et des textes pour les tablettes */
+    h1, h2, h3, h4, h5, h6 {
+        font-size: 24px; /* Taille ajustée pour les tablettes */
+    }
+
+    /* Taille des images dans les cartes */
+    .product-image {
+        width: 70px; /* Taille encore plus grande pour les images */
+        height: auto; /* Conserver les proportions */
+    }
+
+    /* Ajustement des marges et espacement */
+    .content {
+        padding: 20px; /* Espacement ajusté pour s'adapter aux tablettes */
+    }
+
+    /* Styles pour les éléments de la barre latérale */
+    .sidebar ul li {
+        font-size: 18px; /* Texte plus grand pour les tablettes */
+    }
+
+    /* Taille de l'icône du menu hamburger pour les tablettes */
+    .menu-icon {
+        font-size: 30px; /* Taille ajustée de l'icône */
+        padding: 10px; /* Espacement ajusté */
+    }
+}
+
