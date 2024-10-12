@@ -471,14 +471,14 @@ h1 {
      display: inline-block; /* Assure que le lien ait un comportement de bouton */
     padding: 10px 20px; /* Ajoute du remplissage pour donner l'apparence d'un bouton */
     font-size: 14px; /* Taille du texte pour les boutons PDF */
-    background-color: #CFCFCF; /* Couleur de fond du bouton (gris par exemple) */
     text-decoration: none; /* Supprime le soulignement du lien */
     border-radius: 5px; /* Arrondit les coins du bouton */
     border: none; /* Supprime les bordures */
     cursor: pointer; /* Change le curseur pour indiquer un élément cliquable */
     word-wrap: break-word; /* Gère les longs textes */
     word-break: break-word; /* Coupe les mots si nécessaire */
-  color: #007bff; /* Bleu clair */
+  background-color: #0056b2; /* Bleu plus foncé */
+  color: white; /* Couleur du texte en blanc */
   text-decoration: none;
   font-weight: bold;
 }
@@ -486,8 +486,8 @@ h1 {
 .external-link:hover {
     transform: scale(1.05); /* Agrandit légèrement la carte au survol */
     transition: transform 0.3s ease;
- background-color: #0056b2; /* Bleu plus foncé */
-  color: white; /* Couleur du texte en blanc */
+    color: #007bff; /* Bleu clair */
+    background-color: #CFCFCF; /* Couleur de fond du bouton (gris par exemple) */
 }
 
 .lien-info {
@@ -539,7 +539,7 @@ h1 {
     height: 24px; /* Définit la hauteur de l'icône PDF à 24px */
     margin-right: 8px; /* Ajoute une marge droite de 8px entre l'icône et le texte du lien */
 }
-.btn,.btn6 , .btn1, .btn2, .btn3, .btn4, .btn5 {
+.btn, .btn1, .btn2, .btn3, .btn4, .btn5, .btn6 {
     display: inline-block; /* Assure que le lien ait un comportement de bouton */
     padding: 10px 20px; /* Ajoute du remplissage pour donner l'apparence d'un bouton */
     font-size: 14px; /* Taille du texte pour les boutons PDF */
@@ -553,21 +553,12 @@ h1 {
 }
 
 .btn {
-     background-color: #f0f0f0; /* Couleur de fond du bouton (vert par exemple) */
+     background-color: #4CAF50; /* Couleur de fond du bouton (vert par exemple) */
 }
 .btn:hover {
     background-color: #45a049; /* Change la couleur du bouton au survol */
 }
-.btn6 {
-    background-color: rgb(228,228,228);
-    color: black;
-    font-family: 'Matemasie-Regular', 'MilestoneBrush', Arial, sans-serif;
-     background-color: #4CAF50; /* Couleur de fond du bouton (vert par exemple) */
-}
-.btn6:hover {
-    background-color: #333;
-    color: #fff; /* Change la couleur du bouton au survol */
-}
+
 .btn1 {
     background-color: rgb(40,108,164); /* Couleur de fond du bouton (vert par exemple) */
 }
@@ -597,6 +588,15 @@ h1 {
 }
 .btn5:hover {
     background-color: rgb(29,119,141); /* Change la couleur du bouton au survol */
+}
+.btn6{
+    font-family: 'Matemasie-Regular','MilestoneBrush','Roboto-Regular',Arial, sans-serif; /* Police neutre */
+    color: black;
+    background-color: rgb(234,234,234);
+}
+.btn6:hover {
+    color: white;
+    background-color: black;
 }
 /* Pour les écrans de taille moyenne (en dessous de 768px de large) */
 @media (max-width: 768px) {
