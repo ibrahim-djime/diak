@@ -469,6 +469,22 @@ footer {
         width: 48%; /* Chaque carte prend environ 48% de la largeur */
         margin: 1px; /* Espace autour de chaque carte */
     }
+    .btn1, .btn2, .btn3, .btn4 {
+    width: 50%; /* Largeur fixe des cartes */
+    height: 20%; /*Hauteur de carte fixe a 60%*/
+                                }
+    .btn1:hover {
+    height: auto; /*Tous les elements du bouton sont visibles au survol*/
+                                 }
+                                 .btn2:hover {
+    height: auto; /*Tous les elements du bouton sont visibles au survol*/
+                                 }
+                                 .btn3:hover {
+    height: auto; /*Tous les elements du bouton sont visibles au survol*/
+                                 }
+                                 .btn4:hover {
+    height: auto; /*Tous les elements du bouton sont visibles au survol*/
+                                 }
     .card{
         flex-wrap: wrap; /* Permet aux cartes de passer à la ligne si nécessaire */
     display: flex; /* Affiche les cartes en ligne */
@@ -515,6 +531,22 @@ footer {
         width: 45%; /* Chaque carte prend environ 45% de la largeur */
         margin: 1px; /* Espace autour de chaque carte */
     }
+    .btn1, .btn2, .btn3, .btn4 {
+    width: 50%; /* Largeur fixe des cartes */
+    height: 20%; /*Hauteur de carte fixe a 60%*/
+                                }
+    .btn1:hover {
+    height: auto; /*Tous les elements du bouton sont visibles au survol*/
+                                 }
+                                 .btn2:hover {
+    height: auto; /*Tous les elements du bouton sont visibles au survol*/
+                                 }
+                                 .btn3:hover {
+    height: auto; /*Tous les elements du bouton sont visibles au survol*/
+                                 }
+                                 .btn4:hover {
+    height: auto; /*Tous les elements du bouton sont visibles au survol*/
+                                 }
     .card{
         flex-wrap: wrap; /* Permet aux cartes de passer à la ligne si nécessaire */
     display: flex; /* Affiche les cartes en ligne */
@@ -561,11 +593,22 @@ footer {
         margin: 1px; /* Espace autour de chaque carte */
         margin: 20px 0; /* Espacement ajusté entre les cartes */
     }
-    .btn1, .btn2, .btn3, .btn4{
-        text-overflow: ellipsis;/*Cette propriété insère des points de suspension (trois points) à la fin du texte tronqué pour indiquer qu'il y a du contenu supplémentaire qui n'est pas visible.*/
-        width: 80%; /* Le bouton prend toute la largeur de la carte */
-    min-height: 40px; /* Hauteur minimale pour une bonne visibilité */
-    }
+    .btn1, .btn2, .btn3, .btn4 {
+    width: 50%; /* Largeur fixe des cartes */
+    height: 20%; /*Hauteur de carte fixe a 60%*/
+                                }
+    .btn1:hover {
+    height: auto; /*Tous les elements du bouton sont visibles au survol*/
+                                 }
+                                 .btn2:hover {
+    height: auto; /*Tous les elements du bouton sont visibles au survol*/
+                                 }
+                                 .btn3:hover {
+    height: auto; /*Tous les elements du bouton sont visibles au survol*/
+                                 }
+                                 .btn4:hover {
+    height: auto; /*Tous les elements du bouton sont visibles au survol*/
+                                 }
     .card{
         flex-wrap: wrap; /* Permet aux cartes de passer à la ligne si nécessaire */
     display: flex; /* Affiche les cartes en ligne */
