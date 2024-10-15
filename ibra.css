@@ -329,8 +329,8 @@ h6{
     border-radius: 10px; /* Coins arrondis */
     width: 220px; /* Largeur fixe des cartes */
     height: 200px; /* Hauteur fixe des cartes */
-    margin: 15px; /* Espace autour de chaque carte */
-    padding: 10px; /* Espacement interne */
+    margin: 5px; /* Espace autour de chaque carte */
+    padding: 5px; /* Espacement interne */
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); /* Ombre légère sous les cartes */
     text-align: center; /* Centre le contenu */
     transition: transform 0.3s ease; /* Transition pour l'animation au survol */
@@ -351,7 +351,7 @@ h6{
     display: flex; /* Affiche les cartes en ligne */
     background: rgb(195,195,195); /* Fond blanc pour les cartes */
     border-radius: 8px; /* Arrondit les coins des cartes */
-    padding: 1.5rem; /* Ajoute un padding interne */
+    padding: 5px; /* Ajoute un padding interne */
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Ajoute une ombre subtile */
     text-align: left; /* Aligne le texte à gauche */
 }
@@ -391,8 +391,8 @@ h6{
 }
 
 .btn1, .btn2, .btn3, .btn4 {
-    width: 80%; /* Largeur fixe des cartes */
-    height: 60%px;
+    width: 50%; /* Largeur fixe des cartes */
+    height: 20%; /*Hauteur de carte fixe a 60%*/
     display: inline-block; /* Assure que le lien ait un comportement de bouton */
     padding: 10px 20px; /* Ajoute du remplissage pour donner l'apparence d'un bouton */
     font-size: 14px; /* Taille du texte pour les boutons PDF */
@@ -403,30 +403,36 @@ h6{
     cursor: pointer; /* Change le curseur pour indiquer un élément cliquable */
     word-wrap: break-word; /* Gère les longs textes */
     word-break: break-word; /* Coupe les mots si nécessaire */
+    text-overflow: ellipsis;
+    overflow: hidden;
 }
 
 .btn1 {
     background-color: rgb(40,108,164); /* Couleur de fond du bouton (vert par exemple) */
 }
 .btn1:hover {
+    height: auto; /*Tous les elements du bouton sont visibles au survol*/
     background-color: rgb(16,44,67); /* Change la couleur du bouton au survol */
 }
 .btn2 {
     background-color: rgb(189,196,64); /* Couleur de fond du bouton (vert par exemple) */
 }
 .btn2:hover {
+    height: auto; /*Tous les elements du bouton sont visibles au survol*/
     background-color: rgb(68,70,21); /* Change la couleur du bouton au survol */
 }
 .btn3 {
     background-color: rgb(221,11,48); /* Couleur de fond du bouton (vert par exemple) */
 }
 .btn3:hover {
+    height: auto; /*Tous les elements du bouton sont visibles au survol*/
     background-color: rgb(134,6,29); /* Change la couleur du bouton au survol */
 }
 .btn4 {
     background-color: rgb(153,217,234); /* Couleur de fond du bouton (vert par exemple) */
 }
 .btn4:hover {
+    height: auto; /*Tous les elements du bouton sont visibles au survol*/
     background-color: rgb(29,119,141); /* Change la couleur du bouton au survol */
 }
 
@@ -462,12 +468,6 @@ footer {
     .product-card {
         width: 48%; /* Chaque carte prend environ 48% de la largeur */
         margin: 1px; /* Espace autour de chaque carte */
-        margin: 10px 0; /* Espacement réduit entre les cartes */
-    }
-   .btn1, .btn2, .btn3, .btn4{
-        text-overflow: ellipsis;/*Cette propriété insère des points de suspension (trois points) à la fin du texte tronqué pour indiquer qu'il y a du contenu supplémentaire qui n'est pas visible.*/
-        width: 80%; /* Le bouton prend toute la largeur de la carte */
-    min-height: 40px; /* Hauteur minimale pour une bonne visibilité */
     }
     .card{
         flex-wrap: wrap; /* Permet aux cartes de passer à la ligne si nécessaire */
@@ -514,7 +514,6 @@ footer {
     .product-card {
         width: 45%; /* Chaque carte prend environ 45% de la largeur */
         margin: 1px; /* Espace autour de chaque carte */
-        overflow: hidden;
     }
     .card{
         flex-wrap: wrap; /* Permet aux cartes de passer à la ligne si nécessaire */
@@ -605,4 +604,3 @@ footer {
         padding: 10px; /* Espacement ajusté */
     }
 }
-
