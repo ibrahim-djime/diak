@@ -369,7 +369,11 @@ nav ul li:hover > ul {
     flex: 1; /* Les images prennent également autant de place que possible */
     max-width: 400px; /* Limite la largeur des images */
 }
-
+.loi {
+    font-family: 'Roboto-Regular',Arial, sans-serif; /* Police de caractères par défaut */
+    font-size: 20px;
+    color: red;
+}
 /* Pied de page */
 footer {
     background: url('images/p2.jpg') no-repeat center center; /* Image de fond */
@@ -443,22 +447,39 @@ h1 {
 }
 
 .product-container {
-    display: flex; /* Utilise Flexbox pour organiser les éléments enfants en ligne ou en colonne */
-    flex-wrap: wrap; /* Permet aux éléments de passer à la ligne suivante si l'espace est insuffisant */
-    justify-content: space-around; /* Distribue l'espace entre les éléments de manière égale, avec des marges à gauche et à droite */
-    padding: 20px; /* Ajoute un espace autour du conteneur pour le séparer des bords de la page */
+    display: flex;
+    justify-content: flex-start;
+    overflow: hidden; /* Masque les cartes qui sortent du conteneur */
+    width: 100%;
+    position: relative;
 }
 
 .product-card {
-    background-color: #fff; /* Définit un fond blanc pour chaque carte produit */
-    border: 1px solid #ddd; /* Ajoute une bordure gris clair autour de chaque carte produit */
-    border-radius: 5px; /* Arrondit légèrement les coins de la carte pour un effet visuel agréable */
-    width: 200px; /* Fixe la largeur de chaque carte produit à 200px */
-    margin: 15px; /* Ajoute un espace extérieur autour de chaque carte pour les séparer les unes des autres */
-    padding: 15px; /* Ajoute un espace intérieur entre le contenu de la carte et ses bords */
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1); /* Ajoute une ombre légère pour donner un effet de profondeur */
-    text-align: center; /* Centre le texte à l'intérieur de chaque carte produit */
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    width: 200px; /* La largeur des cartes reste la même */
+    margin: 15px;
+    padding: 15px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    text-align: center;
+    flex-shrink: 0; /* Empêche les cartes de se réduire */
+    transition: transform 0.5s ease-in-out;
 }
+
+@keyframes scroll-one-by-one {
+    0% {
+        transform: translateX(0);
+    }
+    100% {
+        transform: translateX(-100%);
+    }
+}
+
+.product-container.auto-scroll {
+    animation: scroll-one-by-one 3s infinite ease-in-out; /* Animation de défilement pour chaque carte */
+}
+
 
 .product-image {
     width: 100%; /* Définit la largeur de l'image pour qu'elle occupe toute la largeur de la carte */
@@ -528,6 +549,11 @@ h1 {
     cursor: pointer; /* Change le curseur pour indiquer un élément cliquable */
     word-wrap: break-word; /* Gère les longs textes */
     word-break: break-word; /* Coupe les mots si nécessaire */
+}
+.polisecu {
+    color: white;
+    margin: 2px;
+    text-decoration: none;
 }
 
 .pdf-link:hover {
