@@ -315,8 +315,6 @@ h6{
 
 /* Conteneur pour organiser les cartes produit */
 .product-container {
-    
-    /*display: flex; /* Affiche les cartes en ligne */
     justify-content: space-around; /* Espace égal autour des cartes */
     flex-wrap: wrap; /* Permet aux cartes de passer à la ligne si nécessaire */
     gap: 20px; /* Espace entre les cartes */
@@ -492,7 +490,6 @@ footer {
     }
 
     .product-container {
-        display: flex;
         flex-wrap: wrap; /* Les cartes s'enroulent si nécessaire */
         justify-content: space-between; /* Espace égal entre les cartes */
     }
@@ -556,7 +553,6 @@ footer {
     justify-content: space-between/*espace les éléments enfants de manière égale à l'intérieur du conteneur.*/
     }
     .product-container {
-        display: flex;
         flex-wrap: wrap; /* Les cartes s'enroulent si nécessaire */
         justify-content: space-between; /* Espace égal entre les cartes */
     }
@@ -621,7 +617,6 @@ footer {
     justify-content: space-between/*espace les éléments enfants de manière égale à l'intérieur du conteneur.*/
     }
     .product-container {
-        display: flex;
         flex-wrap: wrap; /* Les cartes s'enroulent si nécessaire */
         justify-content: space-between; /* Espace égal entre les cartes */
     }
