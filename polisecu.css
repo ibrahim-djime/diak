@@ -1,0 +1,191 @@
+/* Définir les polices personnalisées */
+@font-face {
+    font-family: 'INGAME';
+    src: url('pol/INGAME.ttf');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+@font-face {
+    font-family: 'PlayfairDisplaySC-Black';
+    src: url('pol/PlayfairDisplaySC-Black.ttf');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+@font-face {
+    font-family: 'Robot-Rebels';
+    src: url('pol/Robot-Rebels.ttf');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+@font-face {
+    font-family: 'Roboto-Regular';
+    src: url('pol/Roboto-Regular.ttf');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+@font-face {
+    font-family: 'Boul';
+    src: url('pol/Boul.otf');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+@font-face {
+    font-family: 'PlayfairDisplaySC-Bold';
+    src: url('pol/PlayfairDisplaySC-Bold.ttf');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+@font-face {
+    font-family: 'Sobatyan-Regular';
+    src: url('pol/Sobatyan-Regular.otf');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+@font-face {
+    font-family: 'Roboto-MediumItalic';
+    src: url('pol/Roboto-MediumItalic.ttf');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+@font-face {
+    font-family: 'MilestoneBrush';
+    src: url('pol/MilestoneBrush.otf');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+@font-face {
+    font-family: 'Rostack';
+    src: url('pol/Rostack.otf');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+@font-face {
+    font-family: 'Roboto-Black';
+    src: url('pol/Roboto-Black.ttf');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+@font-face {
+    font-family: 'Matemasie-Regular';
+    src: url('pol/Matemasie-Regular.ttf');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+@font-face {
+    font-family: 'NewAmsterdam-Regular';
+    src: url('pol/NewAmsterdam-Regular.ttf');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+@font-face {
+    font-family: 'NerkoOne-Regular';
+    src: url('pol/NerkoOne-Regular.ttf');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+@font-face {
+    font-family: 'Roboto-Bold';
+    src: url('pol/Roboto-Bold.ttf');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+@font-face {
+    font-family: 'DMSerifText-Regular';
+    src: url('pol/DMSerifText-Regular.ttf');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+.loi {
+    font-family: 'Roboto-Regular',Arial, sans-serif; /* Police de caractères par défaut */
+    font-size: 20px;
+    color: red;
+}
+body {
+    font-family: 'Roboto-Regular',Arial, sans-serif; /* Police de caractères par défaut */
+    background-color: #f4f4f4; /* Couleur de fond */
+    background: url('logo/g2.png') no-repeat center center; /* Image de fond */
+    background-size: cover; /* L'image couvre entièrement */
+            line-height: 1.6;
+            background-color: #f4f4f4;
+            padding: 20px; /* Espacement autour du contenu */
+            color: white;
+        }
+        .content {
+    transition: margin-left 0.5s; /* Transition douce pour le décalage lors de l'ouverture de la barre latérale */
+    padding: 20px; /* Espacement autour du contenu */
+}
+        h1 {
+           font-size: 60px; /* Taille du texte sur les grands écrans */
+    font-family: 'PlayfairDisplaySC-Bold','Roboto-Black', 'Roboto-Rebels', Arial, sans-serif; /* Police principale */
+    color: #FFFFFF; /* Couleur du texte */
+    text-align: center; /* Centrer le texte */
+    letter-spacing: 2px; /* Espacement entre les lettres */
+    text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3); /* Ombre légère */
+        }
+        p {
+            margin: 10px 0;
+        }
+        ul {
+            list-style-type: disc;
+            margin-left: 20px;
+        }
+        .site, .stat{
+            display: inline-block; /* Assure que le lien ait un comportement de bouton */
+    padding: 2px 2px; /* Ajoute du remplissage pour donner l'apparence d'un bouton */
+    font-size: 14px; /* Taille du texte pour les boutons PDF */
+    text-decoration: none; /* Supprime le soulignement du lien */
+    border-radius: 5px; /* Arrondit les coins du bouton */
+    border: none; /* Supprime les bordures */
+    cursor: pointer; /* Change le curseur pour indiquer un élément cliquable */
+    word-wrap: break-word; /* Gère les longs textes */
+    word-break: break-word; /* Coupe les mots si nécessaire */
+    font-family: 'Roboto-Bold','Roboto-Regular', Arial, sans-serif; /* Police utilisée */;
+     color: black;
+    background-color: rgb(234,234,234);
+        }
+.site:hover {
+    color: white;
+    background-color: black;
+}
+.stat:hover {
+    color: white;
+    background-color: black;
+}
+        /* Pied de page */
+footer {
+    background: url('images/p2.jpg') no-repeat center center; /* Image de fond */
+    background-size: cover; /* L'image couvre entièrement */
+    color: white; /* Couleur du texte */
+    padding: 10px 0; /* Espacement vertical */
+    text-align: center; /* Centre le texte */
+}
+.social-icons {
+    display: flex; /* Affiche les icônes sur une seule ligne */
+    justify-content: center; /* Centre les icônes horizontalement */
+}
+.social-icon {
+    margin: 0 10px; /* Ajoute un espace entre les icônes */
+    color: #fff; /* Couleur des icônes */
+    font-size: 25px; /* Taille des icônes */
+    transition: color 0.3s ease; /* Transition pour le changement de couleur au survol */
+}
+
+.social-icon:hover {
+    color: rgb(114,165,168); /* Couleur des icônes au survol */
+}
