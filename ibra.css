@@ -510,7 +510,10 @@ footer {
 
     /* Ajustement des marges et espacement */
     .content {
-        padding: 10px; /* Réduire l'espacement interne pour s'adapter aux petits écrans */
+        padding: 0px; /* Réduire l'espacement interne pour s'adapter aux petits écrans */
+    }
+    .section{
+        padding: 1px; /* Réduire l'espacement interne pour s'adapter aux petits écrans */
     }
 
     /* Styles pour les éléments de la barre latérale */
@@ -571,7 +574,10 @@ footer {
 
     /* Ajustement des marges et espacement */
     .content {
-        padding: 15px; /* Espacement ajusté pour s'adapter à ces écrans */
+        padding: 0px; /* Réduire l'espacement interne pour s'adapter aux petits écrans */
+    }
+    .section{
+        padding: 1px; /* Réduire l'espacement interne pour s'adapter aux petits écrans */
     }
 
     /* Styles pour les éléments de la barre latérale */
@@ -633,7 +639,10 @@ footer {
 
     /* Ajustement des marges et espacement */
     .content {
-        padding: 20px; /* Espacement ajusté pour s'adapter aux tablettes */
+        padding: 0px; /* Réduire l'espacement interne pour s'adapter aux petits écrans */
+    }
+    .section{
+        padding: 1px; /* Réduire l'espacement interne pour s'adapter aux petits écrans */
     }
 
     /* Styles pour les éléments de la barre latérale */
