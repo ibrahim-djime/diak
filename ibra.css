@@ -488,6 +488,10 @@ footer {
         width: 48%; /* Chaque carte prend environ 48% de la largeur */
         margin: 10px 0; /* Espacement réduit entre les cartes */
     }
+    .card{
+        flex-wrap: wrap; /* Permet aux cartes de passer à la ligne si nécessaire */
+    display: flex; /* Affiche les cartes en ligne */
+    }
 
     .product-container {
         display: flex;
@@ -529,7 +533,10 @@ footer {
         width: 45%; /* Chaque carte prend environ 45% de la largeur */
         margin: 15px 0; /* Espacement ajusté entre les cartes */
     }
-
+    .card{
+        flex-wrap: wrap; /* Permet aux cartes de passer à la ligne si nécessaire */
+    display: flex; /* Affiche les cartes en ligne */
+    }
     .product-container {
         display: flex;
         flex-wrap: wrap; /* Les cartes s'enroulent si nécessaire */
@@ -570,7 +577,10 @@ footer {
         width: 30%; /* Chaque carte prend environ 30% de la largeur */
         margin: 20px 0; /* Espacement ajusté entre les cartes */
     }
-
+    .card{
+        flex-wrap: wrap; /* Permet aux cartes de passer à la ligne si nécessaire */
+    display: flex; /* Affiche les cartes en ligne */
+    }
     .product-container {
         display: flex;
         flex-wrap: wrap; /* Les cartes s'enroulent si nécessaire */
