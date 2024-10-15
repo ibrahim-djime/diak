@@ -195,7 +195,11 @@ body{
     font-family: 'Roboto-Regular', Arial, sans-serif; /* Police utilisée */
     /*background-color: #ecf0f1; /* Couleur d'arrière-plan du contenu */
 }
-
+.loi {
+    font-family: 'Roboto-Regular',Arial, sans-serif; /* Police de caractères par défaut */
+    font-size: 20px;
+    color: red;
+}
 /* Styles pour les sections de contenu */
 .section {
     background: #fff; /*Couleur de fond blanc*/
@@ -312,7 +316,7 @@ h6{
 /* Conteneur pour organiser les cartes produit */
 .product-container {
     
-    display: flex; /* Affiche les cartes en ligne */
+    /*display: flex; /* Affiche les cartes en ligne */
     justify-content: space-around; /* Espace égal autour des cartes */
     flex-wrap: wrap; /* Permet aux cartes de passer à la ligne si nécessaire */
     gap: 20px; /* Espace entre les cartes */
@@ -334,7 +338,27 @@ h6{
     flex-direction: column; /* Organise les éléments en colonne */
     justify-content: space-between; /* Espacement égal entre les éléments de la carte */
 }
+/* Style des cartes */
+.product-card:hover {
+    transform: scale(1.05); /* Agrandit légèrement la carte au survol */
+    transition: transform 0.3s ease;
+}
+.card {
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.1); /* Ajoute une petite ombre autour de la section */
+    flex-wrap: wrap; /* Permet aux cartes de passer à la ligne si nécessaire */
+    display: flex; /* Affiche les cartes en ligne */
+    background: rgb(195,195,195); /* Fond blanc pour les cartes */
+    border-radius: 8px; /* Arrondit les coins des cartes */
+    padding: 1.5rem; /* Ajoute un padding interne */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Ajoute une ombre subtile */
+    text-align: left; /* Aligne le texte à gauche */
+}
+.product-container h4{
 
+    font-family: 'Robot-Rebels','Roboto-Bold','Roboto-Regular', Arial, sans-serif; /* Police utilisée */;
+    margin: 10px;/*Bordure exterieure*/
+    font-size: 18px;
+}
 /* Styles pour les images dans les cartes produit */
 .product-image {
     width: 50px; /* Taille fixe des images */
