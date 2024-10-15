@@ -327,7 +327,7 @@ h6{
     background-color: #fff; /* Fond blanc pour les cartes */
     border: 1px solid #ddd; /* Bordure légère autour des cartes */
     border-radius: 10px; /* Coins arrondis */
-    width: 250px; /* Largeur fixe des cartes */
+    width: 220px; /* Largeur fixe des cartes */
     height: 200px; /* Hauteur fixe des cartes */
     margin: 15px; /* Espace autour de chaque carte */
     padding: 10px; /* Espacement interne */
@@ -337,13 +337,15 @@ h6{
     display: flex;
     flex-direction: column; /* Organise les éléments en colonne */
     justify-content: space-between; /* Espacement égal entre les éléments de la carte */
+    
 }
 /* Style des cartes */
 .product-card:hover {
     transform: scale(1.05); /* Agrandit légèrement la carte au survol */
-    transition: transform 0.3s ease;
+    transition: transform 0.3s ease; /*Crée une transition douce lorsque la largeur de la carte change au survol.*/
 }
 .card {
+    justify-content: space-between/*espace les éléments enfants de manière égale à l'intérieur du conteneur.*/
     box-shadow: 0 0 5px rgba(0, 0, 0, 0.1); /* Ajoute une petite ombre autour de la section */
     flex-wrap: wrap; /* Permet aux cartes de passer à la ligne si nécessaire */
     display: flex; /* Affiche les cartes en ligne */
@@ -389,6 +391,8 @@ h6{
 }
 
 .btn1, .btn2, .btn3, .btn4 {
+    width: 160px; /* Largeur fixe des cartes */
+    height: 100px;
     display: inline-block; /* Assure que le lien ait un comportement de bouton */
     padding: 10px 20px; /* Ajoute du remplissage pour donner l'apparence d'un bouton */
     font-size: 14px; /* Taille du texte pour les boutons PDF */
@@ -436,35 +440,6 @@ h6{
     }
 }
 
-@media (max-width: 768px) {
-     /* Exemple : Réduire la taille des titres */
-  h1, h2, h3, h4, h5, h6 {
-    font-size: 18px;
-  }
-
-  /* Ajuster les marges et espacements */
-  .container {
-    padding: 10px;
-  }
-
-  /* Les cartes prennent 100% de la largeur sur petits écrans */
-  .card {
-    width: 100%;
-    margin-bottom: 15px;
-  }
-
-  /* Centrer les textes ou les ajuster selon l'espace */
-  .centered-title {
-    text-align: center;
-  }
-    nav ul {
-        flex-direction: column; /* Passe les éléments de navigation en colonne sur les petits écrans */
-    }
-    nav ul li {
-        margin: 0; /* Réduit la marge entre les éléments */
-    }
-}
-
 @keyframes fadeIn {
     from {
         opacity: 0;
@@ -486,11 +461,13 @@ footer {
     /* Cartes visibles deux par deux sur Android */
     .product-card {
         width: 48%; /* Chaque carte prend environ 48% de la largeur */
+        margin: 1px; /* Espace autour de chaque carte */
         margin: 10px 0; /* Espacement réduit entre les cartes */
     }
     .card{
         flex-wrap: wrap; /* Permet aux cartes de passer à la ligne si nécessaire */
     display: flex; /* Affiche les cartes en ligne */
+    justify-content: space-between/*espace les éléments enfants de manière égale à l'intérieur du conteneur.*/
     }
 
     .product-container {
@@ -531,11 +508,13 @@ footer {
     /* Cartes visibles deux par deux */
     .product-card {
         width: 45%; /* Chaque carte prend environ 45% de la largeur */
-        margin: 15px 0; /* Espacement ajusté entre les cartes */
+        margin: 1px; /* Espace autour de chaque carte */
+        overflow: hidden;
     }
     .card{
         flex-wrap: wrap; /* Permet aux cartes de passer à la ligne si nécessaire */
     display: flex; /* Affiche les cartes en ligne */
+    justify-content: space-between/*espace les éléments enfants de manière égale à l'intérieur du conteneur.*/
     }
     .product-container {
         display: flex;
@@ -575,11 +554,13 @@ footer {
     /* Cartes visibles trois par trois */
     .product-card {
         width: 30%; /* Chaque carte prend environ 30% de la largeur */
+        margin: 1px; /* Espace autour de chaque carte */
         margin: 20px 0; /* Espacement ajusté entre les cartes */
     }
     .card{
         flex-wrap: wrap; /* Permet aux cartes de passer à la ligne si nécessaire */
     display: flex; /* Affiche les cartes en ligne */
+    justify-content: space-between/*espace les éléments enfants de manière égale à l'intérieur du conteneur.*/
     }
     .product-container {
         display: flex;
