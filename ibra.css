@@ -391,8 +391,8 @@ h6{
 }
 
 .btn1, .btn2, .btn3, .btn4 {
-    width: 160px; /* Largeur fixe des cartes */
-    height: 100px;
+    width: 80%; /* Largeur fixe des cartes */
+    height: 60%px;
     display: inline-block; /* Assure que le lien ait un comportement de bouton */
     padding: 10px 20px; /* Ajoute du remplissage pour donner l'apparence d'un bouton */
     font-size: 14px; /* Taille du texte pour les boutons PDF */
@@ -463,6 +463,11 @@ footer {
         width: 48%; /* Chaque carte prend environ 48% de la largeur */
         margin: 1px; /* Espace autour de chaque carte */
         margin: 10px 0; /* Espacement réduit entre les cartes */
+    }
+   .btn1, .btn2, .btn3, .btn4{
+        text-overflow: ellipsis;/*Cette propriété insère des points de suspension (trois points) à la fin du texte tronqué pour indiquer qu'il y a du contenu supplémentaire qui n'est pas visible.*/
+        width: 80%; /* Le bouton prend toute la largeur de la carte */
+    min-height: 40px; /* Hauteur minimale pour une bonne visibilité */
     }
     .card{
         flex-wrap: wrap; /* Permet aux cartes de passer à la ligne si nécessaire */
@@ -556,6 +561,11 @@ footer {
         width: 30%; /* Chaque carte prend environ 30% de la largeur */
         margin: 1px; /* Espace autour de chaque carte */
         margin: 20px 0; /* Espacement ajusté entre les cartes */
+    }
+    .btn1, .btn2, .btn3, .btn4{
+        text-overflow: ellipsis;/*Cette propriété insère des points de suspension (trois points) à la fin du texte tronqué pour indiquer qu'il y a du contenu supplémentaire qui n'est pas visible.*/
+        width: 80%; /* Le bouton prend toute la largeur de la carte */
+    min-height: 40px; /* Hauteur minimale pour une bonne visibilité */
     }
     .card{
         flex-wrap: wrap; /* Permet aux cartes de passer à la ligne si nécessaire */
