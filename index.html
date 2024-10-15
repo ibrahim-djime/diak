@@ -23,7 +23,6 @@ href="https://statcounter.com/" target="_blank"><img class="statcounter"
 src="https://c.statcounter.com/13046048/0/ff489f98/0/" alt="site stats"
 referrerPolicy="no-referrer-when-downgrade"></a></div></noscript>
 <!-- End of Statcounter Code -->
-<a href="https://statcounter.com/p13046048/?guest=1">Statistiques du site</a>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="robots" content="index, follow">
@@ -33,6 +32,27 @@ referrerPolicy="no-referrer-when-downgrade"></a></div></noscript>
     <title>Lumesys: Savoirs et Téléchargements Utiles</title>
     <link rel="stylesheet" href="style4.css"> <!-- Lien vers le fichier CSS -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script>
+    (function(window, document) {
+        var SEMRC = window.SEM_REMARKETING_CONFIG || {};
+        SEMRC.runtime = 'async';
+        window.SEM_REMARKETING_CONFIG = SEMRC;
+        var SEMRD = window.SEM_REMARKETING_DATA || {};
+        SEMRD.pageType = 'home';
+        SEMRD.siteName = 'Lumesys';
+        window.SEM_REMARKETING_DATA = SEMRD;
+        window.addEventListener('load', function() {
+            setTimeout(function() {
+                var script = document.createElement('script');
+                script.type = 'text/javascript';
+                script.src = 'https://your-remarketing-url.js';
+                var s = document.getElementsByTagName('script')[0];
+                s.parentNode.insertBefore(script, s);
+            }, 200);
+        });
+    })(window, document);
+</script>
+
 </head>
 <body>
     <!-- Google Tag Manager (noscript) -->
@@ -59,7 +79,6 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                     <a href="#downloads">Téléchargements</a>
                     <ul class="dropdown-content">
                         <li><a href="#documents-educatifs">Documents Éducatifs</a></li>
-                        <li><a href="#documents-professionnelles">Documents Professionnelles</a></li>
                         <li><a href="#documents-administratifs">Documents Administratifs</a></li>
                         <li><a href="#documents-divers">Documents Diverses</a></li>
                     </ul>
@@ -150,6 +169,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <div class="section">
         <h2>Téléchargements</h2>
         <p><strong>Téléchargez des documents PDF utiles sur différents sujets, directement depuis notre site !</strong> 📚 Que vous soyez étudiant, professionnel, ou simplement curieux, nous avons une vaste collection de ressources pour vous. Explorez nos catégories ci-dessous pour trouver exactement ce dont vous avez besoin.</p>
+        <p class="loi">Si vous êtes le titulaire des droits d'auteur d'une œuvre publiée sur notre site et que vous souhaitez qu'elle soit retirée, veuillez nous contacter au :00223 76-85-66-31.<br /> Nous retirons le contenu concerné dès réception de votre demande.</p>
         
         <div class="grid">
             <!-- Carte Documents Éducatifs -->
@@ -158,18 +178,10 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                 <p>Accédez à des manuels scolaires, guides et cours pour l'enseignement fondamental, secondaire, technique, et supérieur.</p>
                 <a href="Ibra.html" target="_blank" class="btn1">Télécharger les Documents Éducatifs</a>
             </div>
-            
-            <!-- Carte Ressources Professionnelles -->
-            <div class="card">
-                <h3 id="documents-professionnelles">Documents Professionnelles</h3>
-                <p>Trouvez des guides de carrière, des études de cas et des conseils pour le développement professionnel.</p>
-                <a href="Ibra.html#documents-professionnels" target="_blank" class="btn">Accéder aux Ressources Professionnelles</a>
-            </div>
-            
             <!-- Carte Documents Administratifs -->
             <div class="card">
                 <h3 id="documents-administratifs">Documents Administratifs</h3>
-                <p>Documents pour l'enseignement fondamental, secondaire, supérieur et toutes vos démarches administratives.</p>
+                <p>Trouvez des arretes, decisions, avancements et transposition pour l'enseignement fondamental, secondaire et toutes vos démarches administratives.</p>
                 <a href="Ibra.html#documents-administratifs" target="_blank" class="btn2">Télécharger les Documents Administratifs</a>
             </div>
             
@@ -314,7 +326,38 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             }
         };
     </script>
+   <script>
+    let container = document.querySelector('.product-container');
+    let cards = document.querySelectorAll('.product-card');
+
+    // Duplique les cartes pour permettre un défilement continu
+    container.innerHTML += container.innerHTML; // Duplique le contenu de .product-container
+
+    let currentIndex = 0;
+
+    function scrollOneByOne() {
+        currentIndex++;
+        if (currentIndex >= cards.length) {
+            container.style.transition = 'none'; // Retire temporairement la transition
+            currentIndex = 0; // Réinitialise l'index à 0 pour recommencer
+            container.style.transform = `translateX(0)`; // Reviens à la première carte
+            setTimeout(() => {
+                container.style.transition = 'transform 0.5s ease-in-out'; // Réapplique la transition après un court délai
+            }, 20);
+        } else {
+            container.style.transform = `translateX(${-215 * currentIndex}px)`; // Défile une carte à la fois
+        }
+    }
+
+    // Défilement automatique toutes les 3 secondes
+    setInterval(scrollOneByOne, 3000);
+</script>
+
+
+
     <footer>
+        <a href="privacy-policy.html" class="polisecu" title="Politique de confidentialité du site">Politique de confidentialité</a> |
+        <a href="terms-of-service.html" class="polisecu" title="Conditions de securites">Conditions de sécurité</a>
         <div class="social-icons">
             <a href="https://web.facebook.com/ibrahimdjime.diakite.3" target="_blank" class="social-icon">
                 <i class="fab fa-facebook-f"></i>
