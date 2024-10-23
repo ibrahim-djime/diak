@@ -193,7 +193,6 @@ body{
     transition: margin-left 0.5s; /* Transition douce pour le décalage lors de l'ouverture de la barre latérale */
     padding: 20px; /* Espacement autour du contenu */
     font-family: 'Roboto-Regular', Arial, sans-serif; /* Police utilisée */
-    /*background-color: #ecf0f1; /* Couleur d'arrière-plan du contenu */
 }
 .loi {
     font-family: 'Roboto-Regular',Arial, sans-serif; /* Police de caractères par défaut */
@@ -272,10 +271,6 @@ h5{
 h6{
     font-size:13px;/*Taille du texte*/
 }
-/* Ajout de styles supplémentaires pour les conteneurs de section */
-.section {
-    margin-bottom: 40px; /* Espace supplémentaire en dessous de chaque section */
-}
 
 /* Styles pour les paragraphes dans les sections */
 .section p {
@@ -317,9 +312,16 @@ h6{
 .product-container {
     justify-content: space-around; /* Espace égal autour des cartes */
     flex-wrap: wrap; /* Permet aux cartes de passer à la ligne si nécessaire */
-    gap: 20px; /* Espace entre les cartes */
 }
-
+.card {
+    flex-wrap: wrap; /* Permet aux cartes de passer à la ligne si nécessaire */
+    display: flex; /* Affiche les cartes en ligne */
+    background: rgb(195,195,195); /* Fond blanc pour les cartes */
+    border-radius: 8px; /* Arrondit les coins des cartes */
+    padding: 5px; /* Ajoute un padding interne */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Ajoute une ombre subtile */
+    text-align: left; /* Aligne le texte à gauche */
+}
 /* Styles pour les cartes produit */
 .product-card {
     background-color: #fff; /* Fond blanc pour les cartes */
@@ -327,9 +329,9 @@ h6{
     border-radius: 10px; /* Coins arrondis */
     width: 220px; /* Largeur fixe des cartes */
     height: 200px; /* Hauteur fixe des cartes */
-    margin: 5px; /* Espace autour de chaque carte */
+    margin: 2px; /* Espace autour de chaque carte */
     padding: 5px; /* Espacement interne */
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); /* Ombre légère sous les cartes */
+    box-shadow: 10px 10px 20px rgba(0, 0, 0, 0.1); /* Ombre légère sous les cartes */
     text-align: center; /* Centre le contenu */
     transition: transform 0.3s ease; /* Transition pour l'animation au survol */
     display: flex;
@@ -342,17 +344,7 @@ h6{
     transform: scale(1.05); /* Agrandit légèrement la carte au survol */
     transition: transform 0.3s ease; /*Crée une transition douce lorsque la largeur de la carte change au survol.*/
 }
-.card {
-    justify-content: space-between/*espace les éléments enfants de manière égale à l'intérieur du conteneur.*/
-    box-shadow: 0 0 5px rgba(0, 0, 0, 0.1); /* Ajoute une petite ombre autour de la section */
-    flex-wrap: wrap; /* Permet aux cartes de passer à la ligne si nécessaire */
-    display: flex; /* Affiche les cartes en ligne */
-    background: rgb(195,195,195); /* Fond blanc pour les cartes */
-    border-radius: 8px; /* Arrondit les coins des cartes */
-    padding: 5px; /* Ajoute un padding interne */
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Ajoute une ombre subtile */
-    text-align: left; /* Aligne le texte à gauche */
-}
+
 .product-container h4{
 
     font-family: 'Robot-Rebels','Roboto-Bold','Roboto-Regular', Arial, sans-serif; /* Police utilisée */;
