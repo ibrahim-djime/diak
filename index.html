@@ -30,7 +30,7 @@ referrerPolicy="no-referrer-when-downgrade"></a></div></noscript>
     <meta name="msvalidate.01" content="1A06709B0DC4C1E52E626BFBEA0AACB4" />
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <title>Lumesys: Savoirs et Téléchargements Utiles</title>
-    <link rel="stylesheet" href="style4.css"> <!-- Lien vers le fichier CSS -->
+    <link rel="stylesheet" href="style41.css"> <!-- Lien vers le fichier CSS -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <script>
     (function(window, document) {
@@ -203,24 +203,39 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                 Appelez directement le veudeur et convenez du prix et de la livraison.
             </p>
             <div class="product-container">
+                <div class="ccard">
          <div class="product-card">
             <img src="images/phone1.jpg" alt="Produit 1" class="product-image">
             <h3 id="Electroniques">Samsung A15 seconde main</h3>
             <p>100,000.00 fcfa</p>
             <p>00223 78 52 89 73</p>
         </div>
+    </div>
+    <div class="ccard">
         <div class="product-card">
             <img src="images/chaussure1.jpg" alt="Produit 2" class="product-image">
             <h3 id="Chaussures">Tappette pour femme</h3>
             <p>2,500.00 fcfa</p>
             <p>00223 69 42 03 65</p>
         </div>
+    </div>
+    <div class="ccard">
+        <div class="product-card">
+            <img src="images/chaussure2.jpg" alt="Produit 2" class="product-image">
+            <h3>Tappette pour femme</h3>
+            <p>2,500.00 fcfa</p>
+            <p>00223 69 42 03 65</p>
+        </div>
+    </div>
+    <div class="ccard">
         <div class="product-card">
             <img src="images/chaussure3.jpg" alt="Produit 2" class="product-image">
             <h3>Tappette pour femme</h3>
             <p>2,500.00 fcfa</p>
             <p>00223 69 42 03 65</p>
         </div>
+    </div>
+        
     
            </div>
        </div>
@@ -326,32 +341,6 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             }
         };
     </script>
-   <script>
-    let container = document.querySelector('.product-container');
-    let cards = document.querySelectorAll('.product-card');
-
-    // Duplique les cartes pour permettre un défilement continu
-    container.innerHTML += container.innerHTML; // Duplique le contenu de .product-container
-
-    let currentIndex = 0;
-
-    function scrollOneByOne() {
-        currentIndex++;
-        if (currentIndex >= cards.length) {
-            container.style.transition = 'none'; // Retire temporairement la transition
-            currentIndex = 0; // Réinitialise l'index à 0 pour recommencer
-            container.style.transform = `translateX(0)`; // Reviens à la première carte
-            setTimeout(() => {
-                container.style.transition = 'transform 0.5s ease-in-out'; // Réapplique la transition après un court délai
-            }, 20);
-        } else {
-            container.style.transform = `translateX(${-215 * currentIndex}px)`; // Défile une carte à la fois
-        }
-    }
-
-    // Défilement automatique toutes les 3 secondes
-    setInterval(scrollOneByOne, 3000);
-</script>
 
 
 
