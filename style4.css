@@ -447,38 +447,49 @@ h1 {
 }
 
 .product-container {
+    border-radius: 1px black;
     display: flex;
-    justify-content: flex-start;
     overflow: hidden; /* Masque les cartes qui sortent du conteneur */
-    width: 100%;
+    width: 210px;
     position: relative;
 }
+.ccard{
 
-.product-card {
-    background-color: #fff;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-    width: 200px; /* La largeur des cartes reste la même */
-    margin: 15px;
-    padding: 15px;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-    text-align: center;
-    flex-shrink: 0; /* Empêche les cartes de se réduire */
-    transition: transform 0.5s ease-in-out;
+    display: flex;
+    width: 200px;
+    animation-duration: 20s;
+    animation-name: mescar;
+    animation-iteration-count: infinite;
 }
-
-@keyframes scroll-one-by-one {
-    0% {
+@keyframes mescar {
+    0%{
         transform: translateX(0);
     }
-    100% {
-        transform: translateX(-100%);
+    25%{
+        transform: translateX(-200px);
+    }
+    50%{
+        transform: translateX(-400px);
+    }
+    75%{
+        transform: translateX(-600px);
+    }
+    100%{
+        transform: translateX(0);
     }
 }
+.product-card {
+    background-color: #fff;
+    margin: 2px white;
+    border-radius: 5px;
+    width: 200px; /* La largeur des cartes reste la même */
+        padding: 20px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    text-align: center;
 
-.product-container.auto-scroll {
-    animation: scroll-one-by-one 3s infinite ease-in-out; /* Animation de défilement pour chaque carte */
 }
+
+
 
 
 .product-image {
