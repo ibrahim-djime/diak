@@ -1,6 +1,15 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
+    <!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-1Y80YWCNCP"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-1Y80YWCNCP');
+</script>
     <!-- Google Tag Manager -->
 <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
 new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
@@ -52,9 +61,113 @@ referrerPolicy="no-referrer-when-downgrade"></a></div></noscript>
         });
     })(window, document);
 </script>
-
+    <title>Consentement pour la géolocalisation</title>
+    <style>
+        /* Style pour la fenêtre de consentement */
+        #consent-popup {
+            display: flex;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000; /* Assurer que le popup soit au-dessus d'autres éléments */
+        }
+        .consent-content {
+            background-color: white;
+            padding: 20px;
+            text-align: center;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            width: 300px; /* Largeur du popup */
+        }
+        .button-container {
+            display: flex;
+            justify-content: space-around; /* Espacer les boutons */
+            margin-top: 20px; /* Espacement entre le message et les boutons */
+        }
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        .accept-btn {
+            background-color: #4CAF50; /* Vert */
+            color: white;
+        }
+        .reject-btn {
+            background-color: #f44336; /* Rouge */
+            color: white;
+        }
+        .btn:hover {
+            opacity: 0.9; /* Effet d'ombre au survol */
+        }
+    </style>
 </head>
 <body>
+    <div id="consent-popup">
+        <div class="consent-content">
+            <p>Nous aimerions accéder à votre localisation pour améliorer votre expérience. Voulez-vous partager votre position ?</p>
+            <div class="button-container">
+                <button class="btn accept-btn" onclick="acceptLocation()">Accepter</button>
+                <button class="btn reject-btn" onclick="rejectLocation()">Refuser</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Fonction pour gérer l'acceptation du consentement
+        function acceptLocation() {
+            // Masquer la fenêtre de consentement
+            document.getElementById("consent-popup").style.display = "none";
+            // Si l'utilisateur accepte, demande la géolocalisation
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(showPosition, showError);
+            } else {
+                alert("Géolocalisation non supportée par ce navigateur.");
+            }
+        }
+
+        // Fonction pour gérer le refus du consentement
+        function rejectLocation() {
+            alert("Merci d'avoir pris le temps de considérer cette demande. Sans votre position, certaines fonctionnalités pourraient ne pas être disponibles, mais nous sommes toujours heureux de vous accueillir ici !");
+            document.getElementById("consent-popup").style.display = "flex"; // Rendre le popup visible si nécessaire
+        }
+
+        // Fonction pour afficher les coordonnées
+        function showPosition(position) {
+            // Affiche les coordonnées dans la console (latitude et longitude)
+            console.log("Latitude: " + position.coords.latitude);
+            console.log("Longitude: " + position.coords.longitude);
+            alert("Votre position a été enregistrée :\nLatitude: " + position.coords.latitude + "\nLongitude: " + position.coords.longitude);
+        }
+
+        // Fonction pour gérer les erreurs de géolocalisation
+        function showError(error) {
+            if (error.code === error.PERMISSION_DENIED) {
+                // Si l'utilisateur refuse via les paramètres du navigateur
+                rejectLocation();
+            } else {
+                alert("Erreur de géolocalisation : " + error.message);
+            }
+        }
+
+        // Afficher le popup de consentement au chargement de la page
+        window.onload = function() {
+            document.getElementById("consent-popup").style.display = "flex"; // Afficher le popup
+        };
+    </script>
+    <style>
+    html {
+        scroll-behavior: smooth;
+    }
+</style>
+
     <!-- Google Tag Manager (noscript) -->
 <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-MN9542FK"
 height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
