@@ -873,5 +873,81 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             });
         });
     </script>
+    <script>
+// Gestion des cookies pour Lumesys
+
+// Fonction générique pour définir et récupérer des cookies
+function setCookie(name, value, type = "session") {
+    if (type === "session") {
+        sessionStorage.setItem(name, value);
+    } else {
+        localStorage.setItem(name, value);
+    }
+}
+
+function getCookie(name, type = "session") {
+    return type === "session" ? sessionStorage.getItem(name) : localStorage.getItem(name);
+}
+
+// Initialisation des cookies par type
+
+// 1. Cookies de session : informations de session utilisateur
+function initializeSessionCookies() {
+    setCookie("userSession", "active");
+    console.log("Session de l'utilisateur :", getCookie("userSession"));
+}
+
+// 2. Cookies de préférences : langue et thème de l'utilisateur
+function initializePreferenceCookies() {
+    setCookie("language", "fr", "persistent"); // Exemple : français par défaut
+    setCookie("theme", "dark", "persistent");  // Exemple : thème sombre par défaut
+    console.log("Langue :", getCookie("language", "persistent"));
+    console.log("Thème :", getCookie("theme", "persistent"));
+}
+
+// 3. Cookies d'analyse : suivi des visites pour analyse du trafic
+function initializeAnalyticsCookies() {
+    let visits = getCookie("siteVisits", "persistent");
+    visits = visits ? parseInt(visits) + 1 : 1;
+    setCookie("siteVisits", visits, "persistent");
+    console.log("Nombre de visites :", visits);
+}
+
+// 4. Cookies publicitaires : ciblage basé sur les intérêts de l'utilisateur
+function initializeAdCookies() {
+    const interests = ["tech", "art"];
+    setCookie("adInterests", interests.join(","), "persistent");
+    console.log("Intérêts publicitaires :", getCookie("adInterests", "persistent"));
+}
+
+// 5. Cookies de réseaux sociaux : session de partage et interaction sociale
+function initializeSocialCookies() {
+    setCookie("socialLoggedIn", "true", "persistent");
+    console.log("Session de réseaux sociaux :", getCookie("socialLoggedIn", "persistent"));
+}
+
+// 6. Cookies de performance : mesure du temps de chargement des pages
+function initializePerformanceCookies() {
+    window.onload = function () {
+        const loadTime = window.performance.timing.domContentLoadedEventEnd - window.performance.timing.navigationStart;
+        setCookie("pageLoadTime", loadTime, "persistent");
+        console.log("Temps de chargement de la page :", loadTime, "ms");
+    };
+}
+
+// Fonction principale pour initialiser tous les cookies
+function initializeAllCookies() {
+    initializeSessionCookies();
+    initializePreferenceCookies();
+    initializeAnalyticsCookies();
+    initializeAdCookies();
+    initializeSocialCookies();
+    initializePerformanceCookies();
+}
+
+// Exécution de l'initialisation des cookies
+initializeAllCookies();
+
+</script>
 </body>
 </html>
