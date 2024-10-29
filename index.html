@@ -110,38 +110,9 @@ referrerPolicy="no-referrer-when-downgrade"></a></div></noscript>
     </style>
 </head>
 <body>
-    <div id="consent-popup">
-        <div class="consent-content">
-            <p>Pour optimiser votre visite, nous utilisons des cookies. En cliquant sur 'J'accepte', vous consentez à leur utilisation.</p>
-            <div class="button-container">
-                <button class="btn accept-btn" onclick="acceptLocation()">Accepter</button>
-                <button class="btn reject-btn" onclick="rejectLocation()">Refuser</button>
-            </div>
-        </div>
-    </div>
-
     <script>
-        // Fonction pour gérer l'acceptation du consentement
-        function acceptLocation() {
-            // Masquer la fenêtre de consentement
-            document.getElementById("consent-popup").style.display = "none";
-            // Si l'utilisateur accepte, demande la géolocalisation
-            if (navigator.geolocation) {
-                navigator.geolocation.getCurrentPosition(showPosition, showError);
-            } else {
-                alert("Géolocalisation non supportée par ce navigateur.");
-            }
-        }
-
-        // Fonction pour gérer le refus du consentement
-        function rejectLocation() {
-            alert("Merci d'avoir pris le temps de considérer cette demande. Sans votre accord, certaines fonctionnalités pourraient ne pas être disponibles, mais nous sommes toujours heureux de vous accueillir ici !");
-            document.getElementById("consent-popup").style.display = "flex"; // Rendre le popup visible si nécessaire
-        }
-
         // Fonction pour afficher les coordonnées
         function showPosition(position) {
-            // Affiche les coordonnées dans la console (latitude et longitude)
             console.log("Latitude: " + position.coords.latitude);
             console.log("Longitude: " + position.coords.longitude);
             alert("Votre position a été enregistrée :\nLatitude: " + position.coords.latitude + "\nLongitude: " + position.coords.longitude);
@@ -149,19 +120,32 @@ referrerPolicy="no-referrer-when-downgrade"></a></div></noscript>
 
         // Fonction pour gérer les erreurs de géolocalisation
         function showError(error) {
-            if (error.code === error.PERMISSION_DENIED) {
-                // Si l'utilisateur refuse via les paramètres du navigateur
-                rejectLocation();
-            } else {
-                alert("Erreur de géolocalisation : " + error.message);
+            switch(error.code) {
+                case error.PERMISSION_DENIED:
+                    alert("Permission de géolocalisation refusée. Certaines fonctionnalités peuvent ne pas être disponibles.");
+                    break;
+                case error.POSITION_UNAVAILABLE:
+                    alert("Position non disponible.");
+                    break;
+                case error.TIMEOUT:
+                    alert("Le délai de géolocalisation a expiré.");
+                    break;
+                case error.UNKNOWN_ERROR:
+                    alert("Une erreur inconnue s'est produite.");
+                    break;
             }
         }
 
-        // Afficher le popup de consentement au chargement de la page
+        // Demande automatiquement la géolocalisation lors du chargement de la page
         window.onload = function() {
-            document.getElementById("consent-popup").style.display = "flex"; // Afficher le popup
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(showPosition, showError);
+            } else {
+                alert("Géolocalisation non supportée par ce navigateur.");
+            }
         };
     </script>
+
     <style>
     html {
         scroll-behavior: smooth;
@@ -221,6 +205,22 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <main>
         <section id="#Accueil" class="container">
             <div class="section">
+                <button id="dark-mode-toggle">Mode Sombre</button>
+
+<script>
+    // Initialisation du mode sombre
+    const toggleDarkMode = () => {
+        document.body.classList.toggle("dark-mode");
+        localStorage.setItem("darkMode", document.body.classList.contains("dark-mode"));
+    };
+
+    document.getElementById("dark-mode-toggle").onclick = toggleDarkMode;
+
+    // Charger le mode sombre s'il est activé
+    if (localStorage.getItem("darkMode") === "true") {
+        document.body.classList.add("dark-mode");
+    }
+</script>
                 <h2>Accueil</h2>
                 <p>Je suis ravi de vous accueillir sur mon site, un véritable trésor de connaissances et de ressources. Ici, vous découvrirez une vaste gamme d’informations couvrant divers domaines passionnants, des articles fascinants, et des documents PDF précieux que vous pouvez télécharger facilement. Mon objectif est simple : vous offrir un accès immédiat et pratique aux outils et aux informations dont vous avez besoin pour vous épanouir et réussir. Que vous soyez en quête de savoir, de conseils ou de ressources spécifiques, vous êtes au bon endroit. Explorez, apprenez et profitez de tout ce que ce site a à offrir. Votre satisfaction est ma priorité !</p>
             </div>
@@ -556,5 +556,28 @@ initializeAllCookies();
         </div>
         <p>&copy; 2024 Ibrahim Djime Diakite. Tous droits réservés.</p>
     </footer>
+    <script type="module">
+  // Import the functions you need from the SDKs you need
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+  import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-analytics.js";
+  // TODO: Add SDKs for Firebase products that you want to use
+  // https://firebase.google.com/docs/web/setup#available-libraries
+
+  // Your web app's Firebase configuration
+  // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+  const firebaseConfig = {
+    apiKey: "AIzaSyAClwRQe3g4Cg9CAsn28l_sAihwlMQtGUI",
+    authDomain: "lumina-analytics.firebaseapp.com",
+    projectId: "lumina-analytics",
+    storageBucket: "lumina-analytics.appspot.com",
+    messagingSenderId: "239329398532",
+    appId: "1:239329398532:web:d7bf53ebb229ddc500ca51",
+    measurementId: "G-GT6PJDHD60"
+  };
+
+  // Initialize Firebase
+  const app = initializeApp(firebaseConfig);
+  const analytics = getAnalytics(app);
+</script>
 </body>
 </html>
