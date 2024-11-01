@@ -114,6 +114,227 @@ body {
     background: url('images/p02.jpg') no-repeat center center; /* Image de fond */
     background-size: cover; /* L'image couvre entièrement */
 }
+/* Container for the search bar and suggestions */
+.search-container {
+    position: relative;
+    width: 100%;
+    max-width: 500px;
+    margin: 20px auto;
+}
+
+/* Search input field styling */
+#search-input {
+    width: 100%;
+    padding: 10px 15px;
+    font-size: 16px;
+    border: 1px solid #ddd;
+    border-radius: 24px;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+    outline: none;
+    box-sizing: border-box;
+    transition: border-color 0.2s;
+}
+
+#search-input:focus {
+    border-color: #007bff;
+}
+
+/* Search button styling */
+#search-button {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    background-color: transparent;
+    border: none;
+    padding: 0 10px;
+    cursor: pointer;
+    outline: none;
+}
+
+#search-button img {
+    width: 20px;
+    height: 20px;
+}
+
+/* Suggestions dropdown styling */
+.suggestions {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 100%;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-top: none;
+    border-radius: 0 0 24px 24px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    max-height: 300px;
+    overflow-y: auto;
+    z-index: 1000;
+    display: none; /* Hidden by default */
+}
+
+/* Individual suggestion item styling */
+.suggestion-item {
+    display: block;
+    padding: 12px 20px;
+    font-size: 16px;
+    color: #333;
+    text-decoration: none;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.suggestion-item:hover {
+    background-color: #f0f0f0;
+}
+
+.suggestion-item:active {
+    background-color: #e0e0e0;
+}
+
+/* Hide suggestions container when empty */
+.suggestions:empty {
+    display: none;
+}
+.suggestion-item.highlighted {
+    background-color: #f0f0f0; /* Couleur de surbrillance */
+    color: #333; /* Couleur du texte */
+}
+
+
+
+/* Mode sombre */
+.dark-mode {
+    background-color: #121212; /* Définit la couleur de fond générale pour le mode sombre en gris très foncé */
+    color: #ffffff; /* Définit la couleur du texte principal en blanc pour un meilleur contraste */
+    background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('logo/g2.png') no-repeat center center; 
+    /* Ajoute un dégradé sombre semi-transparent superposé sur une image d'arrière-plan pour améliorer la lisibilité */
+    background-size: cover; /* Assure que l'image d'arrière-plan couvre toute la zone */
+}
+
+/* Styles pour les titres et liens en mode sombre */
+.dark-mode h1,
+.dark-mode h2,
+.dark-mode h3,
+.dark-mode h4,
+.dark-mode h5,
+.dark-mode h6,
+.dark-mode p,
+.dark-mode a {
+    color: #ffffff; /* Définit la couleur de tous les titres, paragraphes et liens en blanc pour les rendre lisibles sur le fond sombre */
+}
+
+/* Style pour le bouton */
+#dark-mode-toggle {
+    position: fixed; /* Positionne le bouton de manière fixe pour qu'il reste visible lors du défilement */
+    top: 10px; /* Distance de 10 pixels depuis le haut de la page */
+    right: 10px; /* Distance de 10 pixels depuis la droite de la page */
+    padding: 10px; /* Ajoute un espace intérieur de 10 pixels autour du texte du bouton */
+    background-color: #333; /* Définit la couleur de fond du bouton en gris foncé */
+    color: #ffffff; /* Définit la couleur du texte du bouton en blanc */
+    border: none; /* Supprime la bordure par défaut du bouton */
+    border-radius: 5px; /* Arrondit les coins du bouton pour un style plus doux */
+    cursor: pointer; /* Change le curseur en pointeur pour indiquer que le bouton est cliquable */
+}
+
+/* Style du bouton en mode sombre */
+.dark-mode #dark-mode-toggle {
+    background-color: #ffffff; /* Change le fond du bouton en blanc en mode sombre */
+    color: #333; /* Change la couleur du texte du bouton en gris foncé pour contraste avec le fond blanc */
+}
+
+/* Styles pour le fond flou */
+.blur-background {
+    background: rgba(255, 255, 255, 0.8); /* Crée un fond blanc semi-transparent pour un effet de flou */
+    backdrop-filter: blur(10px); /* Applique un effet de flou de 10 pixels à l'arrière-plan */
+    padding: 20px; /* Ajoute un espacement interne de 20 pixels autour du contenu */
+}
+
+/* Styles pour les suggestions en mode sombre */
+.dark-mode #suggestions {
+    background-color: #333; /* Définit la couleur de fond de la boîte de suggestions en gris foncé */
+    color: #ffffff; /* Définit la couleur du texte de la suggestion en blanc */
+    border: 1px solid #444; /* Ajoute une bordure gris foncé pour séparer la boîte de suggestions du reste du contenu */
+}
+
+.dark-mode .suggestion-item {
+    color: #e0e0e0; /* Définit la couleur des éléments de suggestion en gris clair pour les rendre plus visibles */
+    font-weight: bold; /* Rend le texte en gras pour une meilleure visibilité */
+}
+
+.dark-mode .suggestion-item:hover {
+    background-color: #555; /* Change le fond des éléments de suggestion en gris moyen au survol */
+    color: #ffcc00; /* Change la couleur du texte en jaune vif au survol pour le rendre bien visible */
+}
+
+/* Styles pour le fond flou */
+.blur-background {
+    background: rgba(255, 255, 255, 0.8); /* Blanc avec transparence */
+    backdrop-filter: blur(10px); /* Appliquer l'effet de flou */
+    padding: 20px; /* Ajout de l'espacement autour du contenu */
+}
+
+/* Styles généraux pour la fenêtre */
+#consent-popup {
+    display: flex; /* Utilise flexbox pour aligner les éléments à l'intérieur. */
+    position: fixed; /* Place la fenêtre en position fixe pour qu'elle reste visible même en faisant défiler la page. */
+    top: 0; /* Positionne la fenêtre en haut de l'écran. */
+    left: 0; /* Positionne la fenêtre à gauche de l'écran. */
+    width: 100%; /* Prend toute la largeur de l'écran. */
+    height: 100%; /* Prend toute la hauteur de l'écran. */
+    background-color: rgba(0, 0, 0, 0.5); /* Ajoute un fond semi-transparent noir pour faire ressortir la fenêtre. */
+    justify-content: center; /* Centre la fenêtre horizontalement. */
+    align-items: center; /* Centre la fenêtre verticalement. */
+}
+
+.consent-content {
+    color: #333; /* Utilise une couleur sombre pour le texte, comme un gris foncé */
+    background-color: white; /* Le fond de la fenêtre est blanc. */
+    padding: 20px; /* Ajoute un espacement interne de 20px. */
+    text-align: center; /* Centre le texte à l'intérieur. */
+    border-radius: 8px; /* Arrondit les coins de la fenêtre. */
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); /* Ajoute une ombre autour de la fenêtre pour un effet de profondeur. */
+    max-width: 400px; /* Limite la largeur de la fenêtre à 400px pour qu'elle ne devienne pas trop large. */
+}
+
+.button-container {
+    margin-top: 20px; /* Ajoute un espace au-dessus des boutons. */
+    display: flex; /* Utilise flexbox pour organiser les boutons. */
+    gap: 10px; /* Espace de 10px entre les boutons. */
+    justify-content: center; /* Centre les boutons horizontalement. */
+}
+
+/* Style pour les boutons */
+.btn {
+    padding: 10px 20px; /* Ajoute un espacement interne (10px vertical, 20px horizontal). */
+    font-size: 16px; /* Définit la taille de la police à 16px. */
+    cursor: pointer; /* Change le curseur en une main survolant le bouton. */
+    border: none; /* Enlève la bordure par défaut. */
+    border-radius: 4px; /* Arrondit légèrement les coins du bouton. */
+    font-family: Arial, sans-serif; /* Définit la police pour les boutons. */
+    transition: background-color 0.2s; /* Ajoute une transition fluide de 0,2s sur la couleur de fond. */
+}
+
+.accept-btn {
+    background-color: #1a73e8; /* Couleur bleue inspirée de Google pour le bouton Accepter. */
+    color: white; /* Texte en blanc sur le bouton Accepter. */
+}
+
+.accept-btn:hover {
+    background-color: #155bb5; /* Change la couleur de fond au survol pour un effet plus foncé. */
+}
+
+.reject-btn {
+    background-color: white; /* Fond blanc pour le bouton Refuser. */
+    color: #1a73e8; /* Texte bleu pour le bouton Refuser. */
+    border: 1px solid #1a73e8; /* Bordure bleue autour du bouton Refuser. */
+}
+
+.reject-btn:hover {
+    background-color: #f1f3f4; /* Change le fond en gris clair au survol pour le bouton Refuser. */
+}
+
 
 /* En-tête du site */
 header {
@@ -445,7 +666,12 @@ h1 {
     z-index: -1; /* Positionne le pseudo-élément derrière le contenu de la section */
     pointer-events: none; /* Assure que l'image de fond ne bloque pas les interactions avec le contenu */
 }
-
+.imgcard{
+    width: 100%; /* Définit la largeur de l'image pour qu'elle occupe toute la largeur de la carte */
+    height: auto; /* Ajuste automatiquement la hauteur de l'image en fonction de sa largeur pour maintenir les proportions */
+    border-bottom: 1px solid #ddd; /* Ajoute une bordure en bas de l'image pour la séparer visuellement du reste du contenu */
+    margin-bottom: 15px; /* Ajoute un espace en dessous de l'image pour séparer l'image du texte en dessous */
+}
 .product-container {
     border-radius: 1px black;
     display: flex;
