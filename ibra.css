@@ -205,15 +205,8 @@ body{
     padding: 20px; /* Espacement interne */
     border-radius: 10px; /* Coins arrondis */
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); /* Ombre légère pour la profondeur */
-    margin-bottom: 40px; /* Espace supplémentaire en dessous de chaque section */
+    margin-bottom: 20px; /* Espace entre les sections */
 }
-
-/* Styles pour les paragraphes dans les sections */
-.section p {
-    line-height: 1.6; /* Hauteur de ligne pour un texte plus aéré */
-    color: #666; /* Couleur du texte des paragraphes */
-}
-
 header{
     font-family: 'Sobatyan-Regular','MilestoneBrush', Arial, sans-serif; /* Police utilisée */
     font-size: 40px; /* Taille du texte */
@@ -277,6 +270,12 @@ h5{
 }
 h6{
     font-size:13px;/*Taille du texte*/
+}
+
+/* Styles pour les paragraphes dans les sections */
+.section p {
+    line-height: 1.6; /* Hauteur de ligne pour un texte plus aéré */
+    color: #666; /* Couleur du texte des paragraphes */
 }
 
 /* Styles pour les liens vers les fichiers PDF */
@@ -382,8 +381,8 @@ h6{
 }
 
 .btn1, .btn2, .btn3, .btn4 {
-    width: 50px; /* Largeur fixe des cartes */
-    height: 80px; /*Hauteur de carte fixe a 60%*/
+    width: 50%; /* Largeur fixe des cartes */
+    height: 20%; /*Hauteur de carte fixe a 60%*/
     display: inline-block; /* Assure que le lien ait un comportement de bouton */
     padding: 10px 20px; /* Ajoute du remplissage pour donner l'apparence d'un bouton */
     font-size: 14px; /* Taille du texte pour les boutons PDF */
@@ -428,7 +427,23 @@ h6{
 }
 
 /* Animation (à personnaliser en fonction de votre contenu) */
+@keyframes slideIn {
+    from {
+        transform: translateX(-100%);
+    }
+    to {
+        transform: translateX(0);
+    }
+}
 
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
 /* Styles pour le pied de page */
 footer {
     background: url('images/p2.jpg') no-repeat center center; /* Image de fond du pied de page */
@@ -438,196 +453,34 @@ footer {
     text-align: center; /* Centre le texte */
 }
 
-@media only screen and (max-width: 480px) and (min-width: 320px) {
-/* Cartes visibles deux par deux sur Android */
-.product-card {
-        width: 48%; /* Chaque carte prend environ 48% de la largeur */
-        margin: 1px; /* Espace autour de chaque carte */
-}
-.btn1, .btn2, .btn3, .btn4 {
-    width: 50px; /* Largeur fixe des cartes */
-    height: 50px; /*Hauteur de carte fixe a 60%*/
-    overflow: auto;
-}
-.btn1 {
-    background-color: rgb(40,108,164); /* Couleur de fond du bouton (vert par exemple) */
-}
-.btn1:hover {
-    background-color: rgb(16,44,67); /* Change la couleur du bouton au survol */
-}
-.btn2 {
-    background-color: rgb(189,196,64); /* Couleur de fond du bouton (vert par exemple) */
-}
-.btn2:hover {
-    background-color: rgb(68,70,21); /* Change la couleur du bouton au survol */
-}
-.btn3 {
-    background-color: rgb(221,11,48); /* Couleur de fond du bouton (vert par exemple) */
-}
-.btn3:hover {
-    background-color: rgb(134,6,29); /* Change la couleur du bouton au survol */
-}
-.btn4 {
-    background-color: rgb(153,217,234); /* Couleur de fond du bouton (vert par exemple) */
-}
-.btn4:hover {
-    background-color: rgb(29,119,141); /* Change la couleur du bouton au survol */
-}
-
-.card{
-        flex-wrap: wrap; /* Permet aux cartes de passer à la ligne si nécessaire */
-    display: flex; /* Affiche les cartes en ligne */
-    justify-content: space-between/*espace les éléments enfants de manière égale à l'intérieur du conteneur.*/
-    }
-.product-container {
-        flex-wrap: wrap; /* Les cartes s'enroulent si nécessaire */
-        justify-content: space-between; /* Espace égal entre les cartes */
-}
-/* Réduction de la taille des titres et des textes pour les petits écrans Android */
-h1, h2, h3, h4, h5, h6 {
-        font-size: 20px; /* Taille ajustée pour les petits écrans */
-}
-
-    /* Taille des images dans les cartes */
-.product-image {
-        width: 50px; /* Taille plus petite pour les images */
-        height: auto; /* Conserver les proportions */
-}
-
-/* Ajustement des marges et espacement */
-.content {
-        padding: 0px; /* Réduire l'espacement interne pour s'adapter aux petits écrans */
-}
-.section{
-        padding: 1px; /* Réduire l'espacement interne pour s'adapter aux petits écrans */
-}
-
-/* Styles pour les éléments de la barre latérale */
-.sidebar ul li {
-        font-size: 14px; /* Texte plus petit pour les écrans Android */
-}
-
-/* Taille de l'icône du menu hamburger pour Android */
-.menu-icon {
-        font-size: 26px; /* Taille réduite pour s'adapter aux petits écrans Android */
-        padding: 6px; /* Espacement ajusté */
-    }
-}
-
-@media only screen and (min-width: 481px) and (max-width: 767px) {
-/* Cartes visibles deux par deux */
-.product-card {
-        width: 45%; /* Chaque carte prend environ 45% de la largeur */
-        margin: 1px; /* Espace autour de chaque carte */
-}
-.btn1, .btn2, .btn3, .btn4 {
-    width: 50px; /* Largeur fixe des cartes 50px*/
-    height: 50px; /*Hauteur de carte fixe a 50px*/
-    overflow: auto;
-}
-.btn1 {
-    background-color: rgb(40,108,164); /* Couleur de fond du bouton (vert par exemple) */
-}
-.btn1:hover {
-    background-color: rgb(16,44,67); /* Change la couleur du bouton au survol */
-}
-.btn2 {
-    background-color: rgb(189,196,64); /* Couleur de fond du bouton (vert par exemple) */
-}
-.btn2:hover {
-    background-color: rgb(68,70,21); /* Change la couleur du bouton au survol */
-}
-.btn3 {
-    background-color: rgb(221,11,48); /* Couleur de fond du bouton (vert par exemple) */
-}
-.btn3:hover {
-    background-color: rgb(134,6,29); /* Change la couleur du bouton au survol */
-}
-.btn4 {
-    background-color: rgb(153,217,234); /* Couleur de fond du bouton (vert par exemple) */
-}
-.btn4:hover {
-    background-color: rgb(29,119,141); /* Change la couleur du bouton au survol */
-}
-.card{
-        flex-wrap: wrap; /* Permet aux cartes de passer à la ligne si nécessaire */
-    display: flex; /* Affiche les cartes en ligne */
-    justify-content: space-between/*espace les éléments enfants de manière égale à l'intérieur du conteneur.*/
-}
-.product-container {
-        flex-wrap: wrap; /* Les cartes s'enroulent si nécessaire */
-        justify-content: space-between; /* Espace égal entre les cartes */
-}
-
-/* Taille des titres et des textes pour les écrans moyens */
-h1, h2, h3, h4, h5, h6 {
-        font-size: 22px; /* Taille ajustée pour ces écrans */
-}
-
-/* Taille des images dans les cartes */
-.product-image {
-        width: 60px; /* Taille plus grande pour les images */
-        height: auto; /* Conserver les proportions */
-}
-
-/* Ajustement des marges et espacement */
-.content {
-        padding: 0px; /* Réduire l'espacement interne pour s'adapter aux petits écrans */
-}
-.section{
-        padding: 1px; /* Réduire l'espacement interne pour s'adapter aux petits écrans */
-}
-
-/* Styles pour les éléments de la barre latérale */
-.sidebar ul li {
-        font-size: 16px; /* Texte plus grand pour les écrans moyens */
-}
-
-/* Taille de l'icône du menu hamburger pour ces écrans */
-.menu-icon {
-        font-size: 28px; /* Taille ajustée de l'icône */
-        padding: 8px; /* Espacement ajusté */
-}
-}
-
-@media only screen and (min-width: 768px) and (max-width: 1024px) {
+@media all and (max-width: 1024px) {
     /* Cartes visibles trois par trois */
     .product-card {
         width: 30%; /* Chaque carte prend environ 30% de la largeur */
         margin: 1px; /* Espace autour de chaque carte */
         margin: 20px 0; /* Espacement ajusté entre les cartes */
     }
-.btn1, .btn2, .btn3, .btn4 {
-    width: 50px; /* Largeur fixe des cartes */
-    height: 50px; /*Hauteur de carte fixe a 60%*/
-    overflow: auto;
-}
-
-.btn1 {
-    background-color: rgb(40,108,164); /* Couleur de fond du bouton (vert par exemple) */
-}
-.btn1:hover {
-    background-color: rgb(16,44,67); /* Change la couleur du bouton au survol */
-}
-.btn2 {
-    background-color: rgb(189,196,64); /* Couleur de fond du bouton (vert par exemple) */
-}
-.btn2:hover {
-    background-color: rgb(68,70,21); /* Change la couleur du bouton au survol */
-}
-.btn3 {
-    background-color: rgb(221,11,48); /* Couleur de fond du bouton (vert par exemple) */
-}
-.btn3:hover {
-    background-color: rgb(134,6,29); /* Change la couleur du bouton au survol */
-}
-.btn4 {
-    background-color: rgb(153,217,234); /* Couleur de fond du bouton (vert par exemple) */
-}
-.btn4:hover {
-    background-color: rgb(29,119,141); /* Change la couleur du bouton au survol */
-}    
-.card{
+    .btn1, .btn2, .btn3, .btn4 {
+    width: 50%; /* Largeur fixe des cartes */
+    height: 20%; /*Hauteur de carte fixe a 60%*/
+                                }
+    .btn1:hover {
+         width: 50%; /* Largeur fixe des cartes */
+    height: auto; /*Tous les elements du bouton sont visibles au survol*/
+                                 }
+                                 .btn2:hover {
+                                    width: 50%; /* Largeur fixe des cartes */
+    height: auto; /*Tous les elements du bouton sont visibles au survol*/
+                                 }
+                                 .btn3:hover {
+                                    width: 50%; /* Largeur fixe des cartes */
+    height: auto; /*Tous les elements du bouton sont visibles au survol*/
+                                 }
+                                 .btn4:hover {
+                                    width: 50%; /* Largeur fixe des cartes */
+    height: auto; /*Tous les elements du bouton sont visibles au survol*/
+                                 }
+    .card{
         flex-wrap: wrap; /* Permet aux cartes de passer à la ligne si nécessaire */
     display: flex; /* Affiche les cartes en ligne */
     justify-content: space-between/*espace les éléments enfants de manière égale à l'intérieur du conteneur.*/
@@ -666,4 +519,5 @@ h1, h2, h3, h4, h5, h6 {
         font-size: 30px; /* Taille ajustée de l'icône */
         padding: 10px; /* Espacement ajusté */
     }
+
 }
