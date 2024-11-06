@@ -454,11 +454,11 @@ footer {
 }
 
 @media all and (max-width: 1024px) {
-    /* Cartes visibles trois par trois */
+    /* Cartes visibles 2 2 */
     .product-card {
-        width: 30%; /* Chaque carte prend environ 30% de la largeur */
+        width: 45%; /* Chaque carte prend environ 30% de la largeur */
         margin: 1px; /* Espace autour de chaque carte */
-        margin: 20px 0; /* Espacement ajusté entre les cartes */
+        margin: 2px 0; /* Espacement ajusté entre les cartes */
     }
     .btn1, .btn2, .btn3, .btn4 {
     width: 50%; /* Largeur fixe des cartes */
