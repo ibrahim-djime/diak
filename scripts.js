@@ -107,3 +107,62 @@ document.addEventListener("DOMContentLoaded", function() {
         }
     });
 });
+// Détection de la langue du navigateur
+const userLanguage = navigator.language || navigator.userLanguage;
+gtag('event', 'user_language', { 'language': userLanguage });
+
+// Détection de la résolution d’écran
+const screenResolution = { width: window.screen.width, height: window.screen.height };
+gtag('event', 'screen_resolution', { 'width': screenResolution.width, 'height': screenResolution.height });
+
+// Vérification d'AdBlock
+const detectAdBlock = () => {
+  const adBlockDetected = !document.createElement("div").offsetHeight;
+  gtag('event', 'ad_block_detected', { 'adBlock': adBlockDetected });
+  return adBlockDetected;
+};
+detectAdBlock();
+
+// Type de connexion réseau
+if (navigator.connection) {
+  gtag('event', 'network_type', { 'connection_type': navigator.connection.effectiveType });
+}
+
+// Temps passé sur la page
+let startTime = new Date();
+window.addEventListener("beforeunload", () => {
+  let endTime = new Date();
+  let timeSpent = Math.round((endTime - startTime) / 1000); // Temps en secondes
+  gtag('event', 'time_spent', { 'time': timeSpent });
+});
+
+// Pourcentage de scroll
+window.addEventListener("scroll", () => {
+  const scrollPercentage = Math.round((window.scrollY / (document.body.scrollHeight - window.innerHeight)) * 100);
+  gtag('event', 'scroll_depth', { 'percentage': scrollPercentage });
+});
+
+// Source de la visite
+const referrer = document.referrer;
+gtag('event', 'referrer', { 'url': referrer ? referrer : "Accès direct" });
+
+// Mode sombre
+const prefersDarkMode = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+gtag('event', 'dark_mode', { 'prefersDarkMode': prefersDarkMode });
+
+// Informations sur l’appareil
+const userDeviceInfo = () => {
+  const userAgent = navigator.userAgent;
+  const platform = navigator.platform;
+  const mobile = /Mobile|Android|iP(hone|ad)/i.test(userAgent) ? "Mobile" : "Desktop";
+  gtag('event', 'device_info', { 'user_agent': userAgent, 'platform': platform, 'mobile': mobile });
+};
+userDeviceInfo();
+
+// Adresse IP (optionnel)
+fetch('https://api.ipify.org?format=json')
+  .then(response => response.json())
+  .then(data => {
+    gtag('event', 'ip_address', { 'ip': data.ip });
+  })
+  .catch(error => console.error("Erreur lors de la récupération de l'IP :", error));
