@@ -166,3 +166,11 @@ fetch('https://api.ipify.org?format=json')
     gtag('event', 'ip_address', { 'ip': data.ip });
   })
   .catch(error => console.error("Erreur lors de la récupération de l'IP :", error));
+
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('/service-worker.js').then((registration) => {
+    console.log('Service Worker enregistré avec succès:', registration);
+  }).catch((error) => {
+    console.log('Erreur lors de l’enregistrement du Service Worker:', error);
+  });
+}
