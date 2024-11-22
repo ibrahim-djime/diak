@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Farafin'art Jansa</title>
+    <link rel="stylesheet" href="style3.css">
+</head>
+<body>
+    <!-- Bouton du menu hamburger -->
+    <div class="menu-icon" onclick="toggleMenu()">
+        &#9776;
+    </div>
+
+    <!-- Barre latérale contenant le menu, cachée par défaut -->
+    <div class="slidebar" id="slidebar">
+        <ul>
+            <li><a href="#">Accueil</a></li>
+            <li><a href="#">Galerie</a></li>
+            <li><a href="#">Cours</a></li>
+            <li><a href="#">À propos</a></li>
+            <li><a href="#">Contact</a></li>
+        </ul>
+    </div>
+
+    <!-- Contenu principal de la page -->
+    <div class="content">
+        <header>
+            <!-- Ajout du logo -->
+            <div class="logo">
+                <img src="Art/art11.jpg" alt="Logo Farafin'art Jansa">
+            </div>
+            <h1>Farafina Jansa</h1>
+            <p>Découvrez l'art à travers nos œuvres et nos cours.</p>
+        </header>
+
+        <section class="gallery">
+            <h2>Galerie</h2>
+            <div class="art-grid">
+                <div class="art-item"><img src="Art/art1.jpg" alt="Art 1">
+                    <p class="art-caption">Commentaire pour l'image</p>
+                <p class="art-price">Prix : ...€</p>
+                <p class="art-other">Dimensions : 40x60 cm</p>
+                </div>
+                <div class="art-item"><img src="Art/art2.jpg" alt="Art 2">
+                <p class="art-caption">Commentaire pour l'image</p>
+                <p class="art-price">Prix : ...€</p>
+                <p class="art-other">Dimensions : 40x60 cm</p>
+            </div>
+                <div class="art-item"><img src="Art/art3.jpg" alt="Art 3">
+                <p class="art-caption">Commentaire pour l'image</p>
+                <p class="art-price">Prix : ...€</p>
+                <p class="art-other">Dimensions : 40x60 cm</p>
+            </div>
+                       <div class="art-item"><img src="Art/art4.jpg" alt="Art 4">
+    <p class="art-caption">Commentaire pour l'image 4</p>
+    <p class="art-price">Prix : ...€</p>
+    <p class="art-other">Dimensions : 40x60 cm</p>
+</div>
+<div class="art-item"><img src="Art/art5.jpg" alt="Art 5">
+    <p class="art-caption">Commentaire pour l'image 5</p>
+    <p class="art-price">Prix : ...€</p>
+    <p class="art-other">Dimensions : 40x60 cm</p>
+</div>
+<div class="art-item"><img src="Art/art6.jpg" alt="Art 6">
+    <p class="art-caption">Commentaire pour l'image 6</p>
+    <p class="art-price">Prix : ...€</p>
+    <p class="art-other">Dimensions : 40x60 cm</p>
+</div>
+<div class="art-item"><img src="Art/art7.jpg" alt="Art 7">
+    <p class="art-caption">Commentaire pour l'image 7</p>
+    <p class="art-price">Prix : ...€</p>
+    <p class="art-other">Dimensions : 40x60 cm</p>
+</div>
+<div class="art-item"><img src="Art/art8.jpg" alt="Art 8">
+    <p class="art-caption">Commentaire pour l'image 8</p>
+    <p class="art-price">Prix : ...€</p>
+    <p class="art-other">Dimensions : 40x60 cm</p>
+</div>
+<div class="art-item"><img src="Art/art9.jpg" alt="Art 9">
+    <p class="art-caption">Commentaire pour l'image 9</p>
+    <p class="art-price">Prix : ...€</p>
+    <p class="art-other">Dimensions : 40x60 cm</p>
+</div>
+<div class="art-item"><img src="Art/art10.jpg" alt="Art 10">
+    <p class="art-caption">Commentaire pour l'image 10</p>
+    <p class="art-price">Prix : ...€</p>
+    <p class="art-other">Dimensions : 40x60 cm</p>
+</div>
+<div class="art-item"><img src="Art/art12.jpg" alt="Art 12">
+    <p class="art-caption">Commentaire pour l'image 12</p>
+    <p class="art-price">Prix : ...€</p>
+    <p class="art-other">Dimensions : 40x60 cm</p>
+</div>
+<div class="art-item"><img src="Art/art13.jpg" alt="Art 13">
+    <p class="art-caption">Commentaire pour l'image 13</p>
+    <p class="art-price">Prix : ...€</p>
+    <p class="art-other">Dimensions : 40x60 cm</p>
+</div>
+<div class="art-item"><img src="Art/art14.jpg" alt="Art 14">
+    <p class="art-caption">Commentaire pour l'image 14</p>
+    <p class="art-price">Prix : ...€</p>
+    <p class="art-other">Dimensions : 40x60 cm</p>
+</div>
+<div class="art-item"><img src="Art/art15.jpg" alt="Art 15">
+    <p class="art-caption">Commentaire pour l'image 15</p>
+    <p class="art-price">Prix : ...€</p>
+    <p class="art-other">Dimensions : 40x60 cm</p>
+</div>
+<div class="art-item"><img src="Art/art16.jpg" alt="Art 16">
+    <p class="art-caption">Commentaire pour l'image 16</p>
+    <p class="art-price">Prix : ...€</p>
+    <p class="art-other">Dimensions : 40x60 cm</p>
+</div>
+            </div>
+        </section>
+
+        <section class="about">
+            <h2>À propos</h2>
+            <p>Nous sommes passionnés par l'art et partageons notre expertise à travers nos cours et expositions.</p>
+        </section>
+
+        <section class="contact">
+            <h2>Contact</h2>
+            <p>Pour plus d'informations, n'hésitez pas à nous contacter.</p>
+            <form action="submit_form" method="POST">
+                <input type="text" name="name" placeholder="Nom" required>
+                <input type="email" name="email" placeholder="Email" required>
+                <textarea name="message" placeholder="Votre message" required></textarea>
+                <button type="submit">Envoyer</button>
+            </form>
+        </section>
+    </div>
+    <footer>
+        <div class="social-icons">
+            <a href="https://web.facebook.om/ibrahimdjime.diakite.3" target="_blank" class="social-icon">
+                <i class="fab fa-facebook-f"></i>
+            </a>
+            <a href="https://twitter.cm/DiakitIbra19810" target="_blank" class="social-icon">
+                <i class="fab fa-twitter"></i>
+            </a>
+            <a href="https://www.instagram.cm/ibrahim_djime_diakite" target="_blank" class="social-icon">
+                <i class="fab fa-instagram"></i>
+            </a>
+            <a href="https://www.tiktok.cm/@ibradiak0" target="_blank" class="social-icon">
+                <i class="fab fa-tiktok"></i>
+            </a>
+            <a href="https://wa.me/2237656631" target="_blank" class="social-icon">
+                <i class="fab fa-whatsapp"></i>
+            </a>
+            <a href="mailto:dibrahimdjime@gail.com" class="social-icon" target="_blank">
+                <i class="fas fa-envelope"></i>
+            </a>
+        </div>
+        <p>&copy; 2024 Djimé Diakité. Tous droits réservés.</p>
+    </footer>
+
+    <!-- JavaScript pour activer/désactiver l'affichage du menu -->
+    <script>
+        function toggleMenu() {
+            var sidebar = document.getElementById('sidebar');
+            sidebar.classList.toggle('active');
+        }
+    </script>
+</body>
+</html>
