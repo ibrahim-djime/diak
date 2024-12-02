@@ -912,3 +912,86 @@ h1 {
         display: none;
     }
 }
+/* Conteneur des boutons */
+.social-buttons-container {
+    display: flex;
+    gap: 16px;  /* Espacement entre les boutons */
+    justify-content: center;
+    align-items: center;
+    margin-top: 20px;
+}
+
+/* Style général pour chaque bouton social */
+.social-btn {
+    display: inline-block;
+    width: 40px;  /* Taille des boutons */
+    height: 40px; /* Taille des boutons */
+    border-radius: 50%;
+    overflow: hidden;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    padding: 6px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1); /* Ombre légère */
+}
+
+/* Styles spécifiques pour chaque plateforme */
+.whatsapp-button {
+    background-color: #25d366;
+}
+
+.whatsapp-button:hover {
+    background-color: #128c7e;
+    transform: scale(1.1);
+}
+
+.facebook-button {
+    background-color: #1877f2;
+}
+
+.facebook-button:hover {
+    background-color: #155db8;
+    transform: scale(1.1);
+}
+
+.twitter-button {
+    background-color: #ffffff;
+}
+
+.twitter-button:hover {
+    background-color: #0d8ecf;
+    transform: scale(1.1);
+}
+
+.instagram-button {
+    background-color: #e4405f;
+}
+
+.instagram-button:hover {
+    background-color: #d73450;
+    transform: scale(1.1);
+}
+
+.tiktok-button {
+    background-color: #ffffff;
+}
+
+.tiktok-button:hover {
+    background-color: #1f1f1f;
+    transform: scale(1.1);
+}
+
+/* Style des images dans les boutons */
+.social-btn img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+/* Snapchat */
+.snapchat-button {
+    background-color: #fffc00;
+}
+
+.snapchat-button:hover {
+    background-color: #f0e100;
+    transform: scale(1.1);
+}
