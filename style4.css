@@ -222,9 +222,34 @@ body {
 .dark-mode h6,
 .dark-mode p,
 .dark-mode a {
-    color: #ffffff; /* Définit la couleur de tous les titres, paragraphes et liens en blanc pour les rendre lisibles sur le fond sombre */
+    color: #ffffff !important; /* Définit la couleur de tous les titres, paragraphes et liens en blanc pour les rendre lisibles sur le fond sombre */
 }
 
+/* Styles pour les cartes en mode sombre */
+.dark-mode .card {
+    background-color: #333; /* Fond des cartes en gris foncé */
+    color: #ffffff; /* Texte des cartes en blanc */
+    border: 1px solid #444; /* Bordure pour démarquer les cartes */
+}
+/* Styles pour les cartes en mode sombre */
+.dark-mode .product-card {
+    background-color: #333; /* Fond des cartes en gris foncé */
+    color: #ffffff; /* Texte des cartes en blanc */
+    border: 1px solid #444; /* Bordure pour démarquer les cartes */
+}
+/* Boutons des cartes en mode sombre */
+.dark-mode .btn6 {
+    background-color: #555; /* Fond du bouton */
+    color: #ffffff; /* Couleur du texte du bouton */
+    border: none; /* Retire les bordures par défaut */
+    padding: 10px 20px; /* Ajuste l'espacement intérieur */
+    border-radius: 5px; /* Ajoute des coins arrondis */
+}
+
+.dark-mode .btn6:hover {
+    background-color: #777; /* Change le fond au survol */
+    color: #ffcc00; /* Texte jaune vif pour attirer l'attention */
+}
 /* Style pour le bouton */
 #dark-mode-toggle {
     position: fixed; /* Positionne le bouton de manière fixe pour qu'il reste visible lors du défilement */
@@ -305,6 +330,62 @@ body {
     justify-content: center; /* Centre les boutons horizontalement. */
 }
 
+#share-section {
+    text-align: center; /* Centre le contenu du conteneur. */
+    margin: 20px 0; /* Applique une marge de 20px en haut et en bas du conteneur. */
+}
+
+#share-button {
+    background-color: #007bff; /* Définit une couleur de fond bleue pour le bouton. */
+    color: white; /* Change la couleur du texte à blanc pour un bon contraste. */
+    border: none; /* Retire les bordures du bouton. */
+    border-radius: 5px; /* Arrondit légèrement les coins du bouton avec un rayon de 5px. */
+    padding: 10px 20px; /* Ajoute du padding de 10px en haut et en bas, et 20px à gauche et à droite pour un bouton plus large. */
+    font-size: 16px; /* Définit la taille de la police à 16px. */
+    cursor: pointer; /* Change le curseur en forme de main lorsque l'on survole le bouton. */
+    transition: background-color 0.3s; /* Ajoute une transition fluide de 0.3 seconde pour la couleur de fond. */
+}
+
+#share-button:hover {
+    background-color: #0056b3; /* Change la couleur de fond en bleu plus foncé lors du survol. */
+}
+
+.whatsapp-button {
+    display: inline-flex; /* Utilise un conteneur flex en ligne pour aligner les éléments (icône). */
+    align-items: center; /* Centre l'icône verticalement à l'intérieur du bouton. */
+    background-color: #25d366; /* Applique la couleur verte typique de WhatsApp en fond. */
+    border-radius: 50%; /* Rend le bouton circulaire avec un rayon de bordure de 50%. */
+    padding: 10px; /* Ajoute du padding de 10px autour de l'icône. */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Ajoute une ombre portée légère autour du bouton pour un effet de profondeur. */
+    transition: background-color 0.3s ease, transform 0.3s ease; /* Transition fluide pour la couleur de fond et l'agrandissement du bouton lors de l'interaction. */
+    text-decoration: none; /* Retire toute décoration de texte (comme les soulignements) du lien. */
+}
+
+.whatsapp-button:hover {
+    background-color: #128c7e; /* Change la couleur du bouton en vert plus foncé lors du survol. */
+    transform: scale(1.1); /* Agrandit légèrement le bouton de 10% lors du survol. */
+}
+
+.whatsapp-button img {
+    width: 40px; /* Définit la largeur de l'icône à 40px pour qu'elle soit bien visible. */
+    height: 40px; /* Définit la hauteur de l'icône à 40px pour garder une forme carrée. */
+    object-fit: cover; /* Assure que l'image couvre entièrement l'espace disponible sans déformation. */
+}
+
+@media all and (max-width: 1024px) {
+    /* Applique ces styles uniquement pour les écrans de moins de 1024px (tablettes et petits écrans). */
+    .whatsapp-button {
+        padding: 8px; /* Réduit le padding à 8px pour économiser de l'espace sur les petits écrans. */
+    }
+
+    .whatsapp-button img {
+        width: 35px; /* Réduit la taille de l'icône à 35px pour une meilleure adaptation sur les petits écrans. */
+        height: 35px; /* Réduit la hauteur de l'icône à 35px pour la même raison. */
+    }
+}
+
+
+
 /* Style pour les boutons */
 .btn {
     padding: 10px 20px; /* Ajoute un espacement interne (10px vertical, 20px horizontal). */
@@ -315,26 +396,6 @@ body {
     font-family: Arial, sans-serif; /* Définit la police pour les boutons. */
     transition: background-color 0.2s; /* Ajoute une transition fluide de 0,2s sur la couleur de fond. */
 }
-
-.accept-btn {
-    background-color: #1a73e8; /* Couleur bleue inspirée de Google pour le bouton Accepter. */
-    color: white; /* Texte en blanc sur le bouton Accepter. */
-}
-
-.accept-btn:hover {
-    background-color: #155bb5; /* Change la couleur de fond au survol pour un effet plus foncé. */
-}
-
-.reject-btn {
-    background-color: white; /* Fond blanc pour le bouton Refuser. */
-    color: #1a73e8; /* Texte bleu pour le bouton Refuser. */
-    border: 1px solid #1a73e8; /* Bordure bleue autour du bouton Refuser. */
-}
-
-.reject-btn:hover {
-    background-color: #f1f3f4; /* Change le fond en gris clair au survol pour le bouton Refuser. */
-}
-
 
 /* En-tête du site */
 header {
