@@ -290,21 +290,21 @@ h6{
 }
 
 /* Styles pour les icônes sociales */
-.social-icons {
+.social-icos {
     display: flex; /* Affiche les icônes en ligne */
     justify-content: center; /* Centre les icônes */
     margin-top: 20px; /* Espace au-dessus des icônes */
 }
 
-.social-icon {
+.social-ico {
     margin: 0 10px; /* Espace horizontal entre les icônes */
-    color: #fff; /* Couleur blanche des icônes */
+    color: gray; /* Couleur blanche des icônes */
     font-size: 25px; /* Taille des icônes */
     transition: color 0.3s ease; /* Transition douce pour le changement de couleur */
 }
 
 /* Changement de couleur des icônes au survol */
-.social-icon:hover {
+.social-ico:hover {
     color: #1abc9c; /* Change la couleur des icônes au survol */
 }
 
@@ -379,6 +379,109 @@ h6{
 .pdf-link:hover {
     background-color: #45a049; /* Change la couleur du bouton au survol */
 }
+
+#share-section {
+    text-align: center; /* Centre le contenu du conteneur. */
+    margin: 20px 0; /* Applique une marge de 20px en haut et en bas du conteneur. */
+}
+
+#share-button {
+    background-color: #007bff; /* Définit une couleur de fond bleue pour le bouton. */
+    color: white; /* Change la couleur du texte à blanc pour un bon contraste. */
+    border: none; /* Retire les bordures du bouton. */
+    border-radius: 5px; /* Arrondit légèrement les coins du bouton avec un rayon de 5px. */
+    padding: 10px 20px; /* Ajoute du padding de 10px en haut et en bas, et 20px à gauche et à droite pour un bouton plus large. */
+    font-size: 16px; /* Définit la taille de la police à 16px. */
+    cursor: pointer; /* Change le curseur en forme de main lorsque l'on survole le bouton. */
+    transition: background-color 0.3s; /* Ajoute une transition fluide de 0.3 seconde pour la couleur de fond. */
+}
+
+#share-button:hover {
+    background-color: #0056b3; /* Change la couleur de fond en bleu plus foncé lors du survol. */
+}
+
+/* Styles généraux pour les boutons */
+.social-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #ffffff;
+  border-radius: 50%;
+  padding: 10px;
+  margin: 5px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  transition: background-color 0.3s ease, transform 0.3s ease;
+  text-decoration: none;
+}
+
+.social-button img {
+  width: 40px;
+  height: 40px;
+  object-fit: cover;
+}
+
+/* WhatsApp */
+.whatsapp-button {
+  background-color: #25d366;
+}
+
+.whatsapp-button:hover {
+  background-color: #128c7e;
+  transform: scale(1.1);
+}
+
+/* Facebook */
+.facebook-button {
+  background-color: #1877f2;
+}
+
+.facebook-button:hover {
+  background-color: #155db8;
+  transform: scale(1.1);
+}
+
+/* Twitter */
+.twitter-button {
+  background-color: #ffffff;
+}
+
+.twitter-button:hover {
+  background-color: #0d8ecf;
+  transform: scale(1.1);
+}
+
+/* Instagram */
+.instagram-button {
+  background-color: #e4405f;
+}
+
+.instagram-button:hover {
+  background-color: #d73450;
+  transform: scale(1.1);
+}
+
+/* TikTok */
+.tiktok-button {
+  background-color: #ffffff;
+}
+
+.tiktok-button:hover {
+  background-color: #1f1f1f;
+  transform: scale(1.1);
+}
+
+/* Styles adaptatifs pour les petits écrans */
+@media all and (max-width: 1024px) {
+  .social-button {
+    padding: 8px;
+  }
+
+  .social-button img {
+    width: 35px;
+    height: 35px;
+  }
+}
+
 
 .btn1, .btn2, .btn3, .btn4 {
     width: 50%; /* Largeur fixe des cartes */
