@@ -174,3 +174,30 @@ if ('serviceWorker' in navigator) {
     console.log('Erreur lors de l’enregistrement du Service Worker:', error);
   });
 }
+document.addEventListener("DOMContentLoaded", function () {
+    const shareButton = document.getElementById("share-button");
+
+    shareButton.addEventListener("click", async function () {
+        const siteURL = "https://ibrahim-djime.github.io/diak/"; // Remplacez par votre URL si nécessaire
+
+        if (navigator.share) {
+            try {
+                await navigator.share({
+                    title: "Découvrez ce site",
+                    text: "Visitez ce site incroyable !",
+                    url: siteURL,
+                });
+                console.log("Lien partagé avec succès !");
+            } catch (error) {
+                console.error("Le partage a échoué : ", error);
+            }
+        } else {
+            // Si l'API Web Share n'est pas prise en charge, copier l'URL
+            navigator.clipboard.writeText(siteURL).then(() => {
+                alert("Le lien du site a été copié dans le presse-papier !");
+            }).catch((error) => {
+                console.error("Erreur lors de la copie : ", error);
+            });
+        }
+    });
+});
