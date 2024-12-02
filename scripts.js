@@ -191,13 +191,15 @@ document.addEventListener("DOMContentLoaded", function () {
             } catch (error) {
                 console.error("Le partage a échoué : ", error);
             }
-        } else {
+        } else if (navigator.clipboard) {
             // Si l'API Web Share n'est pas prise en charge, copier l'URL
             navigator.clipboard.writeText(siteURL).then(() => {
                 alert("Le lien du site a été copié dans le presse-papier !");
             }).catch((error) => {
                 console.error("Erreur lors de la copie : ", error);
             });
+        } else {
+            alert("Votre navigateur ne prend pas en charge le partage automatique.");
         }
     });
 });
