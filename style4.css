@@ -923,7 +923,9 @@ h1 {
 
 /* Style général pour chaque bouton social */
 .social-btn {
-    display: inline-block;
+    display: flex;
+  align-items: center;
+  justify-content: center;
     width: 40px;  /* Taille des boutons */
     height: 40px; /* Taille des boutons */
     border-radius: 50%;
@@ -931,6 +933,8 @@ h1 {
     transition: transform 0.3s ease, box-shadow 0.3s ease;
     padding: 6px;
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1); /* Ombre légère */
+    text-decoration: none;
+    flex-wrap: wrap;
 }
 
 /* Styles spécifiques pour chaque plateforme */
