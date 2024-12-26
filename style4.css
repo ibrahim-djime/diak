@@ -736,9 +736,6 @@ h1 {
 
 }
 
-
-
-
 .product-image {
     width: 100%; /* Définit la largeur de l'image pour qu'elle occupe toute la largeur de la carte */
     height: auto; /* Ajuste automatiquement la hauteur de l'image en fonction de sa largeur pour maintenir les proportions */
