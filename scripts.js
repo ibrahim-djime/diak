@@ -176,11 +176,19 @@ if ('serviceWorker' in navigator) {
 }
 document.addEventListener("DOMContentLoaded", function () {
     const shareButton = document.getElementById("share-button");
+    console.log("Script chargé et bouton trouvé :", !!shareButton);
+
+    if (!shareButton) {
+        console.error("Le bouton 'share-button' est introuvable.");
+        return;
+    }
 
     shareButton.addEventListener("click", async function () {
-        const siteURL = "https://ibrahim-djime.github.io/diak/"; // Remplacez par votre URL si nécessaire
+        console.log("Bouton cliqué !");
+        const siteURL = "https://ibrahim-djime.github.io/diak/";
 
         if (navigator.share) {
+            console.log("API Web Share disponible.");
             try {
                 await navigator.share({
                     title: "Découvrez ce site",
@@ -192,13 +200,16 @@ document.addEventListener("DOMContentLoaded", function () {
                 console.error("Le partage a échoué : ", error);
             }
         } else if (navigator.clipboard) {
-            // Si l'API Web Share n'est pas prise en charge, copier l'URL
-            navigator.clipboard.writeText(siteURL).then(() => {
-                alert("Le lien du site a été copié dans le presse-papier !");
-            }).catch((error) => {
-                console.error("Erreur lors de la copie : ", error);
-            });
+            console.log("API Web Share indisponible. Copie dans le presse-papier.");
+            navigator.clipboard.writeText(siteURL)
+                .then(() => {
+                    alert("Le lien du site a été copié dans le presse-papier !");
+                })
+                .catch((error) => {
+                    console.error("Erreur lors de la copie : ", error);
+                });
         } else {
+            console.log("Aucune API de partage disponible.");
             alert("Votre navigateur ne prend pas en charge le partage automatique.");
         }
     });
