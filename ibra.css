@@ -119,6 +119,95 @@ body{
     background: url('images/p02.jpg') no-repeat center center; /* Image de fond */
     background-size: cover; /* L'image couvre entièrement */
 }
+
+/* Container for the search bar and suggestions */
+.search-container {
+    position: relative;
+    width: 100%;
+    max-width: 500px;
+    margin: 20px auto;
+}
+
+/* Search input field styling */
+#search-input {
+    width: 100%;
+    padding: 10px 15px;
+    font-size: 16px;
+    border: 1px solid #ddd;
+    border-radius: 24px;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+    outline: none;
+    box-sizing: border-box;
+    transition: border-color 0.2s;
+}
+
+#search-input:focus {
+    border-color: #007bff;
+}
+
+/* Search button styling */
+#search-button {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    background-color: transparent;
+    border: none;
+    padding: 0 10px;
+    cursor: pointer;
+    outline: none;
+}
+
+#search-button img {
+    width: 20px;
+    height: 20px;
+}
+
+/* Suggestions dropdown styling */
+.suggestions {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 100%;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-top: none;
+    border-radius: 0 0 24px 24px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    max-height: 300px;
+    overflow-y: auto;
+    z-index: 1000;
+    display: none; /* Hidden by default */
+}
+
+/* Individual suggestion item styling */
+.suggestion-item {
+    display: block;
+    padding: 12px 20px;
+    font-size: 16px;
+    color: #333;
+    text-decoration: none;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.suggestion-item:hover {
+    background-color: #f0f0f0;
+}
+
+.suggestion-item:active {
+    background-color: #e0e0e0;
+}
+
+/* Hide suggestions container when empty */
+.suggestions:empty {
+    display: none;
+}
+.suggestion-item.highlighted {
+    background-color: #f0f0f0; /* Couleur de surbrillance */
+    color: #333; /* Couleur du texte */
+}
+
 /* Styles pour le bouton du menu hamburger */
 .menu-icon {
     font-size: 30px; /* Taille de l'icône du menu hamburger */
@@ -353,6 +442,12 @@ h6{
 }
 /* Styles pour les images dans les cartes produit */
 .product-image {
+    width: 50px; /* Taille fixe des images */
+    height: auto; /* Conserve les proportions des images */
+    margin: 0 auto 10px auto; /* Centre les images horizontalement */
+}
+/* Styles pour les images dans les cartes produit */
+.image-produit {
     width: 50px; /* Taille fixe des images */
     height: auto; /* Conserve les proportions des images */
     margin: 0 auto 10px auto; /* Centre les images horizontalement */
