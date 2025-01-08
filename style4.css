@@ -707,52 +707,48 @@ h1 {
     border-bottom: 1px solid #ddd; /* Ajoute une bordure en bas de l'image pour la séparer visuellement du reste du contenu */
     margin-bottom: 15px; /* Ajoute un espace en dessous de l'image pour séparer l'image du texte en dessous */
 }
+
 .product-container {
-    border-radius: 1px black;
+    
+    margin: 20px auto;
+    padding: 2px;
+    background-color: #f9f9f9;
+    border: 1px solid #ddd;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     display: flex;
-    overflow: hidden; /* Masque les cartes qui sortent du conteneur */
-    width: 210px;
-    position: relative;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch; /* pour les appareils mobiles */
+    scroll-snap-type: x mandatory; /* pour un défilement fluide */
+}
+
+.ccontainer{
+    display: flex;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch; /* pour les appareils mobiles */
+    scroll-snap-type: x mandatory; /* pour un défilement fluide */
+}
+.bcard{
+    display: flex;
+    margin: 2px;
+
 }
 .ccard{
-
-    display: flex;
-    width: 200px;
-    animation-duration: 20s;
-    animation-name: mescar;
-    animation-iteration-count: infinite;
-}
-@keyframes mescar {
-    0%{
-        transform: translateX(0);
-    }
-    25%{
-        transform: translateX(-200px);
-    }
-    50%{
-        transform: translateX(-400px);
-    }
-    75%{
-        transform: translateX(-600px);
-    }
-    100%{
-        transform: translateX(0);
-    }
-}
-.product-card {
     background-color: #fff;
-    margin: 2px white;
     border-radius: 5px;
     width: 200px; /* La largeur des cartes reste la même */
-        padding: 20px;
+    height: 400px;
+    padding: 10px;
     box-shadow: 0 2px 5px rgba(0,0,0,0.1);
     text-align: center;
-
+    flex: 0 0 auto; /* pour éviter que les éléments ne soient compressés */
 }
-
 .product-image {
     width: 100%; /* Définit la largeur de l'image pour qu'elle occupe toute la largeur de la carte */
-    height: auto; /* Ajuste automatiquement la hauteur de l'image en fonction de sa largeur pour maintenir les proportions */
+    height: 50%; /* Ajuste automatiquement la hauteur de l'image en fonction de sa largeur pour maintenir les proportions */
     border-bottom: 1px solid #ddd; /* Ajoute une bordure en bas de l'image pour la séparer visuellement du reste du contenu */
     margin-bottom: 15px; /* Ajoute un espace en dessous de l'image pour séparer l'image du texte en dessous */
 }
@@ -846,6 +842,18 @@ h1 {
     word-wrap: break-word; /* Gère les longs textes */
     word-break: break-word; /* Coupe les mots si nécessaire */
 }
+.bouton{
+    text-decoration: none; /* Supprime le soulignement du lien */
+    border-radius: 5px; /* Arrondit les coins du bouton */
+    border: none; /* Supprime les bordures */
+    cursor: pointer; /* Change le curseur pour indiquer un élément cliquable */
+    background-color: #4CAF50;
+    color: #fff;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
 
 .btn {
      background-color: #4CAF50; /* Couleur de fond du bouton (vert par exemple) */
@@ -894,6 +902,10 @@ h1 {
     background-color: black;
 }
 
+.bouton:hover {
+    background-color: #3e8e41;
+}
+
 @media all and (max-width: 1024px) {
       header h1 {
         font-size: 40px; /* Ajuste la taille du texte pour les tablettes et petits écrans */
@@ -905,6 +917,10 @@ h1 {
 
     .card {
         width: 80%; /* Les cartes prennent plus de place sur les tablettes */
+    }
+    
+    .bcard{
+        scroll-snap-align: center; /* pour centrer les éléments */
     }
 
     .scroll-button {
