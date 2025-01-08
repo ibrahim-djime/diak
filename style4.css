@@ -202,8 +202,6 @@ body {
     color: #333; /* Couleur du texte */
 }
 
-
-
 /* Mode sombre */
 .dark-mode {
     background-color: #121212; /* Définit la couleur de fond générale pour le mode sombre en gris très foncé */
@@ -610,6 +608,22 @@ nav ul li:hover > ul {
 .c11, .c21 {
     flex: 1; /* Les images prennent également autant de place que possible */
     max-width: 400px; /* Limite la largeur des images */
+}
+
+.dev {
+    display: flex;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch; /* pour les appareils mobiles */
+    scroll-snap-type: x mandatory; /* pour un défilement fluide */
+}
+
+.pjotodev {
+    margin: 2px;
+    border-radius: 5px;
+    scroll-snap-align: center; /* pour centrer les éléments */
+    flex: 0 0 auto; /* pour éviter que les éléments ne soient compressés */
 }
 .loi {
     font-family: 'Roboto-Regular',Arial, sans-serif; /* Police de caractères par défaut */
