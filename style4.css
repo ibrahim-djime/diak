@@ -752,6 +752,23 @@ h1 {
     border-bottom: 1px solid #ddd; /* Ajoute une bordure en bas de l'image pour la séparer visuellement du reste du contenu */
     margin-bottom: 15px; /* Ajoute un espace en dessous de l'image pour séparer l'image du texte en dessous */
 }
+.synb{
+    font-size: 150px; /* Augmente la taille du symbole */
+    font-weight: bold; /* Met le symbole en gras */
+    color: rgb(92,92,92); /* Change la couleur du symbole (facultatif) */
+    margin: 10px 0; /* Ajoute un peu d'espace autour du symbole */
+}
+.lcard {
+  text-decoration: none;
+}
+
+.lcard h3{
+    font-family: 'NewAmsterdam-Regular','DMSerifText-Regular','Roboto-Regular',Arial, sans-serif; /* Police neutre */
+}
+.lcard .bcard, .lcard .ccard {
+  text-decoration: none;
+}
+
 
 .cmcard{
     display: flex;
