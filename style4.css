@@ -1081,6 +1081,12 @@ border-radius: 10px;
         flex-direction: column; /* Transforme la navigation en une colonne */
     }
 
+.ccard p {
+        font-size: 16px; /* Ajuste la taille du texte pour mobile */
+        margin: 0;
+    }
+
+
     .card {
         width: 80%; /* Les cartes prennent plus de place sur les tablettes */
     }
