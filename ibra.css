@@ -565,6 +565,9 @@ h6{
   color: #fff;
 }
 
+.contcaro{
+    margin: 5px;
+}
 
 /*Caroussel*/
 .caroull {
@@ -633,7 +636,6 @@ border-radius: 10px;
 }
 
 .phtaffi {
-    margin: 2px;
   width:250px;
   height: 250px;
  
@@ -748,7 +750,7 @@ border-radius: 10px;
 
 .btn1, .btn2, .btn3, .btn4 {
     width: 50%; /* Largeur fixe des cartes */
-    height: 20%; /*Hauteur de carte fixe a 60%*/
+    height: 20%; /*Hauteur de carte fixe a 20%*/
     display: inline-block; /* Assure que le lien ait un comportement de bouton */
     padding: 10px 20px; /* Ajoute du remplissage pour donner l'apparence d'un bouton */
     font-size: 14px; /* Taille du texte pour les boutons PDF */
@@ -828,7 +830,7 @@ footer {
     }
     .btn1, .btn2, .btn3, .btn4 {
     width: 50%; /* Largeur fixe des cartes */
-    height: 20%; /*Hauteur de carte fixe a 60%*/
+    height: 20%; /*Hauteur de carte fixe a 20%*/
                                 }
     .btn1:hover {
          width: 50%; /* Largeur fixe des cartes */
