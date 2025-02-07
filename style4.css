@@ -114,6 +114,27 @@ body {
     background: url('images/p02.jpg') no-repeat center center; /* Image de fond */
     background-size: cover; /* L'image couvre entièrement */
 }
+
+/* Conteneur du sélecteur de langue */
+#languageSelector {
+    display: flex; /* Utilise Flexbox pour aligner les éléments horizontalement */
+    align-items: center; /* Centre verticalement les éléments (select et images) */
+    gap: 10px; /* Ajoute un espace de 10px entre chaque élément */
+}
+
+/* Style du menu déroulant de sélection de langue */
+#languageSwitcher {
+    padding: 5px; /* Ajoute un espace intérieur de 5px pour un meilleur rendu */
+}
+
+/* Style des drapeaux */
+#languageSelector img {
+    width: 24px; /* Définit la largeur des images des drapeaux à 24px */
+    height: 16px; /* Définit la hauteur des images des drapeaux à 16px */
+    cursor: pointer; /* Change le curseur en main pour indiquer que c'est cliquable */
+}
+
+
 /* Container for the search bar and suggestions */
 .search-container {
     position: relative;
@@ -966,6 +987,77 @@ border-radius: 10px;
 .social-icon:hover {
     color: rgb(114,165,168); /* Couleur des icônes au survol */
 }
+
+/* Styles généraux pour les boutons */
+.social-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #ffffff;
+  border-radius: 50%;
+  padding: 10px;
+  margin: 5px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  transition: background-color 0.3s ease, transform 0.3s ease;
+  text-decoration: none;
+}
+
+.social-button img {
+  width: 40px;
+  height: 40px;
+  object-fit: cover;
+}
+
+/* WhatsApp */
+.whatsapp-button {
+  background-color: #25d366;
+}
+
+.whatsapp-button:hover {
+  background-color: #128c7e;
+  transform: scale(1.1);
+}
+
+/* Facebook */
+.facebook-button {
+  background-color: #1877f2;
+}
+
+.facebook-button:hover {
+  background-color: #155db8;
+  transform: scale(1.1);
+}
+
+/* Twitter */
+.twitter-button {
+  background-color: #ffffff;
+}
+
+.twitter-button:hover {
+  background-color: #0d8ecf;
+  transform: scale(1.1);
+}
+
+/* Instagram */
+.instagram-button {
+  background-color: #e4405f;
+}
+
+.instagram-button:hover {
+  background-color: #d73450;
+  transform: scale(1.1);
+}
+
+/* TikTok */
+.tiktok-button {
+  background-color: #ffffff;
+}
+
+.tiktok-button:hover {
+  background-color: #1f1f1f;
+  transform: scale(1.1);
+}
+
 /* Styles pour les liens vers des fichiers PDF */
 .pdf-link {
     display: inline-block; /* Assure que le lien ait un comportement de bouton */
@@ -1094,6 +1186,15 @@ border-radius: 10px;
     .bcard{
         scroll-snap-align: center; /* pour centrer les éléments */
     }
+
+    .social-button {
+    padding: 8px;
+  }
+
+  .social-button img {
+    width: 35px;
+    height: 35px;
+  }
 
     .scroll-button {
         width: 60px;
