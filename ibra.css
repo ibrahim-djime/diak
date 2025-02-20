@@ -397,6 +397,33 @@ h6{
     color: #1abc9c; /* Change la couleur des icônes au survol */
 }
 
+.dev {
+    display: flex;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch; /* pour les appareils mobiles */
+    scroll-snap-type: x mandatory; /* pour un défilement fluide */
+}
+
+.pjotodev {
+    margin: 2px;
+    border-radius: 5px;
+    scroll-snap-align: center; /* pour centrer les éléments */
+    flex: 0 0 auto; /* pour éviter que les éléments ne soient compressés */
+}
+
+.noms {
+    font-family: 'PlayfairDisplaySC-Bold', serif;
+    font-size: 24px;
+    color: #333;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    margin: 10px 0;
+}
+
+
+
 /* Conteneur pour organiser les cartes produit */
 .product-container {
     justify-content: space-around; /* Espace égal autour des cartes */
