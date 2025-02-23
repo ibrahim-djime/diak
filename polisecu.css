@@ -130,6 +130,7 @@ body {
     transition: margin-left 0.5s; /* Transition douce pour le décalage lors de l'ouverture de la barre latérale */
     padding: 20px; /* Espacement autour du contenu */
 }
+
         h1 {
            font-size: 60px; /* Taille du texte sur les grands écrans */
     font-family: 'PlayfairDisplaySC-Bold','Roboto-Black', 'Roboto-Rebels', Arial, sans-serif; /* Police principale */
@@ -188,4 +189,93 @@ footer {
 
 .social-icon:hover {
     color: rgb(114,165,168); /* Couleur des icônes au survol */
+}
+
+/* Styles généraux pour les boutons */
+.social-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #ffffff;
+  border-radius: 50%;
+  padding: 10px;
+  margin: 5px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  transition: background-color 0.3s ease, transform 0.3s ease;
+  text-decoration: none;
+}
+
+.social-button img {
+  width: 40px;
+  height: 40px;
+  object-fit: cover;
+}
+
+/* WhatsApp */
+.whatsapp-button {
+  background-color: #25d366;
+}
+
+.whatsapp-button:hover {
+  background-color: #128c7e;
+  transform: scale(1.1);
+}
+
+/* Facebook */
+.facebook-button {
+  background-color: #1877f2;
+}
+
+.facebook-button:hover {
+  background-color: #155db8;
+  transform: scale(1.1);
+}
+
+/* Twitter */
+.twitter-button {
+  background-color: #ffffff;
+}
+
+.twitter-button:hover {
+  background-color: #0d8ecf;
+  transform: scale(1.1);
+}
+
+/* Instagram */
+.instagram-button {
+  background-color: #e4405f;
+}
+
+.instagram-button:hover {
+  background-color: #d73450;
+  transform: scale(1.1);
+}
+
+/* TikTok */
+.tiktok-button {
+  background-color: #ffffff;
+}
+
+.tiktok-button:hover {
+  background-color: #1f1f1f;
+  transform: scale(1.1);
+}
+
+@media all and (max-width: 1024px){
+    header h1 {
+        font-size: 40px; /* Ajuste la taille du texte pour les tablettes et petits écrans */
+    }
+
+    .social-button {
+    padding: 8px;
+  }
+
+  .social-button img {
+    width: 35px;
+    height: 35px;
+  }
+
+        footer {
+        font-size: 14px; /* Ajuste légèrement la taille du texte du pied de page */
+    }
 }
