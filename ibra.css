@@ -180,6 +180,7 @@ body{
     display: none; /* Hidden by default */
 }
 
+
 /* Individual suggestion item styling */
 .suggestion-item {
     display: block;
@@ -399,6 +400,7 @@ h6{
 
 .dev {
     display: flex;
+    align-items: center;
     flex-wrap: nowrap;
     overflow-x: auto;
     overflow-y: hidden;
