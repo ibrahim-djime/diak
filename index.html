@@ -68,7 +68,7 @@ referrerPolicy="no-referrer-when-downgrade"></a></div></noscript>
 <link rel="manifest" href="/manifest.json">
 
 <!-- Feuilles de styles -->
-<link rel="stylesheet" href="style4.css">
+<link rel="stylesheet" href="style41.css">
 
 <link rel="alternate" hreflang="fr" href="index.html">
 <link rel="alternate" hreflang="en" href="index_en.html">
@@ -2860,7 +2860,49 @@ Verification: 983e7a3b50a4c1c3
 </p>
 
 </div>
-        
+       
+
+
+       <!-- POPUP de partage -->
+<div id="popupPartage" class="popup-overlay">
+  <div class="popup-content">
+    <h2>⛔ Accès temporairement bloqué</h2>
+    <p><strong>Pour que je puisse continuer à offrir gratuitement des livres et services utiles,</strong>  
+  <strong>partage ce site sur ton statut Facebook ou WhatsApp.</strong>  
+  <strong>Ton soutien est précieux</strong>  
+  et <strong>me motive à rendre l’accès aux livres toujours plus facile pour tous.</strong><br><br>
+  <em>Ibrahim Djimé Diakité (Sory)</em></p>
+    <a href="https://api.whatsapp.com/send?text=Ce%20site%20m%27a%20aid%C3%A9%20!%20Je%20le%20partage%20avec%20vous%20👉%20https://tonsite.com"
+       target="_blank"
+       onclick="fermerPopup()"
+       class="btn-whatsapp">
+       Partager sur WhatsApp
+    </a>
+  </div>
+</div>
+
+<script>
+  function fermerPopup() {
+    document.getElementById('popupPartage').style.display = 'none';
+    document.body.style.overflow = 'auto';
+  }
+
+  document.addEventListener('DOMContentLoaded', function() {
+    let visites = parseInt(localStorage.getItem('nombreVisites')) || 0;
+    visites++;
+    localStorage.setItem('nombreVisites', visites);
+    console.log('Nombre de visites:', visites);
+
+    if (visites === 3 || (visites > 3 && (visites - 3) % 30 === 0)) {
+      document.getElementById('popupPartage').style.display = 'block';
+      document.body.style.overflow = 'hidden';
+    }
+  });
+</script>
+
+
+
+
             <div id="share-section">
     <button id="share-button">Partager ce site</button>
 </div>
