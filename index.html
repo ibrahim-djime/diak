@@ -218,7 +218,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   import { initializeApp } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-app.js";
   import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
 
-  // 🔸 Initialisation Firebase
+  // === Initialisation Firebase ===
   const firebaseConfig = {
     apiKey: "AIzaSyAClwRQe3g4Cg9CAsn28l_sAihwlMQtGUI",
     authDomain: "lumina-analytics.firebaseapp.com",
@@ -236,12 +236,15 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   const logoutBtn = document.getElementById("logoutBtn");
   const status = document.getElementById("status");
 
-  // 🔹 Fonction overlay connexion
+  // === Fonction overlay connexion ===
   function showOverlay() {
+    if (document.getElementById("overlayConnexion")) return; // éviter doublons
+
     const overlay = document.createElement('div');
+    overlay.id = "overlayConnexion";
     overlay.style.cssText = `
       position:fixed; top:0; left:0; width:100%; height:100%; 
-      background: rgba(0,0,0,0.8); display:flex; flex-direction:column; 
+      background: rgba(0,0,0,0.85); display:flex; flex-direction:column; 
       justify-content:center; align-items:center; color:white; z-index:9999;
     `;
     overlay.innerHTML = `
@@ -256,61 +259,71 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       signInWithPopup(auth, provider).catch(e => console.error(e));
     });
     document.getElementById('quitBtnOverlay').addEventListener('click', () => {
-      window.location.href = 'https://www.google.com'; // ou page d'accueil
+      document.body.removeChild(overlay);
+      window.location.href = 'https://www.google.com';
     });
   }
 
-  // 🔹 Gestion visites par page (2 visites gratuites)
+  // === Supprimer overlay s'il existe ===
+  function removeOverlay() {
+    const overlay = document.getElementById("overlayConnexion");
+    if (overlay) overlay.remove();
+  }
+
+  // === Gestion visites ===
   const pageKey = "visites_" + window.location.pathname;
   const MAX_VISITES = 2;
   let visites = parseInt(localStorage.getItem(pageKey)) || 0;
   visites++;
   localStorage.setItem(pageKey, visites);
 
-  // 🔹 Gestion téléchargements globaux (3 téléchargements gratuites)
+  // === Gestion téléchargements ===
   const downloadKey = "telechargements_gratuits";
   const MAX_DOWNLOADS = 3;
   let downloads = parseInt(localStorage.getItem(downloadKey)) || 0;
 
   document.querySelectorAll('a[target="_blank"]').forEach(link => {
     link.addEventListener('click', (e) => {
-      if(downloads >= MAX_DOWNLOADS) {
-        e.preventDefault();
-        // Affiche overlay uniquement si non connecté
-        onAuthStateChanged(auth, (user) => { if(!user) showOverlay(); });
-      } else {
-        downloads++;
-        localStorage.setItem(downloadKey, downloads);
-      }
+      onAuthStateChanged(auth, (user) => {
+        if (!user && downloads >= MAX_DOWNLOADS) {
+          e.preventDefault();
+          showOverlay();
+        } else {
+          downloads++;
+          localStorage.setItem(downloadKey, downloads);
+        }
+      });
     });
   });
 
-  // 🔹 Gestion état de connexion + vérification overlay pour visites
+  // === Suivi état connexion ===
   onAuthStateChanged(auth, (user) => {
     if (user) {
-      status.innerText = `Connecté : ${user.displayName}`;
+      status.innerText = `✅ Connecté : ${user.displayName}`;
       loginBtn.style.display = "none";
       logoutBtn.style.display = "inline";
+      removeOverlay(); // 💡 Supprime overlay si connecté
     } else {
-      status.innerText = "Non connecté";
+      status.innerText = "❌ Non connecté";
       loginBtn.style.display = "inline";
       logoutBtn.style.display = "none";
 
-      // ⚡ Ne montrer overlay que si limites dépassées ET non connecté
-      if(visites > MAX_VISITES || downloads >= MAX_DOWNLOADS) {
+      if (visites > MAX_VISITES || downloads >= MAX_DOWNLOADS) {
         showOverlay();
       }
     }
   });
 
-  // 🔹 Connexion / Déconnexion
+  // === Connexion / Déconnexion ===
   loginBtn.addEventListener("click", () => {
     signInWithPopup(auth, provider).catch(e => console.error(e));
   });
+
   logoutBtn.addEventListener("click", () => {
     signOut(auth).catch(e => console.error(e));
   });
 </script>
+
 
 
 
