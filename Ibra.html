@@ -107,6 +107,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-app.js";
   import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
+  import { getFirestore, doc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
 
   // === Initialisation Firebase ===
   const firebaseConfig = {
@@ -118,13 +119,32 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     appId: "1:239329398532:web:2f68b196df0c4e6400ca51",
     measurementId: "G-J7LLPRXLJH"
   };
+
   const app = initializeApp(firebaseConfig);
   const auth = getAuth(app);
   const provider = new GoogleAuthProvider();
+  const db = getFirestore(app);
 
   const loginBtn = document.getElementById("loginBtn");
   const logoutBtn = document.getElementById("logoutBtn");
   const status = document.getElementById("status");
+
+  // === Fonction pour récupérer la localisation ===
+  async function getUserLocation() {
+    try {
+      const response = await fetch("https://ipapi.co/json/");
+      const data = await response.json();
+      return {
+        pays: data.country_name,
+        ville: data.city,
+        region: data.region,
+        ip: data.ip
+      };
+    } catch (e) {
+      console.error("Erreur localisation:", e);
+      return { pays: "Inconnu", ville: "Inconnue", region: "Inconnue", ip: "Inconnue" };
+    }
+  }
 
   // === Fonction overlay connexion ===
   function showOverlay() {
@@ -187,12 +207,24 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   });
 
   // === Suivi état connexion ===
-  onAuthStateChanged(auth, (user) => {
+  onAuthStateChanged(auth, async (user) => {
     if (user) {
       status.innerText = `✅ Connecté : ${user.displayName}`;
       loginBtn.style.display = "none";
       logoutBtn.style.display = "inline";
-      removeOverlay(); // 💡 Supprime overlay si connecté
+      removeOverlay();
+
+      // 🔹 Récupérer localisation et enregistrer dans Firestore
+      const loc = await getUserLocation();
+      await setDoc(doc(db, "utilisateurs", user.uid), {
+        nom: user.displayName,
+        email: user.email,
+        photo: user.photoURL,
+        derniereConnexion: serverTimestamp(),
+        localisation: loc
+      }, { merge: true });
+      console.log("Utilisateur enregistré :", user.email, loc);
+
     } else {
       status.innerText = "❌ Non connecté";
       loginBtn.style.display = "inline";
@@ -213,6 +245,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     signOut(auth).catch(e => console.error(e));
   });
 </script>
+
 
 
 
