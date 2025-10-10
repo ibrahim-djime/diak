@@ -53,6 +53,61 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         <p class="loi">Si vous êtes le titulaire des droits d'auteur d'une œuvre publiée sur notre site et que vous souhaitez qu'elle soit retirée, veuillez nous contacter au :00223 76-85-66-31.<br /> Nous retirons le contenu concerné dès réception de votre demande.</p>
     </header>
 
+    <p id="status">Non connecté</p>
+<button id="loginBtn">Se connecter</button>
+<button id="logoutBtn">Se déconnecter</button>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-app.js";
+  import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyAClwRQe3g4Cg9CAsn28l_sAihwlMQtGUI",
+    authDomain: "lumina-analytics.firebaseapp.com",
+    projectId: "lumina-analytics",
+    storageBucket: "lumina-analytics.appspot.com",
+    messagingSenderId: "239329398532",
+    appId: "1:239329398532:web:2f68b196df0c4e6400ca51",
+    measurementId: "G-J7LLPRXLJH"
+  };
+
+  // Initialisation Firebase
+  const app = initializeApp(firebaseConfig);
+
+  const auth = getAuth(app);
+  const provider = new GoogleAuthProvider();
+
+  const loginBtn = document.getElementById("loginBtn");
+  const logoutBtn = document.getElementById("logoutBtn");
+  const status = document.getElementById("status");
+
+  // 🔹 Vérifie l'état de l'utilisateur à chaque chargement de page
+  onAuthStateChanged(auth, (user) => {
+    if (user) {
+      status.innerText = `Connecté : ${user.displayName}`;
+      loginBtn.style.display = "none";
+      logoutBtn.style.display = "inline";
+    } else {
+      status.innerText = "Non connecté";
+      loginBtn.style.display = "inline";
+      logoutBtn.style.display = "none";
+    }
+  });
+
+  // 🔹 Connexion
+  loginBtn.addEventListener("click", () => {
+    signInWithPopup(auth, provider)
+      .catch((error) => console.error("Erreur :", error.message));
+  });
+
+  // 🔹 Déconnexion
+  logoutBtn.addEventListener("click", () => {
+    signOut(auth)
+      .catch((error) => console.error("Erreur de déconnexion :", error.message));
+  });
+</script>
+
+
     <main>
         <section id="#Presentation" class="container">
             <div class="section">
