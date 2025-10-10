@@ -210,6 +210,10 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <a href="index_en.html"><img src="icone/en.png" alt="English"></a>
 </div>
 
+ <h1>Connexion avec Google</h1>
+    <button id="loginBtn">Se connecter avec Google</button>
+    <button id="logoutBtn">Se déconnecter</button>
+    <p id="status">Non connecté</p>
 
     <main>
 <div class="search-container">
@@ -4300,7 +4304,33 @@ initializeAllCookies();
   const app = initializeApp(firebaseConfig);
   const analytics = getAnalytics(app);
 
-  // Ensuite tu pourras ajouter d’autres services ici : Firestore, Auth, Storage…
+  //🔸 Authentification Google
+      const auth = getAuth(app);
+      const provider = new GoogleAuthProvider();
+
+      // Bouton de connexion
+      document.getElementById("loginBtn").addEventListener("click", () => {
+        signInWithPopup(auth, provider)
+          .then((result) => {
+            const user = result.user;
+            document.getElementById("status").innerText = `Connecté : ${user.displayName}`;
+            console.log("Utilisateur :", user);
+          })
+          .catch((error) => {
+            console.error("Erreur :", error.message);
+          });
+      });
+
+      // Bouton de déconnexion
+      document.getElementById("logoutBtn").addEventListener("click", () => {
+        signOut(auth)
+          .then(() => {
+            document.getElementById("status").innerText = "Déconnecté";
+          })
+          .catch((error) => {
+            console.error("Erreur de déconnexion :", error.message);
+          });
+      });
 </script>
 
 </body>
