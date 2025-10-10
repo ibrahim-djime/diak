@@ -209,60 +209,104 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <a href="index.html"><img src="icone/fr.png" alt="French"></a>
     <a href="index_en.html"><img src="icone/en.png" alt="English"></a>
 </div>
+<h1>Connexion avec Google</h1>
+<button id="loginBtn">Se connecter</button>
+<button id="logoutBtn">Se déconnecter</button>
+<p id="status">Non connecté</p>
 
- <h1>Connexion avec Google</h1>
-    <button id="loginBtn">Se connecter</button>
-    <button id="logoutBtn">Se déconnecter</button>
-    <p id="status">Non connecté</p>
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-app.js";
+  import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
 
+  // 🔸 Initialisation Firebase
+  const firebaseConfig = {
+    apiKey: "AIzaSyAClwRQe3g4Cg9CAsn28l_sAihwlMQtGUI",
+    authDomain: "lumina-analytics.firebaseapp.com",
+    projectId: "lumina-analytics",
+    storageBucket: "lumina-analytics.appspot.com",
+    messagingSenderId: "239329398532",
+    appId: "1:239329398532:web:2f68b196df0c4e6400ca51",
+    measurementId: "G-J7LLPRXLJH"
+  };
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const provider = new GoogleAuthProvider();
 
-    <script type="module">
-      import { initializeApp } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-app.js";
-      import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-analytics.js";
-      import { getAuth, signInWithPopup, GoogleAuthProvider, signOut } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
+  const loginBtn = document.getElementById("loginBtn");
+  const logoutBtn = document.getElementById("logoutBtn");
+  const status = document.getElementById("status");
 
-      const firebaseConfig = {
-        apiKey: "AIzaSyAClwRQe3g4Cg9CAsn28l_sAihwlMQtGUI",
-        authDomain: "lumina-analytics.firebaseapp.com",
-        projectId: "lumina-analytics",
-        storageBucket: "lumina-analytics.appspot.com",
-        messagingSenderId: "239329398532",
-        appId: "1:239329398532:web:2f68b196df0c4e6400ca51",
-        measurementId: "G-J7LLPRXLJH"
-      };
+  // 🔹 Gestion état de connexion
+  onAuthStateChanged(auth, (user) => {
+    if (user) {
+      status.innerText = `Connecté : ${user.displayName}`;
+      loginBtn.style.display = "none";
+      logoutBtn.style.display = "inline";
+    } else {
+      status.innerText = "Non connecté";
+      loginBtn.style.display = "inline";
+      logoutBtn.style.display = "none";
+    }
+  });
 
-      // 🔸 Initialisation Firebase
-      const app = initializeApp(firebaseConfig);
-      const analytics = getAnalytics(app);
+  loginBtn.addEventListener("click", () => {
+    signInWithPopup(auth, provider).catch(e => console.error(e));
+  });
 
-      // 🔸 Authentification Google
-      const auth = getAuth(app);
-      const provider = new GoogleAuthProvider();
+  logoutBtn.addEventListener("click", () => {
+    signOut(auth).catch(e => console.error(e));
+  });
 
-      // Bouton de connexion
-      document.getElementById("loginBtn").addEventListener("click", () => {
-        signInWithPopup(auth, provider)
-          .then((result) => {
-            const user = result.user;
-            document.getElementById("status").innerText = `Connecté : ${user.displayName}`;
-            console.log("Utilisateur :", user);
-          })
-          .catch((error) => {
-            console.error("Erreur :", error.message);
-          });
-      });
+  // 🔹 Fonction overlay connexion
+  function showOverlay() {
+    const overlay = document.createElement('div');
+    overlay.style.cssText = `
+      position:fixed; top:0; left:0; width:100%; height:100%; 
+      background: rgba(0,0,0,0.8); display:flex; flex-direction:column; 
+      justify-content:center; align-items:center; color:white; z-index:9999;
+    `;
+    overlay.innerHTML = `
+      <h2>Connexion requise</h2>
+      <p>Vous avez atteint votre limite. Veuillez vous connecter ou quitter.</p>
+      <button id="loginBtnOverlay">Se connecter</button>
+      <button id="quitBtnOverlay">Quitter</button>
+    `;
+    document.body.appendChild(overlay);
 
-      // Bouton de déconnexion
-      document.getElementById("logoutBtn").addEventListener("click", () => {
-        signOut(auth)
-          .then(() => {
-            document.getElementById("status").innerText = "Déconnecté";
-          })
-          .catch((error) => {
-            console.error("Erreur de déconnexion :", error.message);
-          });
-      });
-    </script>
+    document.getElementById('loginBtnOverlay').addEventListener('click', () => {
+      signInWithPopup(auth, provider).catch(e => console.error(e));
+    });
+    document.getElementById('quitBtnOverlay').addEventListener('click', () => {
+      window.location.href = 'https://www.google.com'; // ou page d'accueil
+    });
+  }
+
+  // 🔹 Gestion visites par page (2 visites gratuites)
+  const pageKey = "visites_" + window.location.pathname;
+  const MAX_VISITES = 2;
+  let visites = parseInt(localStorage.getItem(pageKey)) || 0;
+  visites++;
+  localStorage.setItem(pageKey, visites);
+  if (visites > MAX_VISITES) showOverlay();
+
+  // 🔹 Gestion téléchargements globaux (3 téléchargements gratuits)
+  const downloadKey = "telechargements_gratuits";
+  const MAX_DOWNLOADS = 3;
+  let downloads = parseInt(localStorage.getItem(downloadKey)) || 0;
+
+  document.querySelectorAll('a[target="_blank"]').forEach(link => {
+    link.addEventListener('click', (e) => {
+      if(downloads >= MAX_DOWNLOADS) {
+        e.preventDefault();
+        showOverlay();
+      } else {
+        downloads++;
+        localStorage.setItem(downloadKey, downloads);
+      }
+    });
+  });
+</script>
+
 
 
 
