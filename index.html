@@ -215,6 +215,57 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <button id="logoutBtn">Se déconnecter</button>
     <p id="status">Non connecté</p>
 
+
+    <script type="module">
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-app.js";
+      import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-analytics.js";
+      import { getAuth, signInWithPopup, GoogleAuthProvider, signOut } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
+
+      const firebaseConfig = {
+        apiKey: "AIzaSyAClwRQe3g4Cg9CAsn28l_sAihwlMQtGUI",
+        authDomain: "lumina-analytics.firebaseapp.com",
+        projectId: "lumina-analytics",
+        storageBucket: "lumina-analytics.appspot.com",
+        messagingSenderId: "239329398532",
+        appId: "1:239329398532:web:2f68b196df0c4e6400ca51",
+        measurementId: "G-J7LLPRXLJH"
+      };
+
+      // 🔸 Initialisation Firebase
+      const app = initializeApp(firebaseConfig);
+      const analytics = getAnalytics(app);
+
+      // 🔸 Authentification Google
+      const auth = getAuth(app);
+      const provider = new GoogleAuthProvider();
+
+      // Bouton de connexion
+      document.getElementById("loginBtn").addEventListener("click", () => {
+        signInWithPopup(auth, provider)
+          .then((result) => {
+            const user = result.user;
+            document.getElementById("status").innerText = `Connecté : ${user.displayName}`;
+            console.log("Utilisateur :", user);
+          })
+          .catch((error) => {
+            console.error("Erreur :", error.message);
+          });
+      });
+
+      // Bouton de déconnexion
+      document.getElementById("logoutBtn").addEventListener("click", () => {
+        signOut(auth)
+          .then(() => {
+            document.getElementById("status").innerText = "Déconnecté";
+          })
+          .catch((error) => {
+            console.error("Erreur de déconnexion :", error.message);
+          });
+      });
+    </script>
+
+
+
     <main>
 <div class="search-container">
     <input type="text" id="search-input" placeholder="Rechercher..." autocomplete="off">
@@ -4286,53 +4337,7 @@ initializeAllCookies();
         </div>
         <p>&copy; 2025 Ibrahim Djimé Diakité. Tous droits réservés.</p>
     </footer>
-    <script type="module">
-      import { initializeApp } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-app.js";
-      import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-analytics.js";
-      import { getAuth, signInWithPopup, GoogleAuthProvider, signOut } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
-
-      const firebaseConfig = {
-        apiKey: "AIzaSyAClwRQe3g4Cg9CAsn28l_sAihwlMQtGUI",
-        authDomain: "lumina-analytics.firebaseapp.com",
-        projectId: "lumina-analytics",
-        storageBucket: "lumina-analytics.appspot.com",
-        messagingSenderId: "239329398532",
-        appId: "1:239329398532:web:2f68b196df0c4e6400ca51",
-        measurementId: "G-J7LLPRXLJH"
-      };
-
-      // 🔸 Initialisation Firebase
-      const app = initializeApp(firebaseConfig);
-      const analytics = getAnalytics(app);
-
-      // 🔸 Authentification Google
-      const auth = getAuth(app);
-      const provider = new GoogleAuthProvider();
-
-      // Bouton de connexion
-      document.getElementById("loginBtn").addEventListener("click", () => {
-        signInWithPopup(auth, provider)
-          .then((result) => {
-            const user = result.user;
-            document.getElementById("status").innerText = `Connecté : ${user.displayName}`;
-            console.log("Utilisateur :", user);
-          })
-          .catch((error) => {
-            console.error("Erreur :", error.message);
-          });
-      });
-
-      // Bouton de déconnexion
-      document.getElementById("logoutBtn").addEventListener("click", () => {
-        signOut(auth)
-          .then(() => {
-            document.getElementById("status").innerText = "Déconnecté";
-          })
-          .catch((error) => {
-            console.error("Erreur de déconnexion :", error.message);
-          });
-      });
-    </script>
+    
 
 </body>
 </html>
