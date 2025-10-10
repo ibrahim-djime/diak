@@ -126,32 +126,8 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   const logoutBtn = document.getElementById("logoutBtn");
   const status = document.getElementById("status");
 
-  // 🔹 Gestion état de connexion
-  onAuthStateChanged(auth, (user) => {
-    if (user) {
-      status.innerText = `Connecté : ${user.displayName}`;
-      loginBtn.style.display = "none";
-      logoutBtn.style.display = "inline";
-    } else {
-      status.innerText = "Non connecté";
-      loginBtn.style.display = "inline";
-      logoutBtn.style.display = "none";
-    }
-  });
-
-  loginBtn.addEventListener("click", () => {
-    signInWithPopup(auth, provider).catch(e => console.error(e));
-  });
-
-  logoutBtn.addEventListener("click", () => {
-    signOut(auth).catch(e => console.error(e));
-  });
-
   // 🔹 Fonction overlay connexion
   function showOverlay() {
-    // ⚡ ne rien afficher si l'utilisateur est déjà connecté
-    if (auth.currentUser) return;
-
     const overlay = document.createElement('div');
     overlay.style.cssText = `
       position:fixed; top:0; left:0; width:100%; height:100%; 
@@ -180,9 +156,8 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   let visites = parseInt(localStorage.getItem(pageKey)) || 0;
   visites++;
   localStorage.setItem(pageKey, visites);
-  if (visites > MAX_VISITES) showOverlay();
 
-  // 🔹 Gestion téléchargements globaux (3 téléchargements gratuits)
+  // 🔹 Gestion téléchargements globaux (3 téléchargements gratuites)
   const downloadKey = "telechargements_gratuits";
   const MAX_DOWNLOADS = 3;
   let downloads = parseInt(localStorage.getItem(downloadKey)) || 0;
@@ -191,12 +166,39 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     link.addEventListener('click', (e) => {
       if(downloads >= MAX_DOWNLOADS) {
         e.preventDefault();
-        showOverlay();
+        // Affiche overlay uniquement si non connecté
+        onAuthStateChanged(auth, (user) => { if(!user) showOverlay(); });
       } else {
         downloads++;
         localStorage.setItem(downloadKey, downloads);
       }
     });
+  });
+
+  // 🔹 Gestion état de connexion + vérification overlay pour visites
+  onAuthStateChanged(auth, (user) => {
+    if (user) {
+      status.innerText = `Connecté : ${user.displayName}`;
+      loginBtn.style.display = "none";
+      logoutBtn.style.display = "inline";
+    } else {
+      status.innerText = "Non connecté";
+      loginBtn.style.display = "inline";
+      logoutBtn.style.display = "none";
+
+      // ⚡ Ne montrer overlay que si limites dépassées ET non connecté
+      if(visites > MAX_VISITES || downloads >= MAX_DOWNLOADS) {
+        showOverlay();
+      }
+    }
+  });
+
+  // 🔹 Connexion / Déconnexion
+  loginBtn.addEventListener("click", () => {
+    signInWithPopup(auth, provider).catch(e => console.error(e));
+  });
+  logoutBtn.addEventListener("click", () => {
+    signOut(auth).catch(e => console.error(e));
   });
 </script>
 
