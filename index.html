@@ -4287,24 +4287,25 @@ initializeAllCookies();
         <p>&copy; 2025 Ibrahim Djimé Diakité. Tous droits réservés.</p>
     </footer>
     <script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-app.js";
-  import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-analytics.js";
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-app.js";
+      import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-analytics.js";
+      import { getAuth, signInWithPopup, GoogleAuthProvider, signOut } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
 
-  const firebaseConfig = {
-    apiKey: "AIzaSyAClwRQe3g4Cg9CAsn28l_sAihwlMQtGUI",
-    authDomain: "lumina-analytics.firebaseapp.com",
-    projectId: "lumina-analytics",
-    storageBucket: "lumina-analytics.appspot.com", // corrigé
-    messagingSenderId: "239329398532",
-    appId: "1:239329398532:web:2f68b196df0c4e6400ca51",
-    measurementId: "G-J7LLPRXLJH"
-  };
+      const firebaseConfig = {
+        apiKey: "AIzaSyAClwRQe3g4Cg9CAsn28l_sAihwlMQtGUI",
+        authDomain: "lumina-analytics.firebaseapp.com",
+        projectId: "lumina-analytics",
+        storageBucket: "lumina-analytics.appspot.com",
+        messagingSenderId: "239329398532",
+        appId: "1:239329398532:web:2f68b196df0c4e6400ca51",
+        measurementId: "G-J7LLPRXLJH"
+      };
 
-  // Initialiser Firebase
-  const app = initializeApp(firebaseConfig);
-  const analytics = getAnalytics(app);
+      // 🔸 Initialisation Firebase
+      const app = initializeApp(firebaseConfig);
+      const analytics = getAnalytics(app);
 
-  //🔸 Authentification Google
+      // 🔸 Authentification Google
       const auth = getAuth(app);
       const provider = new GoogleAuthProvider();
 
@@ -4331,7 +4332,7 @@ initializeAllCookies();
             console.error("Erreur de déconnexion :", error.message);
           });
       });
-</script>
+    </script>
 
 </body>
 </html>
