@@ -49,6 +49,61 @@ referrerPolicy="no-referrer-when-downgrade"></a></div></noscript>
         <h1>Conditions d'utilisation</h1>
         
     </header>
+
+    <p id="status">Non connecté</p>
+<button id="loginBtn">Se connecter</button>
+<button id="logoutBtn">Se déconnecter</button>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-app.js";
+  import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyAClwRQe3g4Cg9CAsn28l_sAihwlMQtGUI",
+    authDomain: "lumina-analytics.firebaseapp.com",
+    projectId: "lumina-analytics",
+    storageBucket: "lumina-analytics.appspot.com",
+    messagingSenderId: "239329398532",
+    appId: "1:239329398532:web:2f68b196df0c4e6400ca51",
+    measurementId: "G-J7LLPRXLJH"
+  };
+
+  // Initialisation Firebase
+  const app = initializeApp(firebaseConfig);
+
+  const auth = getAuth(app);
+  const provider = new GoogleAuthProvider();
+
+  const loginBtn = document.getElementById("loginBtn");
+  const logoutBtn = document.getElementById("logoutBtn");
+  const status = document.getElementById("status");
+
+  // 🔹 Vérifie l'état de l'utilisateur à chaque chargement de page
+  onAuthStateChanged(auth, (user) => {
+    if (user) {
+      status.innerText = `Connecté : ${user.displayName}`;
+      loginBtn.style.display = "none";
+      logoutBtn.style.display = "inline";
+    } else {
+      status.innerText = "Non connecté";
+      loginBtn.style.display = "inline";
+      logoutBtn.style.display = "none";
+    }
+  });
+
+  // 🔹 Connexion
+  loginBtn.addEventListener("click", () => {
+    signInWithPopup(auth, provider)
+      .catch((error) => console.error("Erreur :", error.message));
+  });
+
+  // 🔹 Déconnexion
+  logoutBtn.addEventListener("click", () => {
+    signOut(auth)
+      .catch((error) => console.error("Erreur de déconnexion :", error.message));
+  });
+</script>
+
     
     <p>Bienvenue sur le site <a href="index.html" class="site">Lumesys</a>. En utilisant ce site web, vous acceptez les conditions d'utilisation décrites ci-dessous. Veuillez lire attentivement ces termes avant d'utiliser nos services.</p>
 
