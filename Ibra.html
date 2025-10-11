@@ -216,7 +216,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
       // 🔹 Récupérer localisation et enregistrer dans Firestore
       const loc = await getUserLocation();
-      await setDoc(doc(db, "utilisateurs", user.uid), {
+      await setDoc(doc(db, "utilisateurs", user.email), {
         nom: user.displayName,
         email: user.email,
         photo: user.photoURL,
