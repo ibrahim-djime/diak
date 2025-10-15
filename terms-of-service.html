@@ -57,6 +57,7 @@ referrerPolicy="no-referrer-when-downgrade"></a></div></noscript>
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-app.js";
   import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
+  import { getFirestore, doc, setDoc, getDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
 
   // === Initialisation Firebase ===
   const firebaseConfig = {
@@ -68,17 +69,36 @@ referrerPolicy="no-referrer-when-downgrade"></a></div></noscript>
     appId: "1:239329398532:web:2f68b196df0c4e6400ca51",
     measurementId: "G-J7LLPRXLJH"
   };
+
   const app = initializeApp(firebaseConfig);
   const auth = getAuth(app);
   const provider = new GoogleAuthProvider();
+  const db = getFirestore(app);
 
   const loginBtn = document.getElementById("loginBtn");
   const logoutBtn = document.getElementById("logoutBtn");
   const status = document.getElementById("status");
 
+  // === Fonction pour récupérer la localisation ===
+  async function getUserLocation() {
+    try {
+      const response = await fetch("https://ipapi.co/json/");
+      const data = await response.json();
+      return {
+        pays: data.country_name,
+        ville: data.city,
+        region: data.region,
+        ip: data.ip
+      };
+    } catch (e) {
+      console.error("Erreur localisation:", e);
+      return { pays: "Inconnu", ville: "Inconnue", region: "Inconnue", ip: "Inconnue" };
+    }
+  }
+
   // === Fonction overlay connexion ===
   function showOverlay() {
-    if (document.getElementById("overlayConnexion")) return; // éviter doublons
+    if (document.getElementById("overlayConnexion")) return;
 
     const overlay = document.createElement('div');
     overlay.id = "overlayConnexion";
@@ -136,13 +156,46 @@ referrerPolicy="no-referrer-when-downgrade"></a></div></noscript>
     });
   });
 
-  // === Suivi état connexion ===
-  onAuthStateChanged(auth, (user) => {
+  // === Suivi état connexion avec nombreConnexions et badge ===
+  onAuthStateChanged(auth, async (user) => {
     if (user) {
       status.innerText = `✅ Connecté : ${user.displayName}`;
       loginBtn.style.display = "none";
       logoutBtn.style.display = "inline";
-      removeOverlay(); // 💡 Supprime overlay si connecté
+      removeOverlay();
+
+      // 🔹 Récupérer localisation
+      const loc = await getUserLocation();
+
+      // 🔹 Récupérer l'ancien doc utilisateur s'il existe
+      const userRef = doc(db, "utilisateurs", user.email);
+      const userSnap = await getDoc(userRef);
+      let nombreConnexions = 1; // par défaut première connexion
+      let badge = "Nouveau";
+
+      if (userSnap.exists()) {
+        const data = userSnap.data();
+        nombreConnexions = (data.nombreConnexions || 0) + 1;
+
+        // Définition du badge selon règles
+        if (nombreConnexions >= 50) badge = "Contributeur";
+        else if (nombreConnexions >= 10) badge = "Fidèle";
+        else badge = "Nouveau";
+      }
+
+      // 🔹 Mise à jour Firestore
+      await setDoc(userRef, {
+        nom: user.displayName,
+        email: user.email,
+        photo: user.photoURL,
+        derniereConnexion: serverTimestamp(),
+        localisation: loc,
+        nombreConnexions,
+        badge
+      }, { merge: true });
+
+      console.log("Utilisateur enregistré :", user.email, loc, nombreConnexions, badge);
+
     } else {
       status.innerText = "❌ Non connecté";
       loginBtn.style.display = "inline";
