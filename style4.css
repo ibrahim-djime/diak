@@ -107,7 +107,7 @@
 
 /* Styles de base pour le corps de la page */
 body {
-    font-family: Arial, sans-serif; /* Police de caractères par défaut */
+       font-family: Arial, sans-serif; /* Police de caractères par défaut */
     margin: 0; /* Supprime la marge par défaut */
     padding: 0; /* Supprime le padding par défaut */
     background-color: #f4f4f4; /* Couleur de fond */
@@ -115,12 +115,436 @@ body {
     background-size: cover; /* L'image couvre entièrement */
 }
 
+main {
+    margin-top: 0 !important;
+    padding-top: 0 !important;
+}
+
+
+@media (min-width: 1024px) {
+/* === BARRE DE NAVIGATION === */ /* Titre de section pour la barre de navigation */
+header.navbar { /* Sélecteur de l’en-tête avec classe navbar */
+  position: relative; /* Fixe la barre en haut de la page */
+  top: 0; /* Positionnée tout en haut */
+  width: 100%; /* Prend toute la largeur */
+    display: flex; /* Utilise un conteneur flex */
+  align-items: center; /* Centre verticalement le contenu */
+  padding: 6px 12px; /* Espacement interne horizontal et vertical */
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1); /* Ajoute une ombre légère en bas */
+  z-index: 1000; /* Met la barre au-dessus des autres éléments */
+  font-family: "Segoe UI", Arial, sans-serif; /* Police du texte utilisée */
+}
+
+.navbar {
+  background: linear-gradient(270deg,
+    #fdfcfb,  /* Blanc cassé */
+    #f7f3e9,  /* Crème doux */
+    #f0ebe0,  /* Beige rosé */
+    #dfeffb,  /* Bleu très pâle */
+    #c7e7fb,  /* Bleu clair */
+    #b4dcf8,  /* Bleu azur pastel */
+    #cae9ff,  /* Bleu ciel nacré */
+    #fdfcfb   /* Retour blanc crème */
+  );
+  background-size: 800% 800%;
+  animation: gradientMove 180s ease-in-out infinite;
+  color: #222; /* Texte foncé pour bon contraste */
+  transition: all 0.3s ease;
+}
+
+/* Animation fluide du dégradé */
+@keyframes gradientMove {
+  0%   { background-position: 0% 50%; }
+  50%  { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+
+/* === LOGO === */ /* Section pour le style du logo */
+.logo { /* Conteneur du logo */
+  display: flex; /* Utilise flexbox */
+  align-items: center; /* Aligne le contenu verticalement */
+  gap: 8px; /* Espacement entre les éléments internes */
+  flex: 1; /* Prend une portion flexible dans le parent */
+}
+.logo-img {
+  height: 5em;
+  animation: logoFade 60s linear infinite;
+}
+
+@keyframes logoFade {
+  0%, 79%   { opacity: 1; }   /* visible */
+  80%, 100% { opacity: 0; }   /* fondu sur 2s à partir de 8s jusqu'à 10s */
+}
+
+.logo-text { /* Style pour le texte du logo */
+    font-family: 'PlayfairDisplaySC-Bold','Roboto-Black', 'Roboto-Rebels', Arial, sans-serif; /* Police principale */
+  font-weight: bold; /* Met le texte en gras */
+  font-size: 4em; /* Taille de police grande */
+  }
+
+  /* --- Texte du logo avec effet magique --- */
+.logo-text {
+  font-family: 'PlayfairDisplaySC-Bold', 'Roboto-Black', 'Robot-Rebels', Arial, sans-serif;
+  font-weight: 700;
+  font-size: 4em;
+  background: linear-gradient(270deg,
+    #4a4a4a,  /* Gris profond */
+    #2c3e50,  /* Gris-bleu foncé */
+    #1b66c9,  /* Bleu intense */
+    #345678,  /* Bleu acier */
+    #4a4a4a   /* Retour gris */
+  );
+  background-size: 400% 400%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: textGradientMove 180s ease-in-out infinite;
+}
+
+/* Animation du texte (plus rapide pour un effet vivant) */
+@keyframes textGradientMove {
+  0%   { background-position: 0% 50%; }
+  50%  { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+
+/* === BARRE CENTRALE (icônes principales) === */ /* Partie centrale de la navbar */
+.navbar-center { /* Conteneur des icônes principales */
+  display: flex; /* Active le modèle flexbox */
+  justify-content: center; /* Centre horizontalement les icônes */
+  align-items: center; /* Centre verticalement */
+  flex: 2; /* Occupe plus d’espace que le logo */
+  height: 60px; /* Hauteur fixe */
+}
+.navbar-center ul { /* Liste des icônes principales */
+  display: flex; /* Affiche les icônes en ligne */
+  gap: 36px; /* Espacement entre les icônes */
+  list-style: none; /* Supprime les puces */
+  margin: 0; /* Supprime les marges */
+  padding: 0; /* Supprime les espacements internes */
+}
+.navbar-center li.nav-item { /* Élément individuel de la liste */
+  display: flex; /* Flex pour aligner le contenu */
+  align-items: center; /* Centrage vertical */
+  justify-content: center; /* Centrage horizontal */
+}
+
+/* === ICÔNES === */ /* Style des boutons/icônes */
+.nav-button { /* Bouton de navigation */
+  display: flex; /* Active flexbox */
+  flex-direction: column; /* Empile l’icône et le texte verticalement */
+  align-items: center; /* Centre horizontalement */
+  justify-content: center; /* Centre verticalement */
+  text-align: center; /* Centre le texte */
+  gap: 4px; /* Espacement entre l’icône et le texte */
+  padding: 6px; /* Espacement interne */
+  border-radius: 8px; /* Coins arrondis */
+  transition: background 0.2s ease; /* Animation douce au survol */
+  font-size: 0.9em; /* Taille de police réduite */
+  color: rgb(0,43,85); /* Couleur bleue du texte */
+   transition: background 0.2s ease, color 0.2s ease, transform 0.2s ease; /* Ajout de transform */
+  font-weight: 500; /* Poids de texte moyen */
+  width: auto; /* Largeur automatique */
+  height: auto; /* Hauteur automatique */
+}
+.nav-button:hover { /* Effet au survol du bouton */
+    color: #1b66c9;
+  background-color: #e7f3ff; /* Change la couleur de fond */
+  cursor: pointer; /* Curseur main */
+  transform: scale(1.05); /* Augmentation de 5% */
+}
+.nav-icon { /* Icône d’un bouton */
+  width: 26px; /* Largeur de l’icône */
+  height: 26px; /* Hauteur de l’icône */
+  /* Couleur via filtre pour atteindre rgb(0, 43, 85) */
+  filter: invert(23%) sepia(53%) saturate(612%) hue-rotate(178deg) brightness(78%) contrast(88%);
+  
+  transition: transform 0.2s ease, filter 0.3s; /* Animation fluide */
+}
+
+.nav-icon:hover { /* Effet au survol d’une icône */
+  transform: scale(1.15); /* Légère augmentation de taille */
+  filter: invert(36%) sepia(99%) saturate(2104%) hue-rotate(191deg) brightness(102%) contrast(98%); /* Ajustement de teinte */
+}
+
+/* === DROPDOWN === */ /* Style du menu déroulant */
+.nav-item.dropdown { /* Élément ayant un sous-menu */
+  position: relative; /* Positionne le sous-menu par rapport à l’élément */
+  transition: all 0.2s ease; /* Animation douce */
+}.dropdown-content { /* Conteneur du contenu déroulant */
+  position: absolute; /* Positionné par rapport au parent */
+  top: calc(100% ); /* Juste sous le bouton principal */
+  left: 50%; /* Centré horizontalement */
+  transform: translateX(-50%); /* Centre exact via transformation */
+  display: none !important; /* Caché par défaut */
+  visibility: hidden; /* Invisibilité */
+  opacity: 0; /* Transparent */
+  transition: opacity 0.45s ease, visibility 0.45s ease; /* Animation d’apparition */
+  background: #ffffff; /* Fond blanc */
+  border: 1px solid #e6e6e6; /* Bordure grise légère */
+  box-shadow: 0 8px 20px rgba(15, 30, 50, 0.08); /* Ombre douce */
+  padding: 14px 20px; /* Espacement interne */
+  z-index: 1100; /* Au-dessus de la navbar */
+  /* ✅ Mise à jour : meilleure disposition en deux colonnes */
+  min-width: auto; /* Largeur minimale supprimée pour adaptation */
+  max-width: 600px; /* Largeur maximale ajustée */
+  width: auto; /* Largeur automatique */
+  grid-template-columns: repeat(2, minmax(150px, 1fr)); /* Deux colonnes équilibrées */
+  flex-wrap: wrap; /* Permet le retour à la ligne (compatibilité) */
+  justify-content: center; /* Centre les éléments internes */
+  gap: 12px 24px; /* Espacement entre éléments */
+  border-radius: 8px; /* Coins arrondis */
+  pointer-events: none; /* Empêche les interactions tant que caché */
+}
+
+.dropdown-content li { /* Élément de la liste du menu déroulant */
+  list-style: none; /* Supprime les puces */
+  width: auto; /* Largeur automatique */
+  margin: 0; /* Pas de marge */
+  padding: 4px 0; /* Espacement vertical */
+}
+
+.dropdown-content li a { /* Lien du menu déroulant */
+  text-decoration: none; /* Supprime le soulignement */
+  color: #1b66c9; /* Couleur bleue */
+  font-weight: 500; /* Texte semi-gras */
+  font-size: 0.95rem; /* Taille légèrement inférieure */
+  padding: 4px 6px; /* Espacement interne */
+  display: inline-block; /* Pour appliquer le padding */
+}
+
+.dropdown-content li a:hover { /* Effet sur un lien au survol */
+  text-decoration: underline; /* Ajoute un soulignement */
+}
+
+.nav-item.dropdown:hover > .dropdown-content { /* Affiche le menu au survol */
+  display: grid !important; /* ✅ Grille visible au survol */
+  visibility: visible; /* Rend visible */
+  opacity: 1; /* Rend opaque */
+  pointer-events: auto; /* Active les interactions */
+  transition-delay: 0.1s; /* Petit délai avant l’apparition */
+}
+
+.nav-item.dropdown:hover > .nav-button { /* Effet sur le bouton parent au survol */
+  background-color: #f1fbff; /* Change légèrement le fond */
+}
+
+.dropdown-content li { /* Style répété pour uniformité */
+  min-width: 160px; /* Largeur minimale d’un élément */
+}
+
+
+
+/* === HAMBURGER === */ /* Bouton menu mobile */
+.hamburger { /* Icône hamburger */
+    display: none; /* Caché par défaut */
+   }
+
+.Verimobil{
+    display: none;
+}
+
+}
+
+/* === MOBILE RESPONSIVE === */
+@media (max-width: 1024px) {
+
+  /* Cacher éléments desktop */
+  #dark-mode-toggle,
+  .navbar-center,
+  #nomobile {
+    display: none;
+  }
+
+  /* Conteneur général mobile */
+  .Verimobil {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    background: #ffffff;
+    border-bottom: 1px solid #ddd;
+  }
+
+  /* Ligne du haut : logo + hamburger */
+  #logmenu {
+    display: flex;
+        justify-content: space-between;
+    align-items: center;
+    padding: 0 4vw;
+    background: linear-gradient(270deg,
+    #fdfcfb,  /* Blanc cassé */
+    #f7f3e9,  /* Crème doux */
+    #f8f6f1,  /* Beige rosé */
+    #edfbfd,  /* Bleu très pâle */
+    #f4f8ee,  /* Bleu clair */
+    #f0fcf6,  /* Bleu azur pastel */
+    #eff8ff,  /* Bleu ciel nacré */
+    #fdfcfb   /* Retour blanc crème */
+  );
+  background-size: 800% 800%;
+  animation: gradientMove 180s ease-in-out infinite;
+  color: #222; /* Texte foncé pour bon contraste */
+  transition: all 0.3s ease;
+}
+
+/* Animation fluide du dégradé */
+@keyframes gradientMove {
+  0%   { background-position: 0% 50%; }
+  50%  { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+
+  .logo {
+     width: 4vw;    /* 4% de la largeur du viewport */
+    display: flex;
+    align-items: center;
+  }
+
+  .logo-text {
+    font-size: 5vw;
+    font-weight: bold; /* Met le texte en gras */
+    font-family: 'PlayfairDisplaySC-Bold', 'Roboto-Black', 'Robot-Rebels', Arial, sans-serif;
+   background: linear-gradient(270deg,
+    #4a4a4a,  /* Gris profond */
+    #2c3e50,  /* Gris-bleu foncé */
+    #227cf1,  /* Bleu intense */
+    #345678,  /* Bleu acier */
+    #4a4a4a   /* Retour gris */
+  );
+  background-size: 400% 400%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: textGradientMove 10s ease-in-out infinite;
+}
+
+/* Animation du texte (plus rapide pour un effet vivant) */
+@keyframes textGradientMove {
+  0%   { background-position: 0% 50%; }
+  50%  { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+  .hamburger {
+    font-size: 5vw;
+    font-weight: bold; /* Met le texte en gras */
+    cursor: pointer;
+    background: linear-gradient(270deg,
+    #4a4a4a,  /* Gris profond */
+    #2c3e50,  /* Gris-bleu foncé */
+    #cddef3,  /* Bleu intense */
+    #345678,  /* Bleu acier */
+    #4a4a4a   /* Retour gris */
+  );
+  background-size: 400% 400%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: textGradientMove 10s ease-in-out infinite;
+}
+
+/* Animation du texte (plus rapide pour un effet vivant) */
+@keyframes textGradientMove {
+  0%   { background-position: 0% 50%; }
+  50%  { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+  /* MENU MOBILE */
+  .navbar-mobile ul {
+    display: flex;                 /* ⚠ important : le <ul> devient flex row */
+    flex-direction: row;           /* boutons alignés horizontalement */
+    justify-content: space-around; /* espacement uniforme */
+    align-items: flex-start;
+    padding: 10px 0;
+    margin: 0;
+    list-style: none;
+  }
+
+  /* Chaque bouton vertical */
+  .navbar-mobile li.nav-item {
+    display: flex;
+    flex-direction: column;       /* icône au-dessus du texte */
+    align-items: center;
+    text-align: center;
+  }
+
+  .navbar-mobile .nav-button {
+    display: flex;
+    flex-direction: column;       /* icône au-dessus du texte */
+    align-items: center;
+    text-decoration: none;
+    color: #0f3464;
+    font-size: 0.9em;
+    font-weight: 600;
+    gap: 4px;                     /* espace icône → texte */
+  }
+
+
+  .nav-button:hover { /* Effet au survol du bouton */
+        color: #1b66c9;
+    cursor: pointer; /* Curseur main */
+  transform: scale(1.05); /* Augmentation de 5% */
+}
+
+  .navbar-mobile .nav-icon-mobile {
+    width: 26px;
+    height: 26px;
+      }
+
+      .nav-icon-mobile{
+        filter: invert(23%) sepia(53%) saturate(612%) hue-rotate(178deg) brightness(78%) contrast(88%);
+  
+  transition: transform 0.2s ease, filter 0.3s; /* Animation fluide */
+      }
+  
+  .nav-icon-mobile:hover{
+    /* Effet au survol d’une icône */
+  transform: scale(1.15); /* Légère augmentation de taille */
+  filter: invert(36%) sepia(99%) saturate(2104%) hue-rotate(191deg) brightness(102%) contrast(98%); /* Ajustement de teinte */
+  }
+
+  
+}
+
+
+
+
+
 /* Conteneur du sélecteur de langue */
 #languageSelector {
-    display: flex; /* Utilise Flexbox pour aligner les éléments horizontalement */
+       display: flex; /* Utilise Flexbox pour aligner les éléments horizontalement */
     align-items: center; /* Centre verticalement les éléments (select et images) */
     gap: 10px; /* Ajoute un espace de 10px entre chaque élément */
 }
+/* ==== SECTION CONNEXION GOOGLE ==== */
+#liaisons {
+    text-align: left;
+    margin: 8px 0 12px 60px; /* léger décalage à gauche sous les langues */
+    font-family: 'Roboto-Regular', sans-serif;
+}
+
+/* Boutons de connexion / déconnexion */
+#liaisons button {
+    font-family: 'Roboto-Bold', sans-serif;
+    background-color: #0078d7;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    padding: 6px 14px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: all 0.2s ease;
+    margin-right: 8px;
+}
+
+#liaisons button:hover {
+    background-color: #005fa3;
+    transform: scale(1.03);
+}
+
+
+
+
 
 /* Style du menu déroulant de sélection de langue */
 #languageSwitcher {
@@ -416,22 +840,6 @@ body {
     transition: background-color 0.2s; /* Ajoute une transition fluide de 0,2s sur la couleur de fond. */
 }
 
-/* En-tête du site */
-header {
-    background: url('images/p4.jpg') no-repeat center center; /* Image de fond */
-    background-size: cover; /* L'image couvre entièrement */
-    color: white; /* Couleur du texte */
-    padding: 10px 0; /* Espacement vertical */
-    text-align: center; /* Centre le texte */
-}
-header h1 {
-    font-size: 80px; /* Taille du texte sur les grands écrans */
-    font-family: 'PlayfairDisplaySC-Bold','Roboto-Black', 'Roboto-Rebels', Arial, sans-serif; /* Police principale */
-    color: #FFFFFF; /* Couleur du texte */
-    text-align: center; /* Centrer le texte */
-    letter-spacing: 2px; /* Espacement entre les lettres */
-    text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3); /* Ombre légère */
-}
 
 
 /* Style des boutons fléchés */
@@ -467,123 +875,7 @@ header h1 {
 }
 
 
-/* Navigation principale */
-/* Styles pour la barre de navigation */
-nav {
-    background: url('images/p4.jpg') no-repeat center center; /* Image de fond */
-    background-size: cover; /* L'image couvre entièrement */
-    padding: 0 1rem; /* Padding pour le contenu de la barre de navigation */
-}
 
-nav ul {
-    font-family: 'Roboto-Black', 'Roboto-Rebels', Arial, sans-serif; /* Police principale */
-    list-style-type: none; /* Supprime les puces des listes */
-    margin: 0; /* Supprime la marge par défaut */
-    padding: 0; /* Supprime le padding par défaut */
-    display: flex; /* Utilise Flexbox pour l'agencement horizontal */
-    justify-content: center; /* Centre les éléments horizontalement */
-    position: relative; /* Nécessaire pour le positionnement des éléments enfants */
-}
-
-nav ul li {
-    margin: 0 1rem; /* Marge horizontale entre les éléments */
-    position: relative; /* Position relative pour le menu déroulant */
-}
-
-/* Styles pour les liens du menu principal */
-nav ul li a {
-    color: #fff; /* Couleur du texte */
-    text-decoration: none; /* Pas de soulignement */
-    display: block; /* Prend toute la largeur de l'élément parent */
-    padding: 15px 20px; /* Espacement interne */
-    font-weight: bold; /* Texte en gras */
-    border-radius: 5px; /* Arrondit les coins */
-    background-color: rgb(52,94,143); /* Fond bleu foncé */
-    transition: background-color 0.3s ease, color 0.3s ease; /* Transition douce */
-}
-
-/* Changement de couleur au survol du lien */
-nav ul li a:hover {
-    background-color: rgb(118,12,31); /* Fond au survol */
-}
-
-/* Styles pour le sous-menu */
-nav ul li ul {
-    display: none; /* Masquer le sous-menu par défaut */
-    position: absolute; /* Positionnement absolu */
-    left: 0; /* Aligner à gauche de l'élément parent */
-    top: 100%; /* Aligner en dessous de l'élément parent */
-    background: #003366; /* Fond du sous-menu */
-    min-width: 300px; /* Largeur minimale du sous-menu */
-    list-style-type: none; /* Supprimer les puces */
-    padding: 0; /* Supprimer le padding */
-    margin: 0; /* Supprimer la marge */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Ombre pour le sous-menu */
-    z-index: 1000; /* Assure que le sous-menu est au-dessus des autres éléments */
-}
-
-/* Styles pour les éléments du sous-menu */
-nav ul li ul li {
-    margin: 0; /* Pas de marge entre les éléments du sous-menu */
-}
-
-/* Styles pour les liens du sous-menu */
-nav ul li ul li a {
-    padding: 10px 20px; /* Espacement interne du sous-menu */
-    color: #fff; /* Couleur du texte du sous-menu */
-}
-
-/* Changement de couleur au survol du lien du sous-menu */
-nav ul li ul li a:hover {
-    background-color: rgb(118,12,31); /* Fond du sous-menu au survol */
-}
-
-/* Afficher le sous-menu au survol de l'élément parent */
-nav ul li:hover > ul {
-    display: block; /* Afficher le sous-menu */
-}
-
-
-
-.animated {
-    animation: fadeIn 1s ease-in;
-}
-
-
-/* Styles pour le menu déroulant */
-.dropdown-content {
-    display: none; /* Cache le menu déroulant par défaut */
-    position: absolute; /* Positionne le menu déroulant par rapport à l'élément parent */
-    background-color: #333; /* Couleur de fond du menu déroulant */
-    min-width: 200px; /* Largeur minimale du menu déroulant */
-    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2); /* Ombre */
-    z-index: 1; /* Assure que le menu déroulant est au-dessus des autres éléments */
-    top: 100%; /* Positionne le menu déroulant directement sous l'élément parent */
-    left: 0; /* Aligne le menu déroulant avec le côté gauche de l'élément parent */
-    opacity: 0; /* Initialement invisible */
-     visibility: hidden; /* Cacher par défaut */
-    transition: opacity 0.3s ease, visibility 0.3s ease; /* Effet de transition pour l'apparition/disparition */
-}
-
-.dropdown-content li {
-    width: 100%; /* Les éléments de la liste prennent toute la largeur du menu */
-}
-
-.dropdown-content li a {
-    padding: 12px 16px; /* Espacement interne des éléments du menu déroulant */
-    color: white; /* Couleur du texte des éléments du menu déroulant */
-    text-decoration: none; /* Supprime le soulignement du texte */
-}
-
-.dropdown-content li a:hover {
-    background-color: #575757; /* Fond au survol des éléments du menu */
-}
-
-.dropdown:hover .dropdown-content {
-    display: block; /* Affiche le menu déroulant */
-    opacity: 1; /* Rends le menu déroulant visible */
-    visibility: visible; /* Afficher lors du survol */
-}
 
 /* Grille pour organiser les cartes */
 .grid {
@@ -1163,21 +1455,27 @@ border-radius: 10px;
     background-color: #3e8e41;
 }
 
+                        /* Responsive - pour mobile */
+
 @media all and (max-width: 1024px) {
-      header h1 {
-        font-size: 40px; /* Ajuste la taille du texte pour les tablettes et petits écrans */
+      
+    
+    #liaisons {
+        text-align: center;
+        margin: 10px auto;
     }
 
-    nav ul {
-        flex-direction: column; /* Transforme la navigation en une colonne */
+    #liaisons button {
+        width: 50%;
+        font-size: 0.85rem;
+        margin: 6px 0;
     }
+
 
 .ccard p {
         font-size: 16px; /* Ajuste la taille du texte pour mobile */
         margin: 1px;
     }
-
-
 
     .card {
         width: 80%; /* Les cartes prennent plus de place sur les tablettes */
