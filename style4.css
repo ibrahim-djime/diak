@@ -425,30 +425,104 @@ header.navbar { /* Sélecteur de l’en-tête avec classe navbar */
   50%  { background-position: 100% 50%; }
   100% { background-position: 0% 50%; }
 }
-  .hamburger {
-    font-size: 5vw;
-    font-weight: bold; /* Met le texte en gras */
-    cursor: pointer;
-    background: linear-gradient(270deg,
-    #4a4a4a,  /* Gris profond */
-    #2c3e50,  /* Gris-bleu foncé */
-    #cddef3,  /* Bleu intense */
-    #345678,  /* Bleu acier */
-    #4a4a4a   /* Retour gris */
-  );
+
+
+/* === CONTAINER HAMBURGER === */
+.hamburger-wrapper {
+  position: relative;
+  display: flex;
+  justify-content: flex-end; /* pousse le hamburger à droite */
+  align-items: center;
+  width: auto; /* laisse la place naturelle */
+}
+
+/* === ICÔNE HAMBURGER === */
+.hamburger {
+  font-size: 5vw;
+  font-weight: bold;
+  cursor: pointer;
+  padding: 2vw 4vw;
+  width: fit-content;
+  background: linear-gradient(270deg,
+      #4a4a4a, 
+      #2c3e50,
+      #cddef3,
+      #345678,
+      #4a4a4a
+    );
   background-size: 400% 400%;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   animation: textGradientMove 10s ease-in-out infinite;
+  z-index: 1000000;
+  position: relative;
 }
 
-/* Animation du texte (plus rapide pour un effet vivant) */
+/* Animation icône */
 @keyframes textGradientMove {
   0%   { background-position: 0% 50%; }
   50%  { background-position: 100% 50%; }
   100% { background-position: 0% 50%; }
 }
 
+/* === MENU PLEIN ÉCRAN === */
+.hamburger-dropdown {
+  display: flex;               /* flex pour colonne */
+  flex-direction: column;
+  position: fixed;
+  top: 0;
+  right: -100%;                /* caché à droite */
+  width: 100vw;
+  height: 100vh;
+  background: #ffffff;          /* fond blanc */
+  padding-top: 80px;            /* espace en haut */
+  gap: 25px;
+  z-index: 999999;              /* au-dessus de tout */
+  overflow-y: auto;             /* scroll si nécessaire */
+  transition: right 0.4s ease-in-out;
+  border-radius: 0;             /* plus de bord arrondi */
+  box-shadow: none;             /* suppression de l’ombre */
+}
+
+/* Quand menu ouvert */
+.hamburger-dropdown.active {
+  right: 0;
+}
+
+/* Liens à l'intérieur */
+.hamburger-dropdown a {
+  display: flex;
+  align-items: center;
+  gap: 3vw;                     /* conserve ton espacement icône-texte */
+  text-decoration: none;
+  padding: 3vw 0;
+  font-size: 4vw;
+  color: #0f3464;
+  font-weight: bold;
+  border-bottom: 1px solid #eee; /* séparation visuelle */
+}
+
+/* Icône des liens */
+.nav-icon-hamb {
+  width: 6vw;
+  height: 6vw;
+  filter: invert(20%) sepia(50%) saturate(600%) hue-rotate(180deg);
+}
+
+/* Bouton X pour fermer menu (ajout via CSS) */
+.hamburger-dropdown::before {
+  content: "✕";
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  font-size: 32px;
+  cursor: pointer;
+  z-index: 1000001;
+}
+
+
+
+  
   /* MENU MOBILE */
   .navbar-mobile ul {
     display: flex;                 /* ⚠ important : le <ul> devient flex row */
@@ -504,7 +578,9 @@ height: 5vw;
   filter: invert(36%) sepia(99%) saturate(2104%) hue-rotate(191deg) brightness(102%) contrast(98%); /* Ajustement de teinte */
   }
 
+
   
+
 }
 
 
