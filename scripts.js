@@ -103,23 +103,28 @@ document.addEventListener("DOMContentLoaded", function () {
 /* ... on garde ton code existant ... */
 
 /* =======================================================
-   3. MENU HAMBURGER PLEIN ÉCRAN AVEC DISPLAY NONE
+   3. MENU HAMBURGER PLEIN ÉCRAN AVEC DISPLAY NONE ET BOUTON RETOUR MOBILE
    ======================================================= */
 function toggleHamburgerMenu() {
   const menu = document.getElementById("hamburgerDropdown");
 
   if (!menu.classList.contains("active")) {
     // Ouvrir le menu
-    menu.style.display = "flex"; // rend visible
-    setTimeout(() => menu.classList.add("active"), 20); // lance la transition
-    document.body.style.overflow = "hidden"; // désactive scroll
+    menu.style.display = "flex";
+    setTimeout(() => menu.classList.add("active"), 20);
+    document.body.style.overflow = "hidden";
+
+    // Ajouter un état historique pour le bouton retour
+    history.pushState({ menuOpen: true }, "", "");
   } else {
-    // Fermer le menu
-    menu.classList.remove("active"); // glisse à droite
-    document.body.style.overflow = ""; 
-    // Après la transition, on cache complètement
-    setTimeout(() => menu.style.display = "none", 400); // 400ms = durée CSS
+    closeHamburgerMenu(menu);
   }
+}
+
+function closeHamburgerMenu(menu) {
+  menu.classList.remove("active");
+  document.body.style.overflow = "";
+  setTimeout(() => menu.style.display = "none", 400);
 }
 
 // Fermer le menu quand on clique sur le X (::before)
@@ -131,11 +136,10 @@ document.addEventListener("click", function(e) {
   const x = e.clientX - rect.left;
   const y = e.clientY - rect.top;
 
-  // Zone du X en haut à droite
   if (x >= rect.width - 50 && x <= rect.width && y >= 0 && y <= 50) {
-    menu.classList.remove("active");
-    document.body.style.overflow = "";
-    setTimeout(() => menu.style.display = "none", 400);
+    closeHamburgerMenu(menu);
+    // Retirer l'état historique
+    if (history.state && history.state.menuOpen) history.back();
   }
 });
 
@@ -145,8 +149,15 @@ document.addEventListener("click", function(e) {
   const hamburger = document.querySelector(".hamburger");
   if (!menu.classList.contains("active")) return;
   if (!menu.contains(e.target) && e.target !== hamburger) {
-    menu.classList.remove("active");
-    document.body.style.overflow = "";
-    setTimeout(() => menu.style.display = "none", 400);
+    closeHamburgerMenu(menu);
+    if (history.state && history.state.menuOpen) history.back();
+  }
+});
+
+// Intercepter le bouton retour du téléphone
+window.addEventListener("popstate", function(event) {
+  const menu = document.getElementById("hamburgerDropdown");
+  if (menu.classList.contains("active")) {
+    closeHamburgerMenu(menu);
   }
 });
