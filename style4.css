@@ -474,8 +474,9 @@ header.navbar { /* Sélecteur de l’en-tête avec classe navbar */
     align-items: center;
     text-decoration: none;
     color: #0f3464;
-    font-size: 0.9em;
-    font-weight: 600;
+    font-size: 2.8vw;
+
+    font-weight: bold;
     gap: 4px;                     /* espace icône → texte */
   }
 
@@ -487,8 +488,8 @@ header.navbar { /* Sélecteur de l’en-tête avec classe navbar */
 }
 
   .navbar-mobile .nav-icon-mobile {
-    width: 26px;
-    height: 26px;
+    width: 5vw;
+height: 5vw;
       }
 
       .nav-icon-mobile{
