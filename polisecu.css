@@ -1,281 +1,186 @@
-/* Définir les polices personnalisées */
-@font-face {
-    font-family: 'INGAME';
-    src: url('pol/INGAME.ttf');
-    font-weight: normal;
-    font-style: normal;
-    font-display: swap;
-}
-@font-face {
-    font-family: 'PlayfairDisplaySC-Black';
-    src: url('pol/PlayfairDisplaySC-Black.ttf');
-    font-weight: normal;
-    font-style: normal;
-    font-display: swap;
-}
-@font-face {
-    font-family: 'Robot-Rebels';
-    src: url('pol/Robot-Rebels.ttf');
-    font-weight: normal;
-    font-style: normal;
-    font-display: swap;
-}
-@font-face {
-    font-family: 'Roboto-Regular';
-    src: url('pol/Roboto-Regular.ttf');
-    font-weight: normal;
-    font-style: normal;
-    font-display: swap;
-}
-@font-face {
-    font-family: 'Boul';
-    src: url('pol/Boul.otf');
-    font-weight: normal;
-    font-style: normal;
-    font-display: swap;
-}
-@font-face {
-    font-family: 'PlayfairDisplaySC-Bold';
-    src: url('pol/PlayfairDisplaySC-Bold.ttf');
-    font-weight: normal;
-    font-style: normal;
-    font-display: swap;
-}
-@font-face {
-    font-family: 'Sobatyan-Regular';
-    src: url('pol/Sobatyan-Regular.otf');
-    font-weight: normal;
-    font-style: normal;
-    font-display: swap;
-}
-@font-face {
-    font-family: 'Roboto-MediumItalic';
-    src: url('pol/Roboto-MediumItalic.ttf');
-    font-weight: normal;
-    font-style: normal;
-    font-display: swap;
-}
-@font-face {
-    font-family: 'MilestoneBrush';
-    src: url('pol/MilestoneBrush.otf');
-    font-weight: normal;
-    font-style: normal;
-    font-display: swap;
-}
-@font-face {
-    font-family: 'Rostack';
-    src: url('pol/Rostack.otf');
-    font-weight: normal;
-    font-style: normal;
-    font-display: swap;
-}
-@font-face {
-    font-family: 'Roboto-Black';
-    src: url('pol/Roboto-Black.ttf');
-    font-weight: normal;
-    font-style: normal;
-    font-display: swap;
-}
-@font-face {
-    font-family: 'Matemasie-Regular';
-    src: url('pol/Matemasie-Regular.ttf');
-    font-weight: normal;
-    font-style: normal;
-    font-display: swap;
-}
-@font-face {
-    font-family: 'NewAmsterdam-Regular';
-    src: url('pol/NewAmsterdam-Regular.ttf');
-    font-weight: normal;
-    font-style: normal;
-    font-display: swap;
-}
-@font-face {
-    font-family: 'NerkoOne-Regular';
-    src: url('pol/NerkoOne-Regular.ttf');
-    font-weight: normal;
-    font-style: normal;
-    font-display: swap;
-}
-@font-face {
-    font-family: 'Roboto-Bold';
-    src: url('pol/Roboto-Bold.ttf');
-    font-weight: normal;
-    font-style: normal;
-    font-display: swap;
-}
-@font-face {
-    font-family: 'DMSerifText-Regular';
-    src: url('pol/DMSerifText-Regular.ttf');
-    font-weight: normal;
-    font-style: normal;
-    font-display: swap;
-}
-.loi {
-    font-family: 'Roboto-Regular',Arial, sans-serif; /* Police de caractères par défaut */
-    font-size: 20px;
-    color: red;
-}
+/* polisecu.css - style pour Politique de confidentialité Lumesys */
+
+/* Reset très léger */
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
 body {
-    font-family: 'Roboto-Regular',Arial, sans-serif; /* Police de caractères par défaut */
-    background-color: #f4f4f4; /* Couleur de fond */
-    background: url('logo/g2.png') no-repeat center center; /* Image de fond */
-    background-size: cover; /* L'image couvre entièrement */
-            line-height: 1.6;
-            background-color: #f4f4f4;
-            padding: 20px; /* Espacement autour du contenu */
-            color: white;
-        }
-        .content {
-    transition: margin-left 0.5s; /* Transition douce pour le décalage lors de l'ouverture de la barre latérale */
-    padding: 20px; /* Espacement autour du contenu */
+  font-family: 'Roboto', Arial, sans-serif;
+  background-color: #f7f7f8;
+  color: #111;
+  line-height: 1.6;
+  padding: 0;
 }
 
-        h1 {
-           font-size: 60px; /* Taille du texte sur les grands écrans */
-    font-family: 'PlayfairDisplaySC-Bold','Roboto-Black', 'Roboto-Rebels', Arial, sans-serif; /* Police principale */
-    color: #FFFFFF; /* Couleur du texte */
-    text-align: center; /* Centrer le texte */
-    letter-spacing: 2px; /* Espacement entre les lettres */
-    text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3); /* Ombre légère */
-        }
-        p {
-            margin: 10px 0;
-        }
-        ul {
-            list-style-type: disc;
-            margin-left: 20px;
-        }
-        .site, .stat{
-            display: inline-block; /* Assure que le lien ait un comportement de bouton */
-    padding: 2px 2px; /* Ajoute du remplissage pour donner l'apparence d'un bouton */
-    font-size: 14px; /* Taille du texte pour les boutons PDF */
-    text-decoration: none; /* Supprime le soulignement du lien */
-    border-radius: 5px; /* Arrondit les coins du bouton */
-    border: none; /* Supprime les bordures */
-    cursor: pointer; /* Change le curseur pour indiquer un élément cliquable */
-    word-wrap: break-word; /* Gère les longs textes */
-    word-break: break-word; /* Coupe les mots si nécessaire */
-    font-family: 'Roboto-Bold','Roboto-Regular', Arial, sans-serif; /* Police utilisée */;
-     color: black;
-    background-color: rgb(234,234,234);
-        }
-.site:hover {
-    color: white;
-    background-color: black;
-}
-.stat:hover {
-    color: white;
-    background-color: black;
-}
-        /* Pied de page */
-footer {
-    background: url('images/p2.jpg') no-repeat center center; /* Image de fond */
-    background-size: cover; /* L'image couvre entièrement */
-    color: white; /* Couleur du texte */
-    padding: 10px 0; /* Espacement vertical */
-    text-align: center; /* Centre le texte */
-}
-.social-icons {
-    display: flex; /* Affiche les icônes sur une seule ligne */
-    justify-content: center; /* Centre les icônes horizontalement */
-}
-.social-icon {
-    margin: 0 10px; /* Ajoute un espace entre les icônes */
-    color: #fff; /* Couleur des icônes */
-    font-size: 25px; /* Taille des icônes */
-    transition: color 0.3s ease; /* Transition pour le changement de couleur au survol */
+/* Layout */
+.layout { display: flex; min-height: 100vh; }
+
+/* Sidebar (gauche) */
+.sidebar {
+  width: 260px;
+  background: #fff;
+  border-right: 1px solid #e6e6e6;
+  padding: 30px 20px;
+  position: sticky;
+  top: 0;
+  align-self: flex-start;
+  height: 100vh;
+  overflow: auto;
 }
 
-.social-icon:hover {
-    color: rgb(114,165,168); /* Couleur des icônes au survol */
+.brand {
+  font-weight: 700;
+  font-size: 20px;
+  margin-bottom: 18px;
+  color: #0b0b0b;
 }
 
-/* Styles généraux pour les boutons */
-.social-button {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  background-color: #ffffff;
-  border-radius: 50%;
-  padding: 10px;
-  margin: 5px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-  transition: background-color 0.3s ease, transform 0.3s ease;
+.toc ul { list-style: none; }
+.toc li { margin: 8px 0; }
+.toc a {
+  color: #0b0b0b;
   text-decoration: none;
+  padding: 8px 10px;
+  display: block;
+  border-radius: 6px;
+  transition: background .18s, color .18s;
+  font-size: 15px;
+}
+.toc a:hover, .toc a:focus { background: #0b0b0b; color: #fff; }
+
+/* Content */
+.content {
+  flex: 1;
+  padding: 48px 60px;
+  max-width: 980px;
+  margin: 0 auto;
+  background: transparent;
 }
 
-.social-button img {
-  width: 40px;
-  height: 40px;
-  object-fit: cover;
+.content-header h1 {
+  font-size: 44px;
+  font-weight: 700;
+  color: #111;
+  margin-bottom: 6px;
 }
 
-/* WhatsApp */
-.whatsapp-button {
-  background-color: #25d366;
+.last-updated {
+  color: #6b6b6b;
+  margin-bottom: 22px;
 }
 
-.whatsapp-button:hover {
-  background-color: #128c7e;
-  transform: scale(1.1);
+/* Articles */
+article { margin-bottom: 28px; background: #fff; padding: 26px; border-radius: 8px; box-shadow: 0 6px 18px rgba(10,10,10,0.03); }
+article h2 { font-size: 20px; margin-bottom: 10px; color: #0b0b0b; }
+article p, article ul { font-size: 15px; color: #222; }
+article ul { margin-left: 18px; margin-top: 8px; }
+article ul li { margin-bottom: 6px; }
+
+/* Footer */
+.page-footer { text-align: center; color: #666; padding: 18px 0; font-size: 14px; margin-top: 10px; }
+
+/* .loi (spéciale) */
+.loi {
+  font-family: 'Roboto', Arial, sans-serif;
+  font-size: 16px;
+  color: #b30000; /* rouge mais lisible */
+  background: #fff6f6;
+  border-left: 4px solid #ffb3b3;
+  padding: 12px;
+  border-radius: 6px;
+  margin-bottom: 12px;
 }
 
-/* Facebook */
-.facebook-button {
-  background-color: #1877f2;
+/* Liens "site" / "stat" (boutons légers) */
+.site, .stat {
+  display: inline-block;
+  padding: 6px 8px;
+  font-size: 14px;
+  text-decoration: none;
+  border-radius: 6px;
+  color: #111;
+  background: #f0f0f0;
+  border: 1px solid #e6e6e6;
+}
+.site:hover, .stat:hover { background: #111; color: #fff; }
+
+/* Social icons container */
+.social-icons { display:flex; justify-content:center; gap:8px; padding: 12px 0; }
+.social-button { display:inline-flex; align-items:center; justify-content:center; width:44px; height:44px; border-radius:50%; background:#fff; box-shadow:0 6px 18px rgba(0,0,0,0.06); text-decoration:none; }
+.social-button img { width:24px; height:24px; object-fit:cover; }
+
+/* Responsive */
+@media (max-width: 980px) {
+  .layout { flex-direction: column; }
+  .sidebar { width: 100%; height: auto; position: relative; border-right: none; border-bottom: 1px solid #e6e6e6; }
+  .content { padding: 22px; }
+  .content-header h1 { font-size: 30px; }
 }
 
-.facebook-button:hover {
-  background-color: #155db8;
-  transform: scale(1.1);
+
+
+/* ------ OVERLAY FOND ------ */
+.overlayTela {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.85);
+    color: white;
+    z-index: 9999;
+    justify-content: center;
+    align-items: center;
 }
 
-/* Twitter */
-.twitter-button {
-  background-color: #ffffff;
+/* ------ CARD CENTRALE ------ */
+.overlayBoxTela {
+    background: #111;
+    padding: 25px;
+    width: 90%;
+    max-width: 350px;
+    border-radius: 12px;
+    text-align: center;
 }
 
-.twitter-button:hover {
-  background-color: #0d8ecf;
-  transform: scale(1.1);
+/* ------ INPUTS ------ */
+.overlayBoxTela input {
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 12px;
+    border: none;
+    border-radius: 8px;
+    background: #222;
+    color: white;
+    font-size: 15px;
 }
 
-/* Instagram */
-.instagram-button {
-  background-color: #e4405f;
+/* ------ BOUTON FERMER ------ */
+.btnCloseTela {
+    width: 100%;
+    padding: 10px;
+    background: #444;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    margin-top: 10px;
 }
 
-.instagram-button:hover {
-  background-color: #d73450;
-  transform: scale(1.1);
+.btnCloseTela:hover {
+    background: #666;
 }
 
-/* TikTok */
-.tiktok-button {
-  background-color: #ffffff;
+/* ------ BOUTON D’OUVERTURE (optionnel) ------ */
+.btnLoginTela {
+    padding: 12px 20px;
+    border: none;
+    background: #007bff;
+    color: white;
+    border-radius: 8px;
+    cursor: pointer;
 }
 
-.tiktok-button:hover {
-  background-color: #1f1f1f;
-  transform: scale(1.1);
-}
-
-@media all and (max-width: 1024px){
-    header h1 {
-        font-size: 40px; /* Ajuste la taille du texte pour les tablettes et petits écrans */
-    }
-
-    .social-button {
-    padding: 8px;
-  }
-
-  .social-button img {
-    width: 35px;
-    height: 35px;
-  }
-
-        footer {
-        font-size: 14px; /* Ajuste légèrement la taille du texte du pied de page */
-    }
+.btnLoginTela:hover {
+    background: #0056c5;
 }
