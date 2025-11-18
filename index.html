@@ -338,10 +338,35 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 </header>
 
 
+<script>
+document.addEventListener("DOMContentLoaded", function () {
 
-  
+    const hour = new Date().getHours();
+    let color;
 
- 
+    if (hour >= 8 && hour < 12) {
+        const colors = ["#FFF9E6", "#F5F3EE", "#DAF0E0"];
+        color = colors[Math.floor(Math.random() * colors.length)];
+    } 
+    else if (hour >= 12 && hour < 18) {
+        const colors = ["#CBEAE2", "#DCECFB", "#F0F0F0"];
+        color = colors[Math.floor(Math.random() * colors.length)];
+    } 
+    else if (hour >= 18 && hour < 24) {
+        const colors = ["#B4C8D9", "#E8D8C3", "#F2E2B3"];
+        color = colors[Math.floor(Math.random() * colors.length)];
+    } 
+    else {
+        const colors = ["#4A5568", "#2C3E50", "#5B5348"];
+        color = colors[Math.floor(Math.random() * colors.length)];
+    }
+
+    document.body.style.setProperty('--bgColor', color);
+});
+</script>
+
+
+
   <main>
 
       <!-- LANGUE -->
@@ -359,7 +384,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
 
 
-<script type="module">
+<!--<script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-app.js";
   import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
   import { getFirestore, doc, setDoc, getDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
@@ -510,7 +535,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   });
 </script>
 
-
+-->
 
 
 
@@ -3597,18 +3622,33 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     }
 </script>
 
-Verification: 983e7a3b50a4c1c3
+<div class="verificat01ion">Verification: 983e7a3b50a4c1c3</div>
 
-                <h2 id="maccueil"><strong>Accueil</strong></h2>
-<p>Bienvenue sur <strong>Lumina</strong> ! Ce site vous offre une variété de <strong>services</strong> adaptés à vos <strong>besoins</strong> :</br>- Découvrez une <strong>séléction d'articles</strong> à acheter et à vendre dans un <strong>espace sécurisé</strong>. Nous mettons les <strong>acheteurs</strong> et les <strong>vendeurs</strong> en <strong>contact direct</strong> pour faciliter vos <strong>transactions</strong>.
-      <a href="#Marche" class="btn2"><strong>Achat d'articles et Articles à vendre</strong></a>,</br> 
-      - Vous souhaitez <strong>promouvoir</strong> vos <strong>produits</strong> ? Notre <strong>espace publicitaire</strong> vous permet de toucher un <strong>large public</strong> pour vendre vos <strong>articles</strong>.<a href="#contacts" class="btn4"><strong>Espace publicitaire</strong></a>,</br>
-      - Besoin d'un <strong>plan</strong> pour construire votre <strong>maison</strong> ? Nous offrons des <strong>plans de construction sur mesure</strong> pour vous aider à réaliser votre projet <strong>immobilier</strong>.<a href="#dialaservice" class="btn4"><strong>Plan de construction</strong></a>,</br>  
-     - Trouvez des <strong>informations</strong> et des <strong>opportunités d’emploi</strong> spécialement destinées aux <strong>diplômés sans emploi</strong>. Nous vous aidons à franchir les <strong>étapes</strong> de votre parcours <strong>professionnel</strong><a href="#recru" class="btn3"><strong>Recrutement pour diplômés sans emploi</strong></a>. </p>
-<p> Explorez le site et profitez pleinement de toutes les <strong>fonctionnalités disponibles</strong>. Votre <strong>satisfaction</strong> est notre <strong>priorité</strong> !</p>
-<p>pour en savoir plus sur nos services et pour discuter de vos besoins spécifiques.
-<a href="#contacts" class="btn5">contactez-nous</a> 
-</p>
+                <div id="maccueil">
+  <h2 class="verbaccueil"><strong>Accueil</strong></h2>
+
+  <!-- Texte fluide -->
+  <p class="intro-desktop">
+    Vous méritez un espace simple pour accéder aux services et aux ressources qui comptent pour vous.  
+    Parce qu’au fond, tout devient plus simple quand l’essentiel est réuni au même endroit et c’est souvent tout ce qu’il faut pour avancer sans effort.  
+    Découvrez comment nous pouvons vous aider à atteindre vos objectifs.
+  </p>
+
+  <p class="intro-mobile">
+    Vous méritez un espace simple pour accéder aux services et aux ressources qui comptent pour vous.  
+    Découvrez comment nous pouvons vous aider à atteindre vos objectifs.
+  </p>
+
+  <!-- Liste verticale des services -->
+  <ul class="services-list">
+    <li><a href="#Marche" class="btn2"><strong>Achat d'articles et Articles à vendre</strong></a></li>
+    <li><a href="#contacts" class="btn4"><strong>Espace publicitaire</strong></a></li>
+    <li><a href="#dialaservice" class="btn4"><strong>Plan de construction</strong></a></li>
+    <li><a href="#recru" class="btn3"><strong>Recrutement pour diplômés sans emploi</strong></a></li>
+    <li><a href="#contacts" class="btn5"><strong>Contactez-nous</strong></a></li>
+  </ul>
+</div>
+
 
 </div>
        
@@ -4870,9 +4910,12 @@ Verification: 983e7a3b50a4c1c3
             </div>
         </section>
 
+      
         
 
     </main>
+
+    </div>
         <!-- Bouton pour faire défiler vers le haut -->
     <button id="scrollUp" class="scroll-button" onclick="scrollToTop()">&#8679;</button>
 
