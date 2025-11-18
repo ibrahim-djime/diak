@@ -115,10 +115,83 @@ body {
     background-size: cover; /* L'image couvre entièrement */
 }
 
+
+
+
+
 main {
     margin-top: 0 !important;
     padding-top: 0 !important;
+    position: relative; /* Ajout sans danger */
 }
+
+main::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: var(--bgColor);
+    opacity: 0.08; /* voile très fin */
+    pointer-events: none;
+    z-index: -1; /* derrière ton contenu */
+}
+
+.verificat01ion {
+  display: none;
+}
+
+/* Style pour le titre d'accueil */
+.verbaccueil {
+  font-family: 'NerkoOne-Regula', cursive; /* Police fun et dynamique */
+  font-size: 3rem; /* Grande taille pour marquer l'attention */
+  background: linear-gradient(90deg, #7e807f, #182125); /* Dégradé vert -> bleu */
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent; /* Texte en dégradé */
+  text-shadow: 2px 2px 4px rgba(0,0,0,0.3); /* Ombre légère pour relief */
+  letter-spacing: 1px; /* Espace léger entre les lettres */
+  transform: rotate(-1deg); /* Légère inclinaison pour effet fun */
+  text-align: center; /* Centrer horizontalement */
+  margin: 0; /* Pas d'espace autour du texte */
+  padding: 0; /* Pas d'espace autour du texte */
+  transition: transform 0.3s ease; /* Animation au survol */
+}
+
+/* Effet au survol pour dynamiser */
+.verbaccueil:hover {
+  transform: rotate(0deg) scale(1.05); /* léger zoom et redressement */
+}
+
+
+/* Centrage général du contenu de la section */
+#maccueil {
+  display: flex;
+  flex-direction: column; /* texte au-dessus, liste en dessous */
+  justify-content: center; /* centre verticalement */
+  align-items: center;     /* centre horizontalement */
+  min-height: 80vh;        /* occupe presque toute la hauteur de l'écran */
+  text-align: center;      /* centre le texte des paragraphes */
+  padding: 20px;
+}
+
+/* Liste verticale centrée */
+.services-list {
+  list-style: none;
+  padding: 0;
+  margin: 20px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px; /* espace entre les liens */
+  align-items: center; /* centre horizontalement les liens */
+}
+
+.services-list li a {
+  text-decoration: none;
+  display: inline-block;
+}
+.intro-desktop { display: block; }
+.intro-mobile { display: none; }
 
 
 @media (min-width: 1024px) {
@@ -350,6 +423,9 @@ header.navbar { /* Sélecteur de l’en-tête avec classe navbar */
 /* === MOBILE RESPONSIVE === */
 @media (max-width: 1024px) {
 
+  .intro-desktop { display: none; }
+  .intro-mobile { display: block; }
+
   /* Cacher éléments desktop */
   #dark-mode-toggle,
   .navbar-center,
@@ -441,7 +517,7 @@ header.navbar { /* Sélecteur de l’en-tête avec classe navbar */
   font-size: 5vw;
   font-weight: bold;
   cursor: pointer;
-  padding: 2vw 4vw;
+  padding: 2vw 2vw;
   width: fit-content;
   background: linear-gradient(270deg,
       #4a4a4a, 
