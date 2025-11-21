@@ -49,17 +49,25 @@ referrerPolicy="no-referrer-when-downgrade"></a></div></noscript>
         <h1>Conditions d'utilisation</h1>
         
     </header>
+<p id="status">Non connecté</p>
 
-    <p id="status">Non connecté</p>
-<button id="loginBtn">Se connecter</button>
+<!-- Bouton qui ouvre l’overlay Téléphone -->
+<button id="loginPhoneBtnTela" class="btnLoginTela">Connexion via Téléphone</button>
+
+<!-- Bouton Déconnexion -->
 <button id="logoutBtn">Se déconnecter</button>
 
-<!-- Overlay Téléphone -->
+
+<!-- ================================
+     Overlay Connexion / Inscription
+================================ -->
 <div id="phoneOverlayTela" class="overlayTela">
 
     <div class="overlayBoxTela">
+        
         <h2>Connexion / Inscription</h2>
 
+        <!-- Contenu généré automatiquement -->
         <div id="phoneFormContainerTela"></div>
 
         <button id="closePhoneOverlayTela" class="btnCloseTela">Fermer</button>
@@ -74,16 +82,22 @@ referrerPolicy="no-referrer-when-downgrade"></a></div></noscript>
 <script type="module">
 
 /* =============================
-   IMPORTS Firebase (version 12.6.0)
+   IMPORTS Firebase
 ============================= */
+console.log("▶ Import Firebase...");
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";
 import { 
   getFirestore, doc, setDoc, getDoc, serverTimestamp 
 } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
+import { getAuth } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-auth.js";
+
+console.log("✔ Firebase modules importés !");
+
 
 /* =============================
-   CONFIG Firebase (LE TIEN)
+   CONFIG Firebase
 ============================= */
+console.log("▶ Initialisation Firebase...");
 const firebaseConfig = {
     apiKey: "AIzaSyAClwRQe3g4Cg9CAsn28l_sAihwlMQtGUI",
     authDomain: "lumina-analytics.firebaseapp.com",
@@ -94,189 +108,286 @@ const firebaseConfig = {
     measurementId: "G-J7LLPRXLJH"
 };
 
-// Initialiser Firebase
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
+const auth = getAuth(app);
+console.log("✔ Firebase initialisé !", app);
+
 
 /* =============================
-   ELEMENTS - version TELA
+   ELEMENTS HTML
 ============================= */
+console.log("▶ Vérification des éléments HTML...");
+
 const loginPhoneBtn = document.getElementById("loginPhoneBtnTela");
 const phoneOverlay = document.getElementById("phoneOverlayTela");
 const phoneFormContainer = document.getElementById("phoneFormContainerTela");
 const closePhoneOverlay = document.getElementById("closePhoneOverlayTela");
 
-/* =====================================================
-   SYSTÈME : APPARAÎT A PARTIR DU 3ᵉ CHARGEMENT
-====================================================== */
+console.log("loginPhoneBtn:", loginPhoneBtn);
+console.log("phoneOverlay:", phoneOverlay);
+console.log("phoneFormContainer:", phoneFormContainer);
+console.log("closePhoneOverlay:", closePhoneOverlay);
+
+if (!loginPhoneBtn || !phoneOverlay || !phoneFormContainer || !closePhoneOverlay) {
+    console.error("❌ Erreur : éléments introuvables !");
+}
+
+
+/* =============================
+   VISITES
+============================= */
+console.log("▶ Comptage des visites...");
 let visitCount = localStorage.getItem("visitCountTela") || 0;
 visitCount++;
 localStorage.setItem("visitCountTela", visitCount);
+console.log("✔ Visite numéro:", visitCount);
 
 const connectedUser = localStorage.getItem("phoneUser");
+console.log("Utilisateur connecté dans localStorage:", connectedUser);
 
-// si l'utilisateur n'est pas connecté ET que c'est le 3e chargement ou plus
+/* Affichage auto après 3 visites */
 if (!connectedUser && visitCount >= 3) {
+    console.log("▶ 3e visite → ouverture automatique");
     phoneOverlay.style.display = "flex";
     showPhoneForm("login");
 }
 
+
 /* =============================
-   OUVERTURE MANUELLE 
+   OUVERTURE MANUELLE
 ============================= */
-loginPhoneBtn.addEventListener("click", ()=> {
-  phoneOverlay.style.display = "flex";
-  showPhoneForm("login");
+loginPhoneBtn.addEventListener("click", ()=>{
+    console.log("▶ Bouton ouverture overlay cliqué");
+    phoneOverlay.style.display = "flex";
+    showPhoneForm("login");
 });
+
 
 /* =============================
    FERMETURE OVERLAY
 ============================= */
-closePhoneOverlay.addEventListener("click", ()=> {
-  phoneOverlay.style.display = "none";
-  phoneFormContainer.innerHTML = "";
+closePhoneOverlay.addEventListener("click", ()=>{
+    console.log("▶ Fermeture overlay");
+    phoneOverlay.style.display = "none";
+    phoneFormContainer.innerHTML = "";
 });
 
+
 /* =============================
-   FORMULAIRE TÉLÉPHONE
+   FORMULAIRES
 ============================= */
 function showPhoneForm(type){
-  if(type==="login"){
-    phoneFormContainer.innerHTML = `
-      <input type="text" id="phoneLogin" placeholder="Numéro de téléphone">
-      <input type="password" id="passwordLogin" placeholder="Mot de passe">
-      <button id="loginPhoneSubmit">Se connecter</button>
-      <p><a href="#" id="goToSignup">Créer un compte</a> | <a href="#" id="goToReset">Mot de passe oublié</a></p>
-    `;
-    document.getElementById("loginPhoneSubmit").addEventListener("click", loginWithPhone);
-    document.getElementById("goToSignup").addEventListener("click", ()=>showPhoneForm("signup"));
-    document.getElementById("goToReset").addEventListener("click", ()=>showPhoneForm("reset"));
-  }
+    console.log(`▶ Affichage formulaire : ${type}`);
 
-  else if(type==="signup"){
-    phoneFormContainer.innerHTML = `
-      <input type="text" id="signupNom" placeholder="Nom">
-      <input type="text" id="signupPrenom" placeholder="Prénom">
-      <input type="date" id="signupDOB">
-      <input type="text" id="signupPhone" placeholder="Numéro de téléphone">
-      <input type="password" id="signupPassword" placeholder="Mot de passe">
-      <button id="signupPhoneSubmit">Créer le compte</button>
-      <p><a href="#" id="goToLogin">Se connecter</a></p>
-    `;
-    document.getElementById("signupPhoneSubmit").addEventListener("click", signupWithPhone);
-    document.getElementById("goToLogin").addEventListener("click", ()=>showPhoneForm("login"));
-  }
+    if (type === "login"){
+        phoneFormContainer.innerHTML = `
+            <input type="text" id="phoneLogin" placeholder="Numéro de téléphone">
+            <input type="password" id="passwordLogin" placeholder="Mot de passe">
+            <button id="loginPhoneSubmit">Se connecter</button>
+            <p><a href="#" id="goToSignup">Créer un compte</a> | <a href="#" id="goToReset">Mot de passe oublié</a></p>
+        `;
 
-  else if(type==="reset"){
-    phoneFormContainer.innerHTML = `
-      <input type="text" id="resetPhone" placeholder="Numéro de téléphone">
-      <input type="text" id="resetNom" placeholder="Nom">
-      <input type="text" id="resetPrenom" placeholder="Prénom">
-      <input type="date" id="resetDOB">
-      <input type="password" id="resetNewPassword" placeholder="Nouveau mot de passe">
-      <button id="resetPhoneSubmit">Réinitialiser le mot de passe</button>
-      <p><a href="#" id="goToLogin2">Se connecter</a></p>
-    `;
-    document.getElementById("resetPhoneSubmit").addEventListener("click", resetPasswordPhone);
-    document.getElementById("goToLogin2").addEventListener("click", ()=>showPhoneForm("login"));
-  }
+        document.getElementById("loginPhoneSubmit").addEventListener("click", loginWithPhone);
+        document.getElementById("goToSignup").addEventListener("click", ()=>showPhoneForm("signup"));
+        document.getElementById("goToReset").addEventListener("click", ()=>showPhoneForm("reset"));
+
+        console.log("✔ Formulaire login chargé !");
+    }
+
+    else if (type === "signup"){
+        phoneFormContainer.innerHTML = `
+            <input type="text" id="signupNom" placeholder="Nom">
+            <input type="text" id="signupPrenom" placeholder="Prénom">
+            <input type="date" id="signupDOB">
+            <input type="text" id="signupPhone" placeholder="Numéro de téléphone">
+            <input type="password" id="signupPassword" placeholder="Mot de passe">
+            <button id="signupPhoneSubmit">Créer le compte</button>
+            <p><a href="#" id="goToLogin">Se connecter</a></p>
+        `;
+
+        document.getElementById("signupPhoneSubmit").addEventListener("click", signupWithPhone);
+        document.getElementById("goToLogin").addEventListener("click", ()=>showPhoneForm("login"));
+
+        console.log("✔ Formulaire signup chargé !");
+    }
+
+    else if (type === "reset"){
+        phoneFormContainer.innerHTML = `
+            <input type="text" id="resetPhone" placeholder="Numéro de téléphone">
+            <input type="text" id="resetNom" placeholder="Nom">
+            <input type="text" id="resetPrenom" placeholder="Prénom">
+            <input type="date" id="resetDOB">
+            <input type="password" id="resetNewPassword" placeholder="Nouveau mot de passe">
+            <button id="resetPhoneSubmit">Réinitialiser le mot de passe</button>
+            <p><a href="#" id="goToLogin2">Se connecter</a></p>
+        `;
+
+        document.getElementById("resetPhoneSubmit").addEventListener("click", resetPasswordPhone);
+        document.getElementById("goToLogin2").addEventListener("click", ()=>showPhoneForm("login"));
+
+        console.log("✔ Formulaire reset chargé !");
+    }
 }
 
+
 /* =============================
-   HASH MOT DE PASSE
+   HASH PASSWORD
 ============================= */
 async function hashPassword(password){
-  const data = new TextEncoder().encode(password);
-  const hash = await crypto.subtle.digest("SHA-256", data);
-  return Array.from(new Uint8Array(hash)).map(b => b.toString(16).padStart(2,"0")).join("");
+    console.log("▶ Hashing password...");
+    const data = new TextEncoder().encode(password);
+    const hash = await crypto.subtle.digest("SHA-256", data);
+    const hex = Array.from(new Uint8Array(hash)).map(b => b.toString(16).padStart(2,"0")).join("");
+
+    console.log("✔ Hash généré:", hex);
+    return hex;
 }
 
+
 /* =============================
-   CRÉER UN COMPTE TÉLÉPHONE
+   SIGNUP
 ============================= */
 async function signupWithPhone(){
-  const nom = document.getElementById("signupNom").value.trim();
-  const prenom = document.getElementById("signupPrenom").value.trim();
-  const dob = document.getElementById("signupDOB").value;
-  const phone = document.getElementById("signupPhone").value.trim();
-  const password = document.getElementById("signupPassword").value;
+    console.log("▶ Clic signup...");
 
-  if(!nom||!prenom||!dob||!phone||!password) return alert("Remplissez tous les champs");
+    const nom = signupNom.value.trim();
+    const prenom = signupPrenom.value.trim();
+    const dob = signupDOB.value;
+    const phone = signupPhone.value.trim();
+    const password = signupPassword.value;
 
-  const ref = doc(db,"utilisateurs",phone);
-  if((await getDoc(ref)).exists()) return alert("Numéro déjà utilisé");
-  
-  const passHash = await hashPassword(password);
+    console.log("Données saisies:", {nom, prenom, dob, phone, password});
 
-  await setDoc(ref,{
-    nom, prenom, dateNaissance:dob, phone, passwordHash:passHash,
-    derniereConnexion: serverTimestamp(), typeCompte:"phone"
-  });
+    if (!nom||!prenom||!dob||!phone||!password){
+        console.warn("⚠ Champs manquants");
+        return alert("Remplissez tous les champs");
+    }
 
-  alert("Compte créé !");
-  showPhoneForm("login");
+    const ref = doc(db,"utilisateurs",phone);
+    const exists = (await getDoc(ref)).exists();
+    console.log("Existance du user:", exists);
+
+    if (exists) return alert("Ce numéro est déjà utilisé.");
+
+    const passHash = await hashPassword(password);
+
+    console.log("▶ Enregistrement Firestore...");
+
+    await setDoc(ref,{
+        nom, prenom, dateNaissance:dob, phone,
+        passwordHash:passHash,
+        derniereConnexion: serverTimestamp(),
+        typeCompte:"phone"
+    });
+
+    console.log("✔ Compte créé !");
+    alert("Compte créé !");
+    showPhoneForm("login");
 }
 
+
 /* =============================
-   CONNEXION TÉLÉPHONE
+   LOGIN
 ============================= */
 async function loginWithPhone(){
-  const phone = document.getElementById("phoneLogin").value.trim();
-  const password = document.getElementById("passwordLogin").value;
+    console.log("▶ Tentative login...");
 
-  const ref = doc(db,"utilisateurs",phone);
-  const snap = await getDoc(ref);
+    const phone = phoneLogin.value.trim();
+    const password = passwordLogin.value;
 
-  if(!snap.exists()) return alert("Utilisateur non trouvé");
+    console.log("Saisie login:", {phone, password});
 
-  if((await hashPassword(password)) !== snap.data().passwordHash)
-    return alert("Mot de passe incorrect");
-
-  localStorage.setItem("phoneUser", phone);
-
-  alert("Connecté !");
-  phoneOverlay.style.display = "none";
-}
-
-/* =============================
-   RESET MOT DE PASSE
-============================= */
-async function resetPasswordPhone(){
-  const phone = document.getElementById("resetPhone").value.trim();
-  const nom = document.getElementById("resetNom").value.trim();
-  const prenom = document.getElementById("resetPrenom").value.trim();
-  const dob = document.getElementById("resetDOB").value;
-  const newPassword = document.getElementById("resetNewPassword").value;
-
-  const ref = doc(db,"utilisateurs",phone);
-  const snap = await getDoc(ref);
-
-  if(!snap.exists()) return alert("Utilisateur non trouvé");
-
-  const data = snap.data();
-  if(data.nom!==nom || data.prenom!==prenom || data.dateNaissance!==dob)
-    return alert("Infos incorrectes");
-
-  const newHash = await hashPassword(newPassword);
-  await setDoc(ref,{ passwordHash:newHash },{ merge:true });
-
-  alert("Mot de passe réinitialisé !");
-  showPhoneForm("login");
-}
-
-/* =============================
-   AUTO-CONNEXION
-============================= */
-window.addEventListener("load", async ()=>{
-  const phone = localStorage.getItem("phoneUser");
-  if(phone){
     const ref = doc(db,"utilisateurs",phone);
     const snap = await getDoc(ref);
-    if(snap.exists()) console.log("Utilisateur connecté :", phone);
-  }
+
+    if (!snap.exists()){
+        console.warn("❌ User introuvable");
+        return alert("Utilisateur introuvable.");
+    }
+
+    const data = snap.data();
+    const hash = await hashPassword(password);
+
+    console.log("Hash attendu:", data.passwordHash);
+    console.log("Hash reçu   :", hash);
+
+    if (hash !== data.passwordHash){
+        console.warn("❌ Mauvais mot de passe");
+        return alert("Mot de passe incorrect.");
+    }
+
+    console.log("✔ Connexion réussie !");
+    localStorage.setItem("phoneUser", phone);
+
+    alert("Connexion réussie !");
+    phoneOverlay.style.display = "none";
+}
+
+
+/* =============================
+   RESET PASSWORD
+============================= */
+async function resetPasswordPhone(){
+    console.log("▶ Reset password...");
+
+    const phone = resetPhone.value.trim();
+    const nom = resetNom.value.trim();
+    const prenom = resetPrenom.value.trim();
+    const dob = resetDOB.value;
+    const newPassword = resetNewPassword.value;
+
+    console.log("Données saisies reset:", {phone, nom, prenom, dob, newPassword});
+
+    const ref = doc(db,"utilisateurs",phone);
+    const snap = await getDoc(ref);
+
+    if (!snap.exists()){
+        console.warn("❌ User introuvable");
+        return alert("Utilisateur introuvable.");
+    }
+
+    const data = snap.data();
+    console.log("Données Firestore:", data);
+
+    if (data.nom!==nom || data.prenom!==prenom || data.dateNaissance!==dob){
+        console.warn("❌ Infos incorrectes");
+        return alert("Informations incorrectes.");
+    }
+
+    const newHash = await hashPassword(newPassword);
+
+    console.log("▶ Mise à jour mot de passe...");
+    await setDoc(ref,{ passwordHash:newHash },{ merge:true });
+
+    console.log("✔ Mot de passe réinitialisé !");
+    alert("Mot de passe réinitialisé !");
+    showPhoneForm("login");
+}
+
+
+/* =============================
+   AUTO LOGIN
+============================= */
+window.addEventListener("load", async ()=>{
+    console.log("▶ Vérification auto-connexion...");
+
+    const phone = localStorage.getItem("phoneUser");
+    console.log("phoneUser localStorage:", phone);
+
+    if (phone){
+        const ref = doc(db,"utilisateurs",phone);
+        const snap = await getDoc(ref);
+
+        if (snap.exists())
+            console.log("✔ Auto connecté en tant que:", phone);
+        else
+            console.warn("⚠ Utilisateur localStorage introuvable dans Firestore");
+    }
 });
 
 </script>
+
 
 
 
