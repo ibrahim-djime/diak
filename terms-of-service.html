@@ -1,412 +1,312 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-        <!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-1Y80YWCNCP"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-
-  gtag('config', 'G-1Y80YWCNCP');
-</script>
-    <!-- Google Tag Manager -->
-<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-})(window,document,'script','dataLayer','GTM-MN9542FK');</script>
-<!-- End Google Tag Manager -->
-<!-- Default Statcounter code for Lumesys https://ibrahim-djime.github.io/diak/
--->
-<script type="text/javascript">
-var sc_project=13046048; 
-var sc_invisible=0; 
-var sc_security="ff489f98"; 
-var scJsHost = "https://";
-document.write("<sc"+"ript type='text/javascript' src='" + scJsHost+
-"statcounter.com/counter/counter.js'></"+"script>");
-</script>
-<noscript><div class="statcounter"><a title="site stats"
-href="https://statcounter.com/" target="_blank"><img class="statcounter"
-src="https://c.statcounter.com/13046048/0/ff489f98/0/" alt="site stats"
-referrerPolicy="no-referrer-when-downgrade"></a></div></noscript>
-<!-- End of Statcounter Code -->
-<a href="https://statcounter.com/p13046048/?guest=1" class="stat">Statistiques du site</a>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-1Y80YWCNCP"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-1Y80YWCNCP');
+    </script>
+    <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+    'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+    })(window,document,'script','dataLayer','GTM-MN9542FK');</script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="robots" content="index, follow">
-    <meta name="google-site-verification" content="lqSP6fhb1mMxSYLmhjajfFqSEkYxitxmn74fJB29Cnw" />
-    <meta name="msvalidate.01" content="1A06709B0DC4C1E52E626BFBEA0AACB4" />
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <link rel="stylesheet" href="polisecu.css">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Conditions d'utilisation - Lumesys</title>
 </head>
 <body>
-    <header>
-
+    <header style="display: flex; justify-content: space-between; align-items: center; padding: 15px 20px; background: #fff; border-bottom: 1px solid #ddd;">
         <h1>Conditions d'utilisation</h1>
-        
+        <div id="header-actions">
+            <button id="btn-open-login" style="padding: 8px 15px; background: #007bff; color: white; border: none; border-radius: 5px; cursor: pointer;">Se connecter</button>
+            <button id="btn-do-logout" class="hidden" style="padding: 8px 15px; background: #6c757d; color: white; border: none; border-radius: 5px; cursor: pointer;">Déconnexion</button>
+        </div>
     </header>
-<p id="status">Non connecté</p>
 
-<!-- Bouton qui ouvre l’overlay Téléphone -->
-<button id="loginPhoneBtnTela" class="btnLoginTela">Connexion via Téléphone</button>
+    <div id="auth-overlay" class="hidden">
+        <div id="auth-box">
+            <button id="btn-close-overlay" class="hidden" title="Fermer">✖</button>
 
-<!-- Bouton Déconnexion -->
-<button id="logoutBtn">Se déconnecter</button>
+            <div id="block-message" class="hidden">
+                <p>Vous avez atteint votre limite hors connexion.<br>Veuillez vous connecter à LUMESYS.</p>
+                <button id="btn-reconnect">Se connecter</button>
+                <br>
+                <button id="btn-quit">Quitter le site</button>
+            </div>
 
+            <div id="login-form" class="hidden">
+                <h2>Connexion</h2>
+                <input type="tel" id="login-phone" placeholder="Numéro de téléphone" autocomplete="tel">
+                <input type="password" id="login-password" placeholder="Mot de passe">
+                <button id="btn-login">Se connecter</button>
+                <p>Pas encore inscrit ? <span id="btn-show-register" class="link-btn">S'inscrire</span></p>
+            </div>
 
-<!-- ================================
-     Overlay Connexion / Inscription
-================================ -->
-<div id="phoneOverlayTela" class="overlayTela">
-
-    <div class="overlayBoxTela">
-        
-        <h2>Connexion / Inscription</h2>
-
-        <!-- Contenu généré automatiquement -->
-        <div id="phoneFormContainerTela"></div>
-
-        <button id="closePhoneOverlayTela" class="btnCloseTela">Fermer</button>
+            <div id="register-form" class="hidden">
+                <h2>Inscription</h2>
+                <input type="text" id="reg-prenom" placeholder="Prénom">
+                <input type="text" id="reg-nom" placeholder="Nom">
+                <label style="font-size:13px; color:#555; margin-bottom:5px; display:block; font-weight:bold;">Date de naissance :</label>
+                <input type="date" id="reg-dateNaissance">
+                <input type="text" id="reg-lieuNaissance" placeholder="Lieu de naissance">
+                <select id="reg-sexe">
+                    <option value="">Sélectionnez le sexe</option>
+                    <option value="M">Masculin</option>
+                    <option value="F">Féminin</option>
+                </select>
+                <input type="tel" id="reg-phone" placeholder="Numéro de téléphone" autocomplete="tel">
+                <input type="email" id="reg-email" placeholder="Email (facultatif)" autocomplete="email">
+                <input type="password" id="reg-password" placeholder="Mot de passe">
+                <button id="btn-register">S'inscrire</button>
+                <p>Déjà inscrit ? <span id="btn-show-login" class="link-btn">Connexion</span></p>
+            </div>
+        </div>
     </div>
 
-</div>
+    <div id="main-content">
+        <p>Bienvenue sur le site <a href="index.html" class="site">Lumesys</a>. En utilisant ce site web, vous acceptez les conditions d'utilisation décrites ci-dessous.</p>
 
+        <h2>1. Acceptation des termes</h2>
+        <p>En accédant et en utilisant le site <a href="index.html" class="site">Lumesys</a>, vous acceptez les présentes conditions d'utilisation.</p>
 
+        <h2>2. Utilisation du site</h2>
+        <p>Vous vous engagez à utiliser ce site conformément aux lois et règlements en vigueur.</p>
+        <ul>
+            <li>Transmettre du contenu illégal, nuisible, ou offensant.</li>
+            <li>Violer les droits d'autrui, y compris les droits de propriété intellectuelle.</li>
+        </ul>
 
-<script type="module">
-/* =============================
-   IMPORTS Firebase
-============================= */
-console.log("▶ Début des imports Firebase...");
-import { initializeApp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";
-import { getFirestore, doc, getDoc, setDoc, serverTimestamp, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
-console.log("✔ Imports Firebase terminés");
+        <h2>3. Propriété intellectuelle</h2>
+        <p>Tous les contenus présents sur le site proviennent de diverses sources.</p>
+        <p class="loi">Si vous êtes le titulaire des droits d'auteur d'une œuvre publiée sur notre site... contactez-nous au : 00223 76-85-66-31.</p>
 
-/* =============================
-   CONFIG Firebase
-============================= */
-console.log("▶ Configuration Firebase...");
-const firebaseConfig = {
-    apiKey: "AIzaSyAClwRQe3g4Cg9CAsn28l_sAihwlMQtGUI",
-    authDomain: "lumina-analytics.firebaseapp.com",
-    projectId: "lumina-analytics",
-    storageBucket: "lumina-analytics.firebasestorage.app",
-    messagingSenderId: "239329398532",
-    appId: "1:239329398532:web:2f68b196df0c4e6400ca51",
-    measurementId: "G-J7LLPRXLJH"
-};
+        <h2>4. Limitation de responsabilité</h2>
+        <p>Nous ne sommes pas responsables des dommages directs ou indirects.</p>
 
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
-console.log("✔ Firebase initialisé et Firestore prêt");
+        <h2>5. Modifications des conditions</h2>
+        <p>Nous nous réservons le droit de modifier ces conditions.</p>
 
-/* =============================
-   SESSION UTILISATEUR
-============================= */
-let currentUser = null; // utilisateur connecté
-console.log("▶ Vérification de la session utilisateur...");
+        <h2>6. Loi applicable</h2>
+        <p>Ces conditions sont régies par les lois en vigueur au Mali.</p>
 
-// Fonction pour afficher l'overlay de connexion / inscription
-function showAuthOverlay() {
-    console.log("▶ Affichage overlay connexion / inscription...");
-    if (document.getElementById("authOverlay")) return;
+        <p>Dernière mise à jour : 23 février 2024</p>
 
-    const overlay = document.createElement("div");
-    overlay.id = "authOverlay";
-    overlay.style.cssText = `
-        position: fixed; top:0; left:0; width:100%; height:100%;
-        background: rgba(0,0,0,0.95); display:flex; flex-direction:column;
-        justify-content:center; align-items:center; color:white; z-index:99999; padding:20px;
-    `;
-    overlay.innerHTML = `
-        <h2>Connexion / Inscription</h2>
-        <p>Veuillez remplir les informations pour accéder à LUMESYS.</p>
-        <form id="authForm" style="display:flex; flex-direction:column; gap:10px; width:300px;">
-            <input type="text" id="nom" placeholder="Nom" required>
-            <input type="text" id="prenom" placeholder="Prénom" required>
-            <input type="date" id="dateNaissance" placeholder="Date de naissance" required>
-            <input type="email" id="email" placeholder="Email (facultatif)">
-            <input type="password" id="password" placeholder="Mot de passe" required>
-            <div style="display:flex; justify-content:space-between; margin-top:10px;">
-                <button type="submit">Valider</button>
-                <button type="button" id="btnQuitterOverlay">Quitter</button>
+        <footer>
+            <div class="social-icons">
+                 <a href="#" class="social-button"><img src="icone/wa.png" alt="WA"></a>
+                 <a href="#" class="social-button"><img src="icone/facebook.png" alt="FB"></a>
+                 <a href="#" class="social-button"><img src="icone/x.png" alt="X"></a>
+                 <a href="#" class="social-button"><img src="icone/insta.png" alt="Insta"></a>
+                 <a href="#" class="social-button"><img src="icone/tiktok.png" alt="TikTok"></a>
             </div>
-        </form>
-        <p id="authMsg" style="color:orange; margin-top:10px;"></p>
-    `;
-    document.body.appendChild(overlay);
-    console.log("✔ Overlay ajouté au DOM");
+            <p>&copy; 2025 Ibrahim Djimé Diakité. Tous droits réservés.</p>
+            <script type="text/javascript">
+            var sc_project=13046048; var sc_invisible=0; var sc_security="ff489f98"; 
+            var scJsHost = "https://";
+            document.write("<sc"+"ript type='text/javascript' src='" + scJsHost+ "statcounter.com/counter/counter.js'></"+"script>");
+            </script>
+            <noscript><div class="statcounter"><a href="https://statcounter.com/" target="_blank"><img class="statcounter" src="https://c.statcounter.com/13046048/0/ff489f98/0/" alt="site stats"></a></div></noscript>
+        </footer>
+    </div>
 
-    document.getElementById("btnQuitterOverlay").addEventListener("click", () => {
-        console.log("▶ Bouton Quitter cliqué, redirection vers about:blank");
-        window.location.href = "about:blank";
-    });
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";
+        import { getFirestore, doc, getDoc, setDoc, updateDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
 
-    document.getElementById("authForm").addEventListener("submit", async (e) => {
-        e.preventDefault();
-        const nom = document.getElementById("nom").value.trim();
-        const prenom = document.getElementById("prenom").value.trim();
-        const dateNaissance = document.getElementById("dateNaissance").value;
-        const email = document.getElementById("email").value.trim();
-        const password = document.getElementById("password").value;
+        const firebaseConfig = {
+            apiKey: "AIzaSyAClwRQe3g4Cg9CAsn28l_sAihwlMQtGUI",
+            authDomain: "lumina-analytics.firebaseapp.com",
+            projectId: "lumina-analytics",
+            storageBucket: "lumina-analytics.firebasestorage.app",
+            messagingSenderId: "239329398532",
+            appId: "1:239329398532:web:2f68b196df0c4e6400ca51",
+            measurementId: "G-J7LLPRXLJH"
+        };
 
-        if (!nom || !prenom || !dateNaissance || !password) return;
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
 
-        // Hasher le mot de passe (SHA-256)
-        const encoder = new TextEncoder();
-        const data = encoder.encode(password);
-        const hashBuffer = await crypto.subtle.digest('SHA-256', data);
-        const hashArray = Array.from(new Uint8Array(hashBuffer));
-        const passwordHash = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
-        console.log("▶ Mot de passe hashé :", passwordHash);
+        // Variables
+        const MAX_VISITS = 3; 
+        let visits = Number(localStorage.getItem('lumina_visits')) || 0;
+        let currentUserPhone = localStorage.getItem('currentUserPhone');
 
-        // Vérifier si l'utilisateur existe
-        const q = query(collection(db, "utilisateurs"), where("nom", "==", nom), where("prenom", "==", prenom), where("dateNaissance", "==", dateNaissance));
-        const querySnapshot = await getDocs(q);
+        // Elements DOM
+        const authOverlay = document.getElementById('auth-overlay');
+        const mainContent = document.getElementById('main-content');
+        const blockMsgDiv = document.getElementById('block-message');
+        const loginDiv = document.getElementById('login-form');
+        const registerDiv = document.getElementById('register-form');
+        const btnOpenLogin = document.getElementById('btn-open-login');
+        const btnDoLogout = document.getElementById('btn-do-logout');
+        const btnCloseOverlay = document.getElementById('btn-close-overlay');
 
-        if (!querySnapshot.empty) {
-            // Connexion
-            let found = false;
-            querySnapshot.forEach(docSnap => {
-                const data = docSnap.data();
-                if (data.passwordHash === passwordHash) {
-                    currentUser = docSnap.id;
-                    console.log("✔ Utilisateur connecté :", data.nom, data.prenom);
-                    setDoc(doc(db, "utilisateurs", currentUser), { derniereConnexion: serverTimestamp() }, { merge: true });
-                    found = true;
+        // Initialisation
+        async function init() {
+            if (currentUserPhone) {
+                console.log("Utilisateur connecté :", currentUserPhone);
+                setConnectedState();
+            } else {
+                console.log("Visiteur non connecté");
+                setDisconnectedState();
+                // On n'incrémente QUE si on n'est pas connecté
+                visits++;
+                localStorage.setItem('lumina_visits', visits);
+                console.log("Visite numéro :", visits);
+                
+                if (visits > MAX_VISITS) {
+                    console.log("Limite atteinte. Blocage activé.");
+                    showBlockScreen();
                 }
-            });
-            if (!found) {
-                document.getElementById("authMsg").textContent = "⚠ Mot de passe incorrect";
-                console.log("⚠ Mot de passe incorrect");
-                return;
             }
-        } else {
-            // Inscription
-            const newUserRef = doc(collection(db, "utilisateurs"));
-            await setDoc(newUserRef, {
-                nom, prenom, dateNaissance, email, passwordHash,
-                derniereConnexion: serverTimestamp(),
-                typeCompte: "phone"
-            });
-            currentUser = newUserRef.id;
-            console.log("✔ Nouvel utilisateur créé :", nom, prenom);
         }
 
-        // Fermer l'overlay
-        overlay.remove();
-        console.log("✔ Overlay fermé, accès autorisé");
-        initVisitesDownloads();
-    });
-}
+        // Gestion Affichage
+        function setConnectedState() {
+            mainContent.classList.remove('hidden');
+            authOverlay.classList.add('hidden');
+            btnOpenLogin.classList.add('hidden');
+            btnDoLogout.classList.remove('hidden');
+        }
 
-// =============================
-//   LIMITES VISITES / TELECHARGEMENTS
-// =============================
-function initVisitesDownloads() {
-    console.log("▶ Initialisation des limites de visites / téléchargements...");
-    const MAX_VISITES = 3;
-    const MAX_DOWNLOADS = 5;
-    const pageKey = "visites_" + window.location.pathname;
-    let visites = parseInt(localStorage.getItem(pageKey)) || 0;
-    console.log(`Visites actuelles pour cette page : ${visites}`);
+        function setDisconnectedState() {
+            btnOpenLogin.classList.remove('hidden');
+            btnDoLogout.classList.add('hidden');
+        }
 
-    const downloadKey = "telechargements";
-    let downloads = parseInt(localStorage.getItem(downloadKey)) || 0;
-    console.log(`Téléchargements actuels : ${downloads}`);
+        function showBlockScreen() {
+            authOverlay.classList.remove('hidden');
+            mainContent.classList.add('hidden'); // Cache le contenu derrière
+            blockMsgDiv.classList.remove('hidden');
+            loginDiv.classList.add('hidden');
+            registerDiv.classList.add('hidden');
+            btnCloseOverlay.classList.add('hidden'); // FORCE le blocage (pas de croix)
+        }
 
-    // Incrément visite
-    visites++;
-    localStorage.setItem(pageKey, visites);
-    console.log(`Nouvelle valeur des visites enregistrée : ${visites}`);
-
-    // Vérification limites
-    if (visites > MAX_VISITES) {
-        console.log(`⚠ Limite de visites dépassée (${visites} > ${MAX_VISITES})`);
-        showBlockOverlay();
-    } else {
-        console.log("✔ Limite de visites non atteinte");
-    }
-
-    // Téléchargements
-    document.querySelectorAll('a[target="_blank"]').forEach(link => {
-        link.addEventListener("click", (e) => {
-            if (!currentUser) {
-                console.log("⚠ Téléchargement bloqué : utilisateur non connecté");
-                e.preventDefault();
-                showAuthOverlay();
-                return;
+        function openLoginOverlay() {
+            authOverlay.classList.remove('hidden');
+            blockMsgDiv.classList.add('hidden');
+            showLoginForm();
+            // Si le visiteur est bloqué, on ne met PAS la croix. Sinon on la met.
+            if (visits > MAX_VISITS) {
+                btnCloseOverlay.classList.add('hidden');
+            } else {
+                btnCloseOverlay.classList.remove('hidden');
             }
-            downloads++;
-            localStorage.setItem(downloadKey, downloads);
-            console.log(`✔ Téléchargement autorisé, nouvelle valeur : ${downloads}`);
-        });
-    });
-}
+        }
 
-// =============================
-//   VERIFICATION SESSION
-// =============================
-console.log("▶ Vérification session utilisateur Firestore...");
-if (!currentUser) {
-    showAuthOverlay();
-}
-</script>
+        function showLoginForm() {
+            registerDiv.classList.add('hidden');
+            loginDiv.classList.remove('hidden');
+        }
 
+        function showRegisterForm() {
+            loginDiv.classList.add('hidden');
+            registerDiv.classList.remove('hidden');
+        }
 
+        // Hachage (Sécurité Mot de passe)
+        async function hashPassword(password) {
+            const encoder = new TextEncoder();
+            const data = encoder.encode(password);
+            const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+            const hashArray = Array.from(new Uint8Array(hashBuffer));
+            return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+        }
 
+        // Actions de Connexion
+        async function handleLogin() {
+            const phone = document.getElementById('login-phone').value.trim();
+            const pass = document.getElementById('login-password').value;
+            if(!phone || !pass) return alert("Veuillez remplir tous les champs.");
 
-    
-    <p>Bienvenue sur le site <a href="index.html" class="site">Lumesys</a>. En utilisant ce site web, vous acceptez les conditions d'utilisation décrites ci-dessous. Veuillez lire attentivement ces termes avant d'utiliser nos services.</p>
+            try {
+                const docRef = doc(db, "utilisateurs", phone);
+                const docSnap = await getDoc(docRef);
+                
+                if (!docSnap.exists()) {
+                    return alert("Ce numéro n'est pas inscrit. Veuillez créer un compte.");
+                }
 
-    <h2>1. Acceptation des termes</h2>
-    <p>En accédant et en utilisant le site <a href="index.html" class="site">Lumesys</a>, vous acceptez les présentes conditions d'utilisation, ainsi que notre <a href="privacy-policy.html" class="site">politique de confidentialité</a>. Si vous n'acceptez pas ces conditions, veuillez ne pas utiliser ce site.</p>
+                const data = docSnap.data();
+                const hashedPass = await hashPassword(pass);
 
-    <h2>2. Utilisation du site</h2>
-    <p>Vous vous engagez à utiliser ce site conformément aux lois et règlements en vigueur. Il est interdit d'utiliser le site pour :</p>
-    <ul>
-        <li>Transmettre du contenu illégal, nuisible, ou offensant.</li>
-        <li>Violer les droits d'autrui, y compris les droits de propriété intellectuelle.</li>
-        <li>Interférer avec le bon fonctionnement du site ou tenter d'accéder à des informations non autorisées.</li>
-    </ul>
+                if (data.passwordHash === hashedPass) {
+                    await updateDoc(docRef, { derniereConnexion: serverTimestamp(), statut: "connecté" });
+                    localStorage.setItem('currentUserPhone', phone);
+                    localStorage.setItem('lumina_visits', 0); // On remet les visites à 0
+                    alert("Connexion réussie !");
+                    location.reload();
+                } else {
+                    alert("Mot de passe incorrect.");
+                }
+            } catch(e) { console.error(e); alert("Erreur technique de connexion."); }
+        }
 
-    <h2>3. Propriété intellectuelle</h2>
-      <p>Tous les contenus présents sur le site <a href="index.html" class="site">Lumesys</a> (textes, images, logos, etc.) proviennent de groupes WhatsApp, de groupes Telegram, d'étudiants, d'enseignants et de sources accessibles sur Internet. Vous n'êtes pas autorisé à les vendre sans notre autorisation écrite préalable.</p>
-      <p class="loi">Si vous êtes le titulaire des droits d'auteur d'une œuvre publiée sur notre site et que vous souhaitez qu'elle soit retirée, veuillez nous contacter au :00223 76-85-66-31.<br /> Nous retirons le contenu concerné dès réception de votre demande.</p>
+        // Actions d'Inscription
+        async function handleRegister() {
+            const prenom = document.getElementById('reg-prenom').value.trim();
+            const nom = document.getElementById('reg-nom').value.trim();
+            const dateN = document.getElementById('reg-dateNaissance').value;
+            const lieuN = document.getElementById('reg-lieuNaissance').value.trim();
+            const sexe = document.getElementById('reg-sexe').value;
+            const phone = document.getElementById('reg-phone').value.trim();
+            const email = document.getElementById('reg-email').value.trim();
+            const pass = document.getElementById('reg-password').value;
 
-    <h2>4. Limitation de responsabilité</h2>
-    <p>Nous ne sommes pas responsables des dommages directs ou indirects découlant de l'utilisation de ce site ou de l'incapacité à l'utiliser. Nous ne garantissons pas que le site sera exempt d'erreurs ou d'interruptions.</p>
+            if (!prenom || !nom || !phone || !pass || !dateN || !sexe) {
+                return alert("Veuillez remplir tous les champs obligatoires.");
+            }
 
-    <h2>5. Modifications des conditions</h2>
-    <p>Nous nous réservons le droit de modifier ces conditions d'utilisation à tout moment. Les modifications prendront effet dès leur publication sur cette page. Il est de votre responsabilité de consulter régulièrement cette page pour être informé des changements.</p>
+            try {
+                const docRef = doc(db, "utilisateurs", phone);
+                const docSnap = await getDoc(docRef);
+                if (docSnap.exists()) { 
+                    alert("Ce numéro possède déjà un compte. Veuillez vous connecter."); 
+                    showLoginForm(); 
+                    return; 
+                }
 
-    <h2>6. Loi applicable</h2>
-    <p>Ces conditions sont régies par les lois en vigueur au Mali. Tout litige relatif à l'utilisation de ce site sera soumis à la juridiction des tribunaux compétents.</p>
+                const hashedPass = await hashPassword(pass);
+                const userData = {
+                    prenom, nom, dateNaissance: dateN, lieuNaissance: lieuN, sexe,
+                    phone, email, passwordHash: hashedPass,
+                    typeCompte: "visiteur", statut: "connecté",
+                    derniereConnexion: serverTimestamp()
+                };
 
-    <p>Dernière mise à jour : 23 février 2024</p>
-    <footer>
-         <div class="social-icons">
-         <!-- Bouton WhatsApp -->
-<a href="https://wa.me/22376856631?text=Bonjour!%20Je%20souhaite%20en%20savoir%20plus%20sur%20votre%20site%20web."
-   target="_blank"
-   class="social-button whatsapp-button"
-   aria-label="Contactez-nous sur WhatsApp">
-  <img src="icone/wa.png" alt="WhatsApp" />
-</a>
+                await setDoc(docRef, userData);
+                localStorage.setItem('currentUserPhone', phone);
+                localStorage.setItem('lumina_visits', 0);
+                alert("Compte créé avec succès !");
+                location.reload();
+            } catch(e) { console.error(e); alert("Erreur lors de l'inscription."); }
+        }
 
-<!-- Bouton Facebook -->
-<a href="https://web.facebook.com/ibrahimdjime.diakite.3"
-   target="_blank"
-   class="social-button facebook-button"
-   aria-label="Partager sur Facebook">
-  <img src="icone/facebook.png" alt="Facebook" />
-</a>
+        function handleLogout() {
+            if(confirm("Voulez-vous vraiment vous déconnecter ?")) {
+                localStorage.removeItem('currentUserPhone');
+                location.reload();
+            }
+        }
 
-<!-- Bouton Twitter -->
-<a href="https://twitter.com/DiakitIbra19810"
-   target="_blank"
-   class="social-button twitter-button"
-   aria-label="Partager sur Twitter">
-  <img src="icone/x.png" alt="Twitter" />
-</a>
+        // Listeners (Écouteurs d'événements)
+        btnOpenLogin.addEventListener('click', openLoginOverlay);
+        btnCloseOverlay.addEventListener('click', () => authOverlay.classList.add('hidden'));
+        btnDoLogout.addEventListener('click', handleLogout);
+        document.getElementById('btn-reconnect').addEventListener('click', showLoginForm);
+        document.getElementById('btn-quit').addEventListener('click', () => window.location.href = "https://www.google.com");
+        document.getElementById('btn-show-register').addEventListener('click', showRegisterForm);
+        document.getElementById('btn-show-login').addEventListener('click', showLoginForm);
+        document.getElementById('btn-login').addEventListener('click', handleLogin);
+        document.getElementById('btn-register').addEventListener('click', handleRegister);
 
-<!-- Bouton Instagram -->
-<a href="https://www.instagram.com/ibrahim_djime_diakite"
-   target="_blank"
-   class="social-button instagram-button"
-   aria-label="Voir Instagram">
-  <img src="icone/insta.png" alt="Instagram" />
-</a>
-
-<!-- Bouton TikTok -->
-<a href="https://www.tiktok.com/@ibradiak0"
-   target="_blank"
-   class="social-button tiktok-button"
-   aria-label="Partager sur TikTok">
-  <img src="icone/tiktok.png" alt="TikTok" />
-</a>
-        </div>
-        <p>&copy; 2025 Ibrahim Djimé Diakité. Tous droits réservés.</p>
-    </footer>
-    <script>
-// Gestion des cookies pour Lumesys
-
-// Fonction générique pour définir et récupérer des cookies
-function setCookie(name, value, type = "session") {
-    if (type === "session") {
-        sessionStorage.setItem(name, value);
-    } else {
-        localStorage.setItem(name, value);
-    }
-}
-
-function getCookie(name, type = "session") {
-    return type === "session" ? sessionStorage.getItem(name) : localStorage.getItem(name);
-}
-
-// Initialisation des cookies par type
-
-// 1. Cookies de session : informations de session utilisateur
-function initializeSessionCookies() {
-    setCookie("userSession", "active");
-    console.log("Session de l'utilisateur :", getCookie("userSession"));
-}
-
-// 2. Cookies de préférences : langue et thème de l'utilisateur
-function initializePreferenceCookies() {
-    setCookie("language", "fr", "persistent"); // Exemple : français par défaut
-    setCookie("theme", "dark", "persistent");  // Exemple : thème sombre par défaut
-    console.log("Langue :", getCookie("language", "persistent"));
-    console.log("Thème :", getCookie("theme", "persistent"));
-}
-
-// 3. Cookies d'analyse : suivi des visites pour analyse du trafic
-function initializeAnalyticsCookies() {
-    let visits = getCookie("siteVisits", "persistent");
-    visits = visits ? parseInt(visits) + 1 : 1;
-    setCookie("siteVisits", visits, "persistent");
-    console.log("Nombre de visites :", visits);
-}
-
-// 4. Cookies publicitaires : ciblage basé sur les intérêts de l'utilisateur
-function initializeAdCookies() {
-    const interests = ["tech", "art"];
-    setCookie("adInterests", interests.join(","), "persistent");
-    console.log("Intérêts publicitaires :", getCookie("adInterests", "persistent"));
-}
-
-// 5. Cookies de réseaux sociaux : session de partage et interaction sociale
-function initializeSocialCookies() {
-    setCookie("socialLoggedIn", "true", "persistent");
-    console.log("Session de réseaux sociaux :", getCookie("socialLoggedIn", "persistent"));
-}
-
-// 6. Cookies de performance : mesure du temps de chargement des pages
-function initializePerformanceCookies() {
-    window.onload = function () {
-        const loadTime = window.performance.timing.domContentLoadedEventEnd - window.performance.timing.navigationStart;
-        setCookie("pageLoadTime", loadTime, "persistent");
-        console.log("Temps de chargement de la page :", loadTime, "ms");
-    };
-}
-
-// Fonction principale pour initialiser tous les cookies
-function initializeAllCookies() {
-    initializeSessionCookies();
-    initializePreferenceCookies();
-    initializeAnalyticsCookies();
-    initializeAdCookies();
-    initializeSocialCookies();
-    initializePerformanceCookies();
-}
-
-// Exécution de l'initialisation des cookies
-initializeAllCookies();
-
-</script>
+        // Lancement
+        init();
+    </script>
 </body>
 </html>
