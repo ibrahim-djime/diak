@@ -80,11 +80,11 @@ referrerPolicy="no-referrer-when-downgrade"></a></div></noscript>
    IMPORTS Firebase
 ============================= */
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";
-import {
-  getFirestore, doc, setDoc, getDoc, serverTimestamp,
-  collection, addDoc
+import { 
+  getFirestore, doc, setDoc, getDoc, serverTimestamp 
 } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
 import { getAuth } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-auth.js";
+
 
 /* =============================
    CONFIG Firebase
@@ -103,6 +103,7 @@ const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const auth = getAuth(app);
 
+
 /* =============================
    ELEMENTS HTML
 ============================= */
@@ -111,44 +112,44 @@ const phoneOverlay = document.getElementById("phoneOverlayTela");
 const phoneFormContainer = document.getElementById("phoneFormContainerTela");
 const closePhoneOverlay = document.getElementById("closePhoneOverlayTela");
 
+
 /* =============================
    GESTION VISITES
-   (un seul compteur stable)
 ============================= */
-let visitCountTela = parseInt(localStorage.getItem("visitCountTela") || "0");
-visitCountTela++;
-localStorage.setItem("visitCountTela", visitCountTela);
+let visitCount = localStorage.getItem("visitCountTela") || 0;
+visitCount++;
+localStorage.setItem("visitCountTela", visitCount);
 
 const connectedUser = localStorage.getItem("phoneUser");
 
-/* ouverture automatique après 3 visites (si non connecté) */
-if (!connectedUser && visitCountTela >= 3) {
+// ouverture automatique après 3 visites
+if (!connectedUser && visitCount >= 3) {
     phoneOverlay.style.display = "flex";
-    showBlockedMessage();
+    showPhoneForm("login");
 }
+
 
 /* =============================
    OUVERTURE / FERMETURE
 ============================= */
-if (loginPhoneBtn) {
-  loginPhoneBtn.addEventListener("click", () => {
-      phoneOverlay.style.display = "flex";
-      showPhoneForm("login");
-  });
-}
-if (closePhoneOverlay) {
-  closePhoneOverlay.addEventListener("click", () => {
-      phoneOverlay.style.display = "none";
-      phoneFormContainer.innerHTML = "";
-  });
-}
+loginPhoneBtn.addEventListener("click", ()=>{
+    phoneOverlay.style.display = "flex";
+    showPhoneForm("login");
+});
+
+closePhoneOverlay.addEventListener("click", ()=>{
+    phoneOverlay.style.display = "none";
+    phoneFormContainer.innerHTML = "";
+});
+
 
 /* =============================
    FORMULAIRES
 ============================= */
 function showPhoneForm(type){
-    if(type==="login"){
-        phoneFormContainer.innerHTML=`
+
+    if (type === "login"){
+        phoneFormContainer.innerHTML = `
             <input type="text" id="phoneLogin" placeholder="Numéro de téléphone">
             <input type="password" id="passwordLogin" placeholder="Mot de passe">
             <button id="loginPhoneSubmit">Se connecter</button>
@@ -156,10 +157,12 @@ function showPhoneForm(type){
                <a href="#" id="goToReset">Mot de passe oublié</a></p>
         `;
         document.getElementById("loginPhoneSubmit").addEventListener("click", loginWithPhone);
-        document.getElementById("goToSignup").addEventListener("click", (e)=>{ e.preventDefault(); showPhoneForm("signup"); });
-        document.getElementById("goToReset").addEventListener("click", (e)=>{ e.preventDefault(); showPhoneForm("reset"); });
-    } else if(type==="signup"){
-        phoneFormContainer.innerHTML=`
+        document.getElementById("goToSignup").addEventListener("click", ()=>showPhoneForm("signup"));
+        document.getElementById("goToReset").addEventListener("click", ()=>showPhoneForm("reset"));
+    }
+
+    else if (type === "signup"){
+        phoneFormContainer.innerHTML = `
             <input type="text" id="signupNom" placeholder="Nom">
             <input type="text" id="signupPrenom" placeholder="Prénom">
             <input type="date" id="signupDOB">
@@ -169,9 +172,11 @@ function showPhoneForm(type){
             <p><a href="#" id="goToLogin">Se connecter</a></p>
         `;
         document.getElementById("signupPhoneSubmit").addEventListener("click", signupWithPhone);
-        document.getElementById("goToLogin").addEventListener("click", (e)=>{ e.preventDefault(); showPhoneForm("login"); });
-    } else if(type==="reset"){
-        phoneFormContainer.innerHTML=`
+        document.getElementById("goToLogin").addEventListener("click", ()=>showPhoneForm("login"));
+    }
+
+    else if (type === "reset"){
+        phoneFormContainer.innerHTML = `
             <input type="text" id="resetPhone" placeholder="Numéro de téléphone">
             <input type="text" id="resetNom" placeholder="Nom">
             <input type="text" id="resetPrenom" placeholder="Prénom">
@@ -181,9 +186,10 @@ function showPhoneForm(type){
             <p><a href="#" id="goToLogin2">Se connecter</a></p>
         `;
         document.getElementById("resetPhoneSubmit").addEventListener("click", resetPasswordPhone);
-        document.getElementById("goToLogin2").addEventListener("click", (e)=>{ e.preventDefault(); showPhoneForm("login"); });
+        document.getElementById("goToLogin2").addEventListener("click", ()=>showPhoneForm("login"));
     }
 }
+
 
 /* =============================
    HASH PASSWORD
@@ -191,29 +197,34 @@ function showPhoneForm(type){
 async function hashPassword(password){
     const data = new TextEncoder().encode(password);
     const hash = await crypto.subtle.digest("SHA-256", data);
-    return Array.from(new Uint8Array(hash)).map(b=>b.toString(16).padStart(2,"0")).join("");
+    return Array.from(new Uint8Array(hash))
+        .map(b => b.toString(16).padStart(2,"0"))
+        .join("");
 }
+
 
 /* =============================
    SIGNUP
-   -> n'écrit PAS d'array contenant serverTimestamp()
-   -> ajoute une action en sous-collection actions
 ============================= */
 async function signupWithPhone(){
-    const nom = document.getElementById("signupNom").value.trim();
-    const prenom = document.getElementById("signupPrenom").value.trim();
-    const dob = document.getElementById("signupDOB").value;
-    const phone = document.getElementById("signupPhone").value.trim();
-    const password = document.getElementById("signupPassword").value;
 
-    if(!nom || !prenom || !dob || !phone || !password) return alert("Remplissez tous les champs");
+    const nom = signupNom.value.trim();
+    const prenom = signupPrenom.value.trim();
+    const dob = signupDOB.value;
+    const phone = signupPhone.value.trim();
+    const password = signupPassword.value;
+
+    if (!nom||!prenom||!dob||!phone||!password){
+        return alert("Remplissez tous les champs");
+    }
 
     const ref = doc(db,"utilisateurs",phone);
     const exists = (await getDoc(ref)).exists();
-    if(exists) return alert("Ce numéro est déjà utilisé.");
+    if (exists) return alert("Ce numéro est déjà utilisé.");
 
     const passHash = await hashPassword(password);
 
+    // 🔥 Création du compte
     await setDoc(ref,{
         nom,
         prenom,
@@ -225,8 +236,11 @@ async function signupWithPhone(){
         derniereConnexion: serverTimestamp()
     });
 
-    // add action in a subcollection (no array)
-    await addDoc(collection(db, "utilisateurs", phone, "actions"), {
+    // 🔥 Historique
+    await setDoc(doc(db,"connections", Date.now().toString()),{
+        nom,
+        prenom,
+        phone,
         type: "signup",
         date: serverTimestamp()
     });
@@ -235,57 +249,79 @@ async function signupWithPhone(){
     showPhoneForm("login");
 }
 
+
 /* =============================
    LOGIN
 ============================= */
 async function loginWithPhone(){
-    const phone = document.getElementById("phoneLogin").value.trim();
-    const password = document.getElementById("passwordLogin").value;
+
+    const phone = phoneLogin.value.trim();
+    const password = passwordLogin.value;
 
     const ref = doc(db,"utilisateurs",phone);
     const snap = await getDoc(ref);
-    if(!snap.exists()) return alert("Utilisateur introuvable.");
+
+    if (!snap.exists()) return alert("Utilisateur introuvable.");
 
     const data = snap.data();
     const hash = await hashPassword(password);
-    if(hash !== data.passwordHash) return alert("Mot de passe incorrect.");
 
-    // Update last login (field update ok)
-    await setDoc(ref,{ derniereConnexion: serverTimestamp() }, { merge: true });
+    if (hash !== data.passwordHash){
+        return alert("Mot de passe incorrect.");
+    }
 
-    // Add login action in subcollection (no arrays with serverTimestamp)
-    await addDoc(collection(db, "utilisateurs", phone, "actions"), {
+    // 🔥 Mise à jour de la dernière connexion
+    await setDoc(ref,{ 
+        derniereConnexion: serverTimestamp()
+    }, { merge:true });
+
+    // 🔥 Historique
+    await setDoc(doc(db,"connections", Date.now().toString()),{
+        nom: data.nom,
+        prenom: data.prenom,
+        phone,
         type: "login",
         date: serverTimestamp()
     });
 
     localStorage.setItem("phoneUser", phone);
+
     alert("Connexion réussie !");
     phoneOverlay.style.display = "none";
 }
+
 
 /* =============================
    RESET PASSWORD
 ============================= */
 async function resetPasswordPhone(){
-    const phone = document.getElementById("resetPhone").value.trim();
-    const nom = document.getElementById("resetNom").value.trim();
-    const prenom = document.getElementById("resetPrenom").value.trim();
-    const dob = document.getElementById("resetDOB").value;
-    const newPassword = document.getElementById("resetNewPassword").value;
+
+    const phone = resetPhone.value.trim();
+    const nom = resetNom.value.trim();
+    const prenom = resetPrenom.value.trim();
+    const dob = resetDOB.value;
+    const newPassword = resetNewPassword.value;
 
     const ref = doc(db,"utilisateurs",phone);
     const snap = await getDoc(ref);
-    if(!snap.exists()) return alert("Utilisateur introuvable.");
+
+    if (!snap.exists()) return alert("Utilisateur introuvable.");
 
     const data = snap.data();
-    if(data.nom!==nom || data.prenom!==prenom || data.dateNaissance!==dob) return alert("Informations incorrectes.");
+
+    if (data.nom!==nom || data.prenom!==prenom || data.dateNaissance!==dob){
+        return alert("Informations incorrectes.");
+    }
 
     const newHash = await hashPassword(newPassword);
-    await setDoc(ref,{ passwordHash: newHash }, { merge:true });
 
-    // Add reset action
-    await addDoc(collection(db, "utilisateurs", phone, "actions"), {
+    await setDoc(ref,{ passwordHash:newHash },{ merge:true });
+
+    // 🔥 Historique
+    await setDoc(doc(db,"connections", Date.now().toString()),{
+        nom,
+        prenom,
+        phone,
         type: "reset",
         date: serverTimestamp()
     });
@@ -294,88 +330,20 @@ async function resetPasswordPhone(){
     showPhoneForm("login");
 }
 
+
 /* =============================
    AUTO LOGIN
 ============================= */
 window.addEventListener("load", async ()=>{
     const phone = localStorage.getItem("phoneUser");
-    if(!phone) return;
+    if (!phone) return;
+
     const ref = doc(db,"utilisateurs",phone);
     const snap = await getDoc(ref);
-    if(snap.exists()) console.log("✔ Auto connecté :", phone);
-});
 
-/* =============================
-   BLOCAGE VISITES ET TÉLÉCHARGEMENTS
-============================= */
-const MAX_VISITES = 3;
-const MAX_TELECHARGEMENTS = 5;
-const isConnected = !!localStorage.getItem("phoneUser");
-
-let downloadCount = parseInt(localStorage.getItem("downloadCountTela")||"0");
-visitCountTela = parseInt(localStorage.getItem("visitCountTela")||"0"); // maintain consistent value
-
-function showBlockedMessage(){
-    const container = document.getElementById("phoneFormContainerTela");
-    container.innerHTML = `
-        <div style="padding:20px; background:#ffe6e6; border:1px solid #ff0000; color:#b30000; border-radius:8px; margin-bottom:15px; text-align:center;">
-            <strong>Vous avez atteint votre limite hors connexion.</strong><br>
-            Veuillez vous connecter à <strong>LUMESYS</strong> pour continuer.
-            <div style="margin-top:15px;">
-                <button id="blockedLoginBtn" style="padding:10px 20px; margin-right:10px; background:#ff0000; color:white; border:none; border-radius:5px; cursor:pointer;">Connexion</button>
-                <button id="blockedQuitBtn" style="padding:10px 20px; background:#ccc; color:#333; border:none; border-radius:5px; cursor:pointer;">Quitter</button>
-            </div>
-        </div>
-    `;
-    document.getElementById("blockedLoginBtn").addEventListener("click", ()=>showPhoneForm("login"));
-    document.getElementById("blockedQuitBtn").addEventListener("click", onBlockedQuit);
-}
-
-// Bloquer si non connecté et visite trop élevée
-if(!isConnected && visitCountTela >= MAX_VISITES){
-    phoneOverlay.style.display = "flex";
-    showBlockedMessage();
-}
-
-/* =============================
-   QUITTER (doit quitter LE SITE)
-   - on essaye window.close() (souvent bloqué),
-   - puis fallback vers about:blank pour forcer sortie
-============================= */
-function onBlockedQuit(){
-    // Nettoyage local (optionnel)
-    // localStorage.setItem("visitCountTela", "0"); // si tu veux réinitialiser
-    // Essayer de fermer l'onglet/fenêtre
-    try {
-        window.open('', '_self'); // tentative pour permettre close
-        window.close();
-        // Si close ne marche pas (souvent), forcer redirection
-        setTimeout(()=>{ window.location.href = 'about:blank'; }, 200);
-    } catch(e){
-        window.location.href = 'about:blank';
+    if (snap.exists()) {
+        console.log("✔ Auto connecté :", phone);
     }
-}
-
-/* =============================
-   Blocage des téléchargements (liens Google Drive)
-   - on attache après DOM ready pour s'assurer que les liens existent
-============================= */
-window.addEventListener("DOMContentLoaded", ()=>{
-    const allDriveLinks = document.querySelectorAll('a[href*="docs.google.com"]');
-    allDriveLinks.forEach(link=>{
-        link.addEventListener("click", function(event){
-            if(!isConnected){
-                if(downloadCount >= MAX_TELECHARGEMENTS){
-                    event.preventDefault();
-                    phoneOverlay.style.display="flex";
-                    showBlockedMessage();
-                    return;
-                }
-                downloadCount++;
-                localStorage.setItem("downloadCountTela", downloadCount);
-            }
-        });
-    });
 });
 </script>
 
