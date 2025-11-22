@@ -80,9 +80,7 @@ referrerPolicy="no-referrer-when-downgrade"></a></div></noscript>
    IMPORTS Firebase
 ============================= */
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";
-import { 
-  getFirestore, doc, setDoc, getDoc, serverTimestamp 
-} from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
+import { getFirestore, doc, setDoc, getDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
 import { getAuth } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-auth.js";
 
 /* =============================
@@ -128,12 +126,12 @@ if (!connectedUser && visitCount >= 3) {
 /* =============================
    OUVERTURE / FERMETURE
 ============================= */
-loginPhoneBtn.addEventListener("click", ()=>{
+loginPhoneBtn.addEventListener("click", () => {
     phoneOverlay.style.display = "flex";
     showPhoneForm("login");
 });
 
-closePhoneOverlay.addEventListener("click", ()=>{
+closePhoneOverlay.addEventListener("click", () => {
     phoneOverlay.style.display = "none";
     phoneFormContainer.innerHTML = "";
 });
@@ -142,9 +140,8 @@ closePhoneOverlay.addEventListener("click", ()=>{
    FORMULAIRES
 ============================= */
 function showPhoneForm(type){
-
-    if (type === "login"){
-        phoneFormContainer.innerHTML = `
+    if(type==="login"){
+        phoneFormContainer.innerHTML=`
             <input type="text" id="phoneLogin" placeholder="Numéro de téléphone">
             <input type="password" id="passwordLogin" placeholder="Mot de passe">
             <button id="loginPhoneSubmit">Se connecter</button>
@@ -154,10 +151,8 @@ function showPhoneForm(type){
         document.getElementById("loginPhoneSubmit").addEventListener("click", loginWithPhone);
         document.getElementById("goToSignup").addEventListener("click", ()=>showPhoneForm("signup"));
         document.getElementById("goToReset").addEventListener("click", ()=>showPhoneForm("reset"));
-    }
-
-    else if (type === "signup"){
-        phoneFormContainer.innerHTML = `
+    } else if(type==="signup"){
+        phoneFormContainer.innerHTML=`
             <input type="text" id="signupNom" placeholder="Nom">
             <input type="text" id="signupPrenom" placeholder="Prénom">
             <input type="date" id="signupDOB">
@@ -168,10 +163,8 @@ function showPhoneForm(type){
         `;
         document.getElementById("signupPhoneSubmit").addEventListener("click", signupWithPhone);
         document.getElementById("goToLogin").addEventListener("click", ()=>showPhoneForm("login"));
-    }
-
-    else if (type === "reset"){
-        phoneFormContainer.innerHTML = `
+    } else if(type==="reset"){
+        phoneFormContainer.innerHTML=`
             <input type="text" id="resetPhone" placeholder="Numéro de téléphone">
             <input type="text" id="resetNom" placeholder="Nom">
             <input type="text" id="resetPrenom" placeholder="Prénom">
@@ -191,9 +184,7 @@ function showPhoneForm(type){
 async function hashPassword(password){
     const data = new TextEncoder().encode(password);
     const hash = await crypto.subtle.digest("SHA-256", data);
-    return Array.from(new Uint8Array(hash))
-        .map(b => b.toString(16).padStart(2,"0"))
-        .join("");
+    return Array.from(new Uint8Array(hash)).map(b=>b.toString(16).padStart(2,"0")).join("");
 }
 
 /* =============================
@@ -206,13 +197,11 @@ async function signupWithPhone(){
     const phone = signupPhone.value.trim();
     const password = signupPassword.value;
 
-    if (!nom||!prenom||!dob||!phone||!password){
-        return alert("Remplissez tous les champs");
-    }
+    if(!nom || !prenom || !dob || !phone || !password) return alert("Remplissez tous les champs");
 
     const ref = doc(db,"utilisateurs",phone);
     const exists = (await getDoc(ref)).exists();
-    if (exists) return alert("Ce numéro est déjà utilisé.");
+    if(exists) return alert("Ce numéro est déjà utilisé.");
 
     const passHash = await hashPassword(password);
 
@@ -224,15 +213,8 @@ async function signupWithPhone(){
         passwordHash: passHash,
         typeCompte: "phone",
         dateCreation: serverTimestamp(),
-        derniereConnexion: serverTimestamp()
-    });
-
-    await setDoc(doc(db,"connections", Date.now().toString()),{
-        nom,
-        prenom,
-        phone,
-        type: "signup",
-        date: serverTimestamp()
+        derniereConnexion: serverTimestamp(),
+        actions: [{ type: "signup", date: serverTimestamp() }]
     });
 
     alert("Compte créé !");
@@ -248,30 +230,20 @@ async function loginWithPhone(){
 
     const ref = doc(db,"utilisateurs",phone);
     const snap = await getDoc(ref);
-
-    if (!snap.exists()) return alert("Utilisateur introuvable.");
+    if(!snap.exists()) return alert("Utilisateur introuvable.");
 
     const data = snap.data();
     const hash = await hashPassword(password);
+    if(hash !== data.passwordHash) return alert("Mot de passe incorrect.");
 
-    if (hash !== data.passwordHash){
-        return alert("Mot de passe incorrect.");
-    }
+    // Update last login
+    await setDoc(ref,{ derniereConnexion: serverTimestamp() }, { merge: true });
 
-    await setDoc(ref,{ 
-        derniereConnexion: serverTimestamp()
-    }, { merge:true });
-
-    await setDoc(doc(db,"connections", Date.now().toString()),{
-        nom: data.nom,
-        prenom: data.prenom,
-        phone,
-        type: "login",
-        date: serverTimestamp()
-    });
+    // Add login action
+    const updatedActions = data.actions ? [...data.actions, { type: "login", date: serverTimestamp() }] : [{ type: "login", date: serverTimestamp() }];
+    await setDoc(ref,{ actions: updatedActions }, { merge: true });
 
     localStorage.setItem("phoneUser", phone);
-
     alert("Connexion réussie !");
     phoneOverlay.style.display = "none";
 }
@@ -288,26 +260,17 @@ async function resetPasswordPhone(){
 
     const ref = doc(db,"utilisateurs",phone);
     const snap = await getDoc(ref);
-
-    if (!snap.exists()) return alert("Utilisateur introuvable.");
+    if(!snap.exists()) return alert("Utilisateur introuvable.");
 
     const data = snap.data();
-
-    if (data.nom!==nom || data.prenom!==prenom || data.dateNaissance!==dob){
-        return alert("Informations incorrectes.");
-    }
+    if(data.nom!==nom || data.prenom!==prenom || data.dateNaissance!==dob) return alert("Informations incorrectes.");
 
     const newHash = await hashPassword(newPassword);
+    await setDoc(ref,{ passwordHash: newHash }, { merge:true });
 
-    await setDoc(ref,{ passwordHash:newHash },{ merge:true });
-
-    await setDoc(doc(db,"connections", Date.now().toString()),{
-        nom,
-        prenom,
-        phone,
-        type: "reset",
-        date: serverTimestamp()
-    });
+    // Add reset action
+    const updatedActions = data.actions ? [...data.actions, { type: "reset", date: serverTimestamp() }] : [{ type: "reset", date: serverTimestamp() }];
+    await setDoc(ref,{ actions: updatedActions }, { merge:true });
 
     alert("Mot de passe réinitialisé !");
     showPhoneForm("login");
@@ -318,14 +281,10 @@ async function resetPasswordPhone(){
 ============================= */
 window.addEventListener("load", async ()=>{
     const phone = localStorage.getItem("phoneUser");
-    if (!phone) return;
-
+    if(!phone) return;
     const ref = doc(db,"utilisateurs",phone);
     const snap = await getDoc(ref);
-
-    if (snap.exists()) {
-        console.log("✔ Auto connecté :", phone);
-    }
+    if(snap.exists()) console.log("✔ Auto connecté :", phone);
 });
 
 /* =============================
@@ -335,71 +294,42 @@ const MAX_VISITES = 3;
 const MAX_TELECHARGEMENTS = 5;
 const isConnected = !!localStorage.getItem("phoneUser");
 
-let downloadCount = parseInt(localStorage.getItem("downloadCountTela") || "0");
-let visitCountTela = parseInt(localStorage.getItem("visitCountTela") || "0");
+let downloadCount = parseInt(localStorage.getItem("downloadCountTela")||"0");
+let visitCountTela = parseInt(localStorage.getItem("visitCountTela")||"0");
 
-function showBlockedMessage() {
+function showBlockedMessage(){
     const container = document.getElementById("phoneFormContainerTela");
     container.innerHTML = `
-        <div style="
-            padding:20px; 
-            background:#ffe6e6; 
-            border:1px solid #ff0000; 
-            color:#b30000; 
-            border-radius:8px; 
-            margin-bottom:15px; 
-            text-align:center;
-        ">
+        <div style="padding:20px; background:#ffe6e6; border:1px solid #ff0000; color:#b30000; border-radius:8px; margin-bottom:15px; text-align:center;">
             <strong>Vous avez atteint votre limite hors connexion.</strong><br>
             Veuillez vous connecter à <strong>LUMESYS</strong> pour continuer.
             <div style="margin-top:15px;">
-                <button id="blockedLoginBtn" style="
-                    padding:10px 20px; 
-                    margin-right:10px; 
-                    background:#ff0000; 
-                    color:white; 
-                    border:none; 
-                    border-radius:5px; 
-                    cursor:pointer;
-                ">Connexion</button>
-                <button id="blockedQuitBtn" style="
-                    padding:10px 20px; 
-                    background:#ccc; 
-                    color:#333; 
-                    border:none; 
-                    border-radius:5px; 
-                    cursor:pointer;
-                ">Quitter</button>
+                <button id="blockedLoginBtn" style="padding:10px 20px; margin-right:10px; background:#ff0000; color:white; border:none; border-radius:5px; cursor:pointer;">Connexion</button>
+                <button id="blockedQuitBtn" style="padding:10px 20px; background:#ccc; color:#333; border:none; border-radius:5px; cursor:pointer;">Quitter</button>
             </div>
         </div>
     `;
-
-    document.getElementById("blockedLoginBtn").addEventListener("click", () => {
-        if (typeof showPhoneForm !== "undefined") {
-            showPhoneForm("login");
-        }
-    });
-
-    document.getElementById("blockedQuitBtn").addEventListener("click", () => {
-        phoneOverlay.style.display = "none";
-        container.innerHTML = "";
+    document.getElementById("blockedLoginBtn").addEventListener("click", ()=>showPhoneForm("login"));
+    document.getElementById("blockedQuitBtn").addEventListener("click", ()=>{
+        phoneOverlay.style.display="none";
+        container.innerHTML="";
     });
 }
 
 // Blocage visites
-if (!isConnected && visitCountTela >= MAX_VISITES) {
-    phoneOverlay.style.display = "flex";
+if(!isConnected && visitCountTela >= MAX_VISITES){
+    phoneOverlay.style.display="flex";
     showBlockedMessage();
 }
 
 // Blocage téléchargements
 const allDriveLinks = document.querySelectorAll('a[href*="docs.google.com"]');
-allDriveLinks.forEach(link => {
-    link.addEventListener("click", function(event) {
-        if (!isConnected) {
-            if (downloadCount >= MAX_TELECHARGEMENTS) {
+allDriveLinks.forEach(link=>{
+    link.addEventListener("click", function(event){
+        if(!isConnected){
+            if(downloadCount >= MAX_TELECHARGEMENTS){
                 event.preventDefault();
-                phoneOverlay.style.display = "flex";
+                phoneOverlay.style.display="flex";
                 showBlockedMessage();
                 return;
             }
