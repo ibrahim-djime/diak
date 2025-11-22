@@ -74,6 +74,10 @@ referrerPolicy="no-referrer-when-downgrade"></a></div></noscript>
     </div>
 
 </div>
+
+
+
+
 <script type="module">
 /* =============================
    IMPORTS Firebase
@@ -82,8 +86,6 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/12.6.0/firebas
 import { 
   getFirestore, doc, setDoc, getDoc, serverTimestamp 
 } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
-import { getAuth } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-auth.js";
-
 
 /* =============================
    CONFIG Firebase
@@ -100,95 +102,6 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
-const auth = getAuth(app);
-
-
-/* =============================
-   ELEMENTS HTML
-============================= */
-const loginPhoneBtn = document.getElementById("loginPhoneBtnTela");
-const phoneOverlay = document.getElementById("phoneOverlayTela");
-const phoneFormContainer = document.getElementById("phoneFormContainerTela");
-const closePhoneOverlay = document.getElementById("closePhoneOverlayTela");
-
-
-/* =============================
-   GESTION VISITES
-============================= */
-let visitCount = localStorage.getItem("visitCountTela") || 0;
-visitCount++;
-localStorage.setItem("visitCountTela", visitCount);
-
-const connectedUser = localStorage.getItem("phoneUser");
-
-// ouverture automatique après 3 visites
-if (!connectedUser && visitCount >= 3) {
-    phoneOverlay.style.display = "flex";
-    showPhoneForm("login");
-}
-
-
-/* =============================
-   OUVERTURE / FERMETURE
-============================= */
-loginPhoneBtn.addEventListener("click", ()=>{
-    phoneOverlay.style.display = "flex";
-    showPhoneForm("login");
-});
-
-closePhoneOverlay.addEventListener("click", ()=>{
-    phoneOverlay.style.display = "none";
-    phoneFormContainer.innerHTML = "";
-});
-
-
-/* =============================
-   FORMULAIRES
-============================= */
-function showPhoneForm(type){
-
-    if (type === "login"){
-        phoneFormContainer.innerHTML = `
-            <input type="text" id="phoneLogin" placeholder="Numéro de téléphone">
-            <input type="password" id="passwordLogin" placeholder="Mot de passe">
-            <button id="loginPhoneSubmit">Se connecter</button>
-            <p><a href="#" id="goToSignup">Créer un compte</a> |
-               <a href="#" id="goToReset">Mot de passe oublié</a></p>
-        `;
-        document.getElementById("loginPhoneSubmit").addEventListener("click", loginWithPhone);
-        document.getElementById("goToSignup").addEventListener("click", ()=>showPhoneForm("signup"));
-        document.getElementById("goToReset").addEventListener("click", ()=>showPhoneForm("reset"));
-    }
-
-    else if (type === "signup"){
-        phoneFormContainer.innerHTML = `
-            <input type="text" id="signupNom" placeholder="Nom">
-            <input type="text" id="signupPrenom" placeholder="Prénom">
-            <input type="date" id="signupDOB">
-            <input type="text" id="signupPhone" placeholder="Numéro de téléphone">
-            <input type="password" id="signupPassword" placeholder="Mot de passe">
-            <button id="signupPhoneSubmit">Créer le compte</button>
-            <p><a href="#" id="goToLogin">Se connecter</a></p>
-        `;
-        document.getElementById("signupPhoneSubmit").addEventListener("click", signupWithPhone);
-        document.getElementById("goToLogin").addEventListener("click", ()=>showPhoneForm("login"));
-    }
-
-    else if (type === "reset"){
-        phoneFormContainer.innerHTML = `
-            <input type="text" id="resetPhone" placeholder="Numéro de téléphone">
-            <input type="text" id="resetNom" placeholder="Nom">
-            <input type="text" id="resetPrenom" placeholder="Prénom">
-            <input type="date" id="resetDOB">
-            <input type="password" id="resetNewPassword" placeholder="Nouveau mot de passe">
-            <button id="resetPhoneSubmit">Réinitialiser le mot de passe</button>
-            <p><a href="#" id="goToLogin2">Se connecter</a></p>
-        `;
-        document.getElementById("resetPhoneSubmit").addEventListener("click", resetPasswordPhone);
-        document.getElementById("goToLogin2").addEventListener("click", ()=>showPhoneForm("login"));
-    }
-}
-
 
 /* =============================
    HASH PASSWORD
@@ -196,17 +109,13 @@ function showPhoneForm(type){
 async function hashPassword(password){
     const data = new TextEncoder().encode(password);
     const hash = await crypto.subtle.digest("SHA-256", data);
-    return Array.from(new Uint8Array(hash))
-        .map(b => b.toString(16).padStart(2,"0"))
-        .join("");
+    return Array.from(new Uint8Array(hash)).map(b => b.toString(16).padStart(2,"0")).join("");
 }
-
 
 /* =============================
    SIGNUP
 ============================= */
 async function signupWithPhone(){
-
     const nom = signupNom.value.trim();
     const prenom = signupPrenom.value.trim();
     const dob = signupDOB.value;
@@ -223,7 +132,6 @@ async function signupWithPhone(){
 
     const passHash = await hashPassword(password);
 
-    // 🔥 Création du compte
     await setDoc(ref,{
         nom,
         prenom,
@@ -231,29 +139,22 @@ async function signupWithPhone(){
         dateNaissance: dob,
         passwordHash: passHash,
         typeCompte: "phone",
-        dateCreation: serverTimestamp(),
         derniereConnexion: serverTimestamp()
     });
 
-    // 🔥 Historique (corrigé)
     await setDoc(doc(db,"utilisateurs", phone, "connections", Date.now().toString()),{
-        nom,
-        prenom,
-        phone,
-        type: "signup",
-        date: serverTimestamp()
+        type:"signup",
+        date:serverTimestamp()
     });
 
     alert("Compte créé !");
     showPhoneForm("login");
 }
 
-
 /* =============================
    LOGIN
 ============================= */
 async function loginWithPhone(){
-
     const phone = phoneLogin.value.trim();
     const password = passwordLogin.value;
 
@@ -265,36 +166,24 @@ async function loginWithPhone(){
     const data = snap.data();
     const hash = await hashPassword(password);
 
-    if (hash !== data.passwordHash){
-        return alert("Mot de passe incorrect.");
-    }
+    if (hash !== data.passwordHash) return alert("Mot de passe incorrect.");
 
-    // 🔥 Mise à jour de la dernière connexion
-    await setDoc(ref,{ 
-        derniereConnexion: serverTimestamp()
-    }, { merge:true });
+    await setDoc(ref,{ derniereConnexion: serverTimestamp() }, { merge:true });
 
-    // 🔥 Historique (corrigé)
     await setDoc(doc(db,"utilisateurs", phone, "connections", Date.now().toString()),{
-        nom: data.nom,
-        prenom: data.prenom,
-        phone,
         type: "login",
         date: serverTimestamp()
     });
 
     localStorage.setItem("phoneUser", phone);
-
     alert("Connexion réussie !");
     phoneOverlay.style.display = "none";
 }
-
 
 /* =============================
    RESET PASSWORD
 ============================= */
 async function resetPasswordPhone(){
-
     const phone = resetPhone.value.trim();
     const nom = resetNom.value.trim();
     const prenom = resetPrenom.value.trim();
@@ -316,19 +205,14 @@ async function resetPasswordPhone(){
 
     await setDoc(ref,{ passwordHash:newHash },{ merge:true });
 
-    // 🔥 Historique (corrigé)
     await setDoc(doc(db,"utilisateurs", phone, "connections", Date.now().toString()),{
-        nom,
-        prenom,
-        phone,
-        type: "reset",
-        date: serverTimestamp()
+        type:"reset",
+        date:serverTimestamp()
     });
 
     alert("Mot de passe réinitialisé !");
     showPhoneForm("login");
 }
-
 
 /* =============================
    AUTO LOGIN
@@ -341,12 +225,10 @@ window.addEventListener("load", async ()=>{
     const snap = await getDoc(ref);
 
     if (snap.exists()) {
-        console.log("✔ Auto connecté :", phone);
+        console.log("Auto connecté :", phone);
     }
 });
 </script>
-
-
 
 
 
