@@ -77,19 +77,19 @@ referrerPolicy="no-referrer-when-downgrade"></a></div></noscript>
 
 
 
-
 <script type="module">
 /* =============================
    IMPORTS Firebase
 ============================= */
+console.log("▶ Début des imports Firebase...");
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";
-import { 
-  getFirestore, doc, setDoc, getDoc, serverTimestamp 
-} from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
+import { getFirestore, doc, getDoc, setDoc, serverTimestamp, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
+console.log("✔ Imports Firebase terminés");
 
 /* =============================
    CONFIG Firebase
 ============================= */
+console.log("▶ Configuration Firebase...");
 const firebaseConfig = {
     apiKey: "AIzaSyAClwRQe3g4Cg9CAsn28l_sAihwlMQtGUI",
     authDomain: "lumina-analytics.firebaseapp.com",
@@ -102,135 +102,160 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
+console.log("✔ Firebase initialisé et Firestore prêt");
 
 /* =============================
-   HASH PASSWORD
+   SESSION UTILISATEUR
 ============================= */
-async function hashPassword(password){
-    const data = new TextEncoder().encode(password);
-    const hash = await crypto.subtle.digest("SHA-256", data);
-    return Array.from(new Uint8Array(hash)).map(b => b.toString(16).padStart(2,"0")).join("");
+let currentUser = null; // utilisateur connecté
+console.log("▶ Vérification de la session utilisateur...");
+
+// Fonction pour afficher l'overlay de connexion / inscription
+function showAuthOverlay() {
+    console.log("▶ Affichage overlay connexion / inscription...");
+    if (document.getElementById("authOverlay")) return;
+
+    const overlay = document.createElement("div");
+    overlay.id = "authOverlay";
+    overlay.style.cssText = `
+        position: fixed; top:0; left:0; width:100%; height:100%;
+        background: rgba(0,0,0,0.95); display:flex; flex-direction:column;
+        justify-content:center; align-items:center; color:white; z-index:99999; padding:20px;
+    `;
+    overlay.innerHTML = `
+        <h2>Connexion / Inscription</h2>
+        <p>Veuillez remplir les informations pour accéder à LUMESYS.</p>
+        <form id="authForm" style="display:flex; flex-direction:column; gap:10px; width:300px;">
+            <input type="text" id="nom" placeholder="Nom" required>
+            <input type="text" id="prenom" placeholder="Prénom" required>
+            <input type="date" id="dateNaissance" placeholder="Date de naissance" required>
+            <input type="email" id="email" placeholder="Email (facultatif)">
+            <input type="password" id="password" placeholder="Mot de passe" required>
+            <div style="display:flex; justify-content:space-between; margin-top:10px;">
+                <button type="submit">Valider</button>
+                <button type="button" id="btnQuitterOverlay">Quitter</button>
+            </div>
+        </form>
+        <p id="authMsg" style="color:orange; margin-top:10px;"></p>
+    `;
+    document.body.appendChild(overlay);
+    console.log("✔ Overlay ajouté au DOM");
+
+    document.getElementById("btnQuitterOverlay").addEventListener("click", () => {
+        console.log("▶ Bouton Quitter cliqué, redirection vers about:blank");
+        window.location.href = "about:blank";
+    });
+
+    document.getElementById("authForm").addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const nom = document.getElementById("nom").value.trim();
+        const prenom = document.getElementById("prenom").value.trim();
+        const dateNaissance = document.getElementById("dateNaissance").value;
+        const email = document.getElementById("email").value.trim();
+        const password = document.getElementById("password").value;
+
+        if (!nom || !prenom || !dateNaissance || !password) return;
+
+        // Hasher le mot de passe (SHA-256)
+        const encoder = new TextEncoder();
+        const data = encoder.encode(password);
+        const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+        const hashArray = Array.from(new Uint8Array(hashBuffer));
+        const passwordHash = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+        console.log("▶ Mot de passe hashé :", passwordHash);
+
+        // Vérifier si l'utilisateur existe
+        const q = query(collection(db, "utilisateurs"), where("nom", "==", nom), where("prenom", "==", prenom), where("dateNaissance", "==", dateNaissance));
+        const querySnapshot = await getDocs(q);
+
+        if (!querySnapshot.empty) {
+            // Connexion
+            let found = false;
+            querySnapshot.forEach(docSnap => {
+                const data = docSnap.data();
+                if (data.passwordHash === passwordHash) {
+                    currentUser = docSnap.id;
+                    console.log("✔ Utilisateur connecté :", data.nom, data.prenom);
+                    setDoc(doc(db, "utilisateurs", currentUser), { derniereConnexion: serverTimestamp() }, { merge: true });
+                    found = true;
+                }
+            });
+            if (!found) {
+                document.getElementById("authMsg").textContent = "⚠ Mot de passe incorrect";
+                console.log("⚠ Mot de passe incorrect");
+                return;
+            }
+        } else {
+            // Inscription
+            const newUserRef = doc(collection(db, "utilisateurs"));
+            await setDoc(newUserRef, {
+                nom, prenom, dateNaissance, email, passwordHash,
+                derniereConnexion: serverTimestamp(),
+                typeCompte: "phone"
+            });
+            currentUser = newUserRef.id;
+            console.log("✔ Nouvel utilisateur créé :", nom, prenom);
+        }
+
+        // Fermer l'overlay
+        overlay.remove();
+        console.log("✔ Overlay fermé, accès autorisé");
+        initVisitesDownloads();
+    });
 }
 
-/* =============================
-   SIGNUP
-============================= */
-async function signupWithPhone(){
-    const nom = signupNom.value.trim();
-    const prenom = signupPrenom.value.trim();
-    const dob = signupDOB.value;
-    const phone = signupPhone.value.trim();
-    const password = signupPassword.value;
+// =============================
+//   LIMITES VISITES / TELECHARGEMENTS
+// =============================
+function initVisitesDownloads() {
+    console.log("▶ Initialisation des limites de visites / téléchargements...");
+    const MAX_VISITES = 3;
+    const MAX_DOWNLOADS = 5;
+    const pageKey = "visites_" + window.location.pathname;
+    let visites = parseInt(localStorage.getItem(pageKey)) || 0;
+    console.log(`Visites actuelles pour cette page : ${visites}`);
 
-    if (!nom||!prenom||!dob||!phone||!password){
-        return alert("Remplissez tous les champs");
+    const downloadKey = "telechargements";
+    let downloads = parseInt(localStorage.getItem(downloadKey)) || 0;
+    console.log(`Téléchargements actuels : ${downloads}`);
+
+    // Incrément visite
+    visites++;
+    localStorage.setItem(pageKey, visites);
+    console.log(`Nouvelle valeur des visites enregistrée : ${visites}`);
+
+    // Vérification limites
+    if (visites > MAX_VISITES) {
+        console.log(`⚠ Limite de visites dépassée (${visites} > ${MAX_VISITES})`);
+        showBlockOverlay();
+    } else {
+        console.log("✔ Limite de visites non atteinte");
     }
 
-    const ref = doc(db,"utilisateurs",phone);
-    const exists = (await getDoc(ref)).exists();
-    if (exists) return alert("Ce numéro est déjà utilisé.");
-
-    const passHash = await hashPassword(password);
-
-    await setDoc(ref,{
-        nom,
-        prenom,
-        phone,
-        dateNaissance: dob,
-        passwordHash: passHash,
-        typeCompte: "phone",
-        derniereConnexion: serverTimestamp()
+    // Téléchargements
+    document.querySelectorAll('a[target="_blank"]').forEach(link => {
+        link.addEventListener("click", (e) => {
+            if (!currentUser) {
+                console.log("⚠ Téléchargement bloqué : utilisateur non connecté");
+                e.preventDefault();
+                showAuthOverlay();
+                return;
+            }
+            downloads++;
+            localStorage.setItem(downloadKey, downloads);
+            console.log(`✔ Téléchargement autorisé, nouvelle valeur : ${downloads}`);
+        });
     });
-
-    await setDoc(doc(db,"utilisateurs", phone, "connections", Date.now().toString()),{
-        type:"signup",
-        date:serverTimestamp()
-    });
-
-    alert("Compte créé !");
-    showPhoneForm("login");
 }
 
-/* =============================
-   LOGIN
-============================= */
-async function loginWithPhone(){
-    const phone = phoneLogin.value.trim();
-    const password = passwordLogin.value;
-
-    const ref = doc(db,"utilisateurs",phone);
-    const snap = await getDoc(ref);
-
-    if (!snap.exists()) return alert("Utilisateur introuvable.");
-
-    const data = snap.data();
-    const hash = await hashPassword(password);
-
-    if (hash !== data.passwordHash) return alert("Mot de passe incorrect.");
-
-    await setDoc(ref,{ derniereConnexion: serverTimestamp() }, { merge:true });
-
-    await setDoc(doc(db,"utilisateurs", phone, "connections", Date.now().toString()),{
-        type: "login",
-        date: serverTimestamp()
-    });
-
-    localStorage.setItem("phoneUser", phone);
-    alert("Connexion réussie !");
-    phoneOverlay.style.display = "none";
+// =============================
+//   VERIFICATION SESSION
+// =============================
+console.log("▶ Vérification session utilisateur Firestore...");
+if (!currentUser) {
+    showAuthOverlay();
 }
-
-/* =============================
-   RESET PASSWORD
-============================= */
-async function resetPasswordPhone(){
-    const phone = resetPhone.value.trim();
-    const nom = resetNom.value.trim();
-    const prenom = resetPrenom.value.trim();
-    const dob = resetDOB.value;
-    const newPassword = resetNewPassword.value;
-
-    const ref = doc(db,"utilisateurs",phone);
-    const snap = await getDoc(ref);
-
-    if (!snap.exists()) return alert("Utilisateur introuvable.");
-
-    const data = snap.data();
-
-    if (data.nom!==nom || data.prenom!==prenom || data.dateNaissance!==dob){
-        return alert("Informations incorrectes.");
-    }
-
-    const newHash = await hashPassword(newPassword);
-
-    await setDoc(ref,{ passwordHash:newHash },{ merge:true });
-
-    await setDoc(doc(db,"utilisateurs", phone, "connections", Date.now().toString()),{
-        type:"reset",
-        date:serverTimestamp()
-    });
-
-    alert("Mot de passe réinitialisé !");
-    showPhoneForm("login");
-}
-
-/* =============================
-   AUTO LOGIN
-============================= */
-window.addEventListener("load", async ()=>{
-    const phone = localStorage.getItem("phoneUser");
-    if (!phone) return;
-
-    const ref = doc(db,"utilisateurs",phone);
-    const snap = await getDoc(ref);
-
-    if (snap.exists()) {
-        console.log("Auto connecté :", phone);
-    }
-});
 </script>
-
-
 
 
 
