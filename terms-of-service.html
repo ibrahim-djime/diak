@@ -44,7 +44,11 @@
                     <input type="password" id="login-password" placeholder="Mot de passe">
                 </div>
                 <button id="btn-login">Se connecter</button>
-                <p>Pas encore inscrit ? <span id="btn-show-register" class="link-btn">S'inscrire</span></p>
+                <p>
+    Pas encore inscrit ? <span class="link-btn" id="show-register">S'inscrire</span>
+    <br>
+    <span class="link-btn" id="show-reset">Mot de passe oublié ?</span>
+</p>
             </div>
 
             <div id="register-form" class="hidden">
@@ -66,6 +70,28 @@
                 <button id="btn-register">S'inscrire</button>
                 <p>Déjà inscrit ? <span id="btn-show-login" class="link-btn">Connexion</span></p>
             </div>
+<div id="reset-password-box" class="hidden">
+    <h2>Réinitialisation du mot de passe</h2>
+    
+    <p>Veuillez entrer vos informations pour vérifier votre identité et créer un nouveau mot de passe.</p>
+
+    <div class="form-content">
+        <input type="text" placeholder="Nom" id="reset-nom" required>
+        <input type="text" placeholder="Prénom" id="reset-prenom" required>
+        
+        <input type="date" id="reset-dateNaissance" required>
+        <input type="text" placeholder="Lieu de naissance" id="reset-lieuNaissance" required>
+
+        <input type="tel" placeholder="Numéro de téléphone" id="reset-phone" required>
+        
+        <input type="password" placeholder="Nouveau mot de passe" id="reset-new-password" required>
+        <input type="password" placeholder="Confirmer le mot de passe" id="reset-confirm-password" required>
+    </div>
+
+    <button id="btn-reinitialiser" class="action-btn">Réinitialiser le mot de passe</button>
+
+    <p><span class="link-btn" id="show-login-from-reset">Retour à la connexion</span></p>
+</div>
         </div>
         
     </div>
@@ -116,211 +142,291 @@
         </footer>
     </div>
 
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";
-        import { getFirestore, doc, getDoc, setDoc, updateDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";
+    import { getFirestore, doc, getDoc, setDoc, updateDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
 
-        const firebaseConfig = {
-            apiKey: "AIzaSyAClwRQe3g4Cg9CAsn28l_sAihwlMQtGUI",
-            authDomain: "lumina-analytics.firebaseapp.com",
-            projectId: "lumina-analytics",
-            storageBucket: "lumina-analytics.firebasestorage.app",
-            messagingSenderId: "239329398532",
-            appId: "1:239329398532:web:2f68b196df0c4e6400ca51",
-            measurementId: "G-J7LLPRXLJH"
-        };
+    const firebaseConfig = {
+        apiKey: "AIzaSyAClwRQe3g4Cg9CAsn28l_sAihwlMQtGUI",
+        authDomain: "lumina-analytics.firebaseapp.com",
+        projectId: "lumina-analytics",
+        storageBucket: "lumina-analytics.firebasestorage.app",
+        messagingSenderId: "239329398532",
+        appId: "1:239329398532:web:2f68b196df0c4e6400ca51",
+        measurementId: "G-J7LLPRXLJH"
+    };
 
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
 
-        // Variables
-        const MAX_VISITS = 3; 
-        let visits = Number(localStorage.getItem('lumina_visits')) || 0;
-        let currentUserPhone = localStorage.getItem('currentUserPhone');
+    // Variables
+    const MAX_VISITS = 3; 
+    let visits = Number(localStorage.getItem('lumina_visits')) || 0;
+    let currentUserPhone = localStorage.getItem('currentUserPhone');
 
-        // Elements DOM
-        const authOverlay = document.getElementById('auth-overlay');
-        const mainContent = document.getElementById('main-content');
-        const blockMsgDiv = document.getElementById('block-message');
-        const loginDiv = document.getElementById('login-form');
-        const registerDiv = document.getElementById('register-form');
-        const btnOpenLogin = document.getElementById('btn-open-login');
-        const btnDoLogout = document.getElementById('btn-do-logout');
-        const btnCloseOverlay = document.getElementById('btn-close-overlay');
+    // Elements DOM
+    const authOverlay = document.getElementById('auth-overlay');
+    const mainContent = document.getElementById('main-content');
+    const blockMsgDiv = document.getElementById('block-message');
+    const loginDiv = document.getElementById('login-form');
+    const registerDiv = document.getElementById('register-form');
+    // NOUVEAU: Élément du formulaire de réinitialisation
+    const resetDiv = document.getElementById('reset-password-box'); 
+    
+    const btnOpenLogin = document.getElementById('btn-open-login');
+    const btnDoLogout = document.getElementById('btn-do-logout');
+    const btnCloseOverlay = document.getElementById('btn-close-overlay');
+    
+    // NOUVEAU: Liens et bouton du formulaire de réinitialisation
+    const showResetLink = document.getElementById('show-reset'); 
+    const showLoginFromResetLink = document.getElementById('show-login-from-reset');
+    const btnReinitialiser = document.getElementById('btn-reinitialiser');
 
-        // Initialisation
-        async function init() {
-            if (currentUserPhone) {
-                console.log("Utilisateur connecté :", currentUserPhone);
-                setConnectedState();
-            } else {
-                console.log("Visiteur non connecté");
-                setDisconnectedState();
-                // On n'incrémente QUE si on n'est pas connecté
-                visits++;
-                localStorage.setItem('lumina_visits', visits);
-                console.log("Visite numéro :", visits);
-                
-                if (visits > MAX_VISITS) {
-                    console.log("Limite atteinte. Blocage activé.");
-                    showBlockScreen();
-                }
-            }
-        }
 
-        // Gestion Affichage
-        function setConnectedState() {
-            mainContent.classList.remove('hidden');
-            authOverlay.classList.add('hidden');
-            btnOpenLogin.classList.add('hidden');
-            btnDoLogout.classList.remove('hidden');
-        }
+    // Initialisation
+    async function init() {
+        if (currentUserPhone) {
+            console.log("Utilisateur connecté :", currentUserPhone);
+            setConnectedState();
+        } else {
+            console.log("Visiteur non connecté");
+            setDisconnectedState();
+            // On n'incrémente QUE si on n'est pas connecté
+            visits++;
+            localStorage.setItem('lumina_visits', visits);
+            console.log("Visite numéro :", visits);
+            
+            if (visits > MAX_VISITS) {
+                console.log("Limite atteinte. Blocage activé.");
+                showBlockScreen();
+            }
+        }
+    }
 
-        function setDisconnectedState() {
-            btnOpenLogin.classList.remove('hidden');
-            btnDoLogout.classList.add('hidden');
-        }
+    // Gestion Affichage
+    function setConnectedState() {
+        mainContent.classList.remove('hidden');
+        authOverlay.classList.add('hidden');
+        btnOpenLogin.classList.add('hidden');
+        btnDoLogout.classList.remove('hidden');
+    }
 
-        function showBlockScreen() {
-            authOverlay.classList.remove('hidden');
-            mainContent.classList.add('hidden'); // Cache le contenu derrière
-            blockMsgDiv.classList.remove('hidden');
-            loginDiv.classList.add('hidden');
-            registerDiv.classList.add('hidden');
-            btnCloseOverlay.classList.add('hidden'); // FORCE le blocage (pas de croix)
-        }
+    function setDisconnectedState() {
+        btnOpenLogin.classList.remove('hidden');
+        btnDoLogout.classList.add('hidden');
+    }
 
-        function openLoginOverlay() {
-            authOverlay.classList.remove('hidden');
-            blockMsgDiv.classList.add('hidden');
-            showLoginForm();
-            // Si le visiteur est bloqué, on ne met PAS la croix. Sinon on la met.
-            if (visits > MAX_VISITS) {
-                btnCloseOverlay.classList.add('hidden');
-            } else {
-                btnCloseOverlay.classList.remove('hidden');
-            }
-        }
+    function showBlockScreen() {
+        authOverlay.classList.remove('hidden');
+        mainContent.classList.add('hidden'); // Cache le contenu derrière
+        blockMsgDiv.classList.remove('hidden');
+        loginDiv.classList.add('hidden');
+        registerDiv.classList.add('hidden');
+        resetDiv.classList.add('hidden'); // Cache le reset si jamais il est affiché
+        btnCloseOverlay.classList.add('hidden'); // FORCE le blocage (pas de croix)
+    }
 
-        function showLoginForm() {
-            registerDiv.classList.add('hidden');
-            loginDiv.classList.remove('hidden');
-        }
+    function openLoginOverlay() {
+        authOverlay.classList.remove('hidden');
+        blockMsgDiv.classList.add('hidden');
+        showLoginForm();
+        // Si le visiteur est bloqué, on ne met PAS la croix. Sinon on la met.
+        if (visits > MAX_VISITS) {
+            btnCloseOverlay.classList.add('hidden');
+        } else {
+            btnCloseOverlay.classList.remove('hidden');
+        }
+    }
 
-        function showRegisterForm() {
-            loginDiv.classList.add('hidden');
-            registerDiv.classList.remove('hidden');
-        }
+    function showLoginForm() {
+        registerDiv.classList.add('hidden');
+        // NOUVEAU: Masquer le formulaire de réinitialisation
+        resetDiv.classList.add('hidden'); 
+        loginDiv.classList.remove('hidden');
+    }
 
-        // Hachage (Sécurité Mot de passe)
-        async function hashPassword(password) {
-            const encoder = new TextEncoder();
-            const data = encoder.encode(password);
-            const hashBuffer = await crypto.subtle.digest('SHA-256', data);
-            const hashArray = Array.from(new Uint8Array(hashBuffer));
-            return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
-        }
+    function showRegisterForm() {
+        loginDiv.classList.add('hidden');
+        // NOUVEAU: Masquer le formulaire de réinitialisation
+        resetDiv.classList.add('hidden');
+        registerDiv.classList.remove('hidden');
+    }
 
-        // Actions de Connexion
-        async function handleLogin() {
-            const phone = document.getElementById('login-phone').value.trim();
-            const pass = document.getElementById('login-password').value;
-            if(!phone || !pass) return alert("Veuillez remplir tous les champs.");
+    // NOUVEAU: Fonction pour afficher le formulaire de réinitialisation
+    function showResetForm() {
+        loginDiv.classList.add('hidden');
+        registerDiv.classList.add('hidden');
+        resetDiv.classList.remove('hidden');
+    }
 
-            try {
-                const docRef = doc(db, "utilisateurs", phone);
-                const docSnap = await getDoc(docRef);
-                
-                if (!docSnap.exists()) {
-                    return alert("Ce numéro n'est pas inscrit. Veuillez créer un compte.");
-                }
+    // Hachage (Sécurité Mot de passe)
+    async function hashPassword(password) {
+        const encoder = new TextEncoder();
+        const data = encoder.encode(password);
+        const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+        const hashArray = Array.from(new Uint8Array(hashBuffer));
+        return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+    }
 
-                const data = docSnap.data();
-                const hashedPass = await hashPassword(pass);
+    // Actions de Connexion
+    async function handleLogin() {
+        const phone = document.getElementById('login-phone').value.trim();
+        const pass = document.getElementById('login-password').value;
+        if(!phone || !pass) return alert("Veuillez remplir tous les champs.");
 
-                if (data.passwordHash === hashedPass) {
-                    await updateDoc(docRef, { derniereConnexion: serverTimestamp(), statut: "connecté" });
-                    localStorage.setItem('currentUserPhone', phone);
-                    localStorage.setItem('lumina_visits', 0); // On remet les visites à 0
-                    alert("Connexion réussie !");
-                    location.reload();
-                } else {
-                    alert("Mot de passe incorrect.");
-                }
-            } catch(e) { console.error(e); alert("Erreur technique de connexion."); }
-        }
+        try {
+            const docRef = doc(db, "utilisateurs", phone);
+            const docSnap = await getDoc(docRef);
+            
+            if (!docSnap.exists()) {
+                return alert("Ce numéro n'est pas inscrit. Veuillez créer un compte.");
+            }
 
-        // Actions d'Inscription
-        async function handleRegister() {
-            const prenom = document.getElementById('reg-prenom').value.trim();
-            const nom = document.getElementById('reg-nom').value.trim();
-            const dateN = document.getElementById('reg-dateNaissance').value;
-            const lieuN = document.getElementById('reg-lieuNaissance').value.trim();
-            const sexe = document.getElementById('reg-sexe').value;
-            const phone = document.getElementById('reg-phone').value.trim();
-            const email = document.getElementById('reg-email').value.trim();
-            const pass = document.getElementById('reg-password').value;
+            const data = docSnap.data();
+            const hashedPass = await hashPassword(pass);
 
-            if (!prenom || !nom || !phone || !pass || !dateN || !sexe) {
-                return alert("Veuillez remplir tous les champs obligatoires.");
-            }
+            if (data.passwordHash === hashedPass) {
+                await updateDoc(docRef, { derniereConnexion: serverTimestamp(), statut: "connecté" });
+                localStorage.setItem('currentUserPhone', phone);
+                localStorage.setItem('lumina_visits', 0); // On remet les visites à 0
+                alert("Connexion réussie !");
+                location.reload();
+            } else {
+                alert("Mot de passe incorrect.");
+            }
+        } catch(e) { console.error(e); alert("Erreur technique de connexion."); }
+    }
 
-            try {
-                const docRef = doc(db, "utilisateurs", phone);
-                const docSnap = await getDoc(docRef);
-                if (docSnap.exists()) { 
-                    alert("Ce numéro possède déjà un compte. Veuillez vous connecter."); 
-                    showLoginForm(); 
-                    return; 
-                }
+    // Actions d'Inscription
+    async function handleRegister() {
+        const prenom = document.getElementById('reg-prenom').value.trim();
+        const nom = document.getElementById('reg-nom').value.trim();
+        const dateN = document.getElementById('reg-dateNaissance').value;
+        const lieuN = document.getElementById('reg-lieuNaissance').value.trim();
+        const sexe = document.getElementById('reg-sexe').value;
+        const phone = document.getElementById('reg-phone').value.trim();
+        const email = document.getElementById('reg-email').value.trim();
+        const pass = document.getElementById('reg-password').value;
 
-                const hashedPass = await hashPassword(pass);
-                const userData = {
-                    prenom, nom, dateNaissance: dateN, lieuNaissance: lieuN, sexe,
-                    phone, email, passwordHash: hashedPass,
-                    typeCompte: "visiteur", statut: "connecté",
-                    derniereConnexion: serverTimestamp()
-                };
+        if (!prenom || !nom || !phone || !pass || !dateN || !sexe) {
+            return alert("Veuillez remplir tous les champs obligatoires.");
+        }
 
-                await setDoc(docRef, userData);
-                localStorage.setItem('currentUserPhone', phone);
-                localStorage.setItem('lumina_visits', 0);
-                alert("Compte créé avec succès !");
-                location.reload();
-            } catch(e) { console.error(e); alert("Erreur lors de l'inscription."); }
-        }
+        try {
+            const docRef = doc(db, "utilisateurs", phone);
+            const docSnap = await getDoc(docRef);
+            if (docSnap.exists()) { 
+                alert("Ce numéro possède déjà un compte. Veuillez vous connecter."); 
+                showLoginForm(); 
+                return; 
+            }
 
-        function handleLogout() {
-            if(confirm("Voulez-vous vraiment vous déconnecter ?")) {
-                // 1. On supprime l'indicateur de connexion
-                localStorage.removeItem('currentUserPhone');
-                
-                // 2. On FORCE le compteur de visites à 4 (MAX_VISITS + 1)
-                localStorage.setItem('lumina_visits', MAX_VISITS + 1); 
-                
-                // 3. On recharge la page
-                location.reload();
-            }
-        }
+            const hashedPass = await hashPassword(pass);
+            const userData = {
+                prenom, nom, dateNaissance: dateN, lieuNaissance: lieuN, sexe,
+                phone, email, passwordHash: hashedPass,
+                typeCompte: "visiteur", statut: "connecté",
+                derniereConnexion: serverTimestamp()
+            };
 
-        // Listeners (Écouteurs d'événements)
-        btnOpenLogin.addEventListener('click', openLoginOverlay);
-        btnCloseOverlay.addEventListener('click', () => authOverlay.classList.add('hidden'));
-        btnDoLogout.addEventListener('click', handleLogout);
-        
-        document.getElementById('btn-reconnect').addEventListener('click', () => {
-            blockMsgDiv.classList.add('hidden'); // Masque le message de blocage et ses boutons
-            showLoginForm();                    // Affiche le formulaire de connexion
-        });
+            await setDoc(docRef, userData);
+            localStorage.setItem('currentUserPhone', phone);
+            localStorage.setItem('lumina_visits', 0);
+            alert("Compte créé avec succès !");
+            location.reload();
+        } catch(e) { console.error(e); alert("Erreur lors de l'inscription."); }
+    }
 
-        document.getElementById('btn-quit').addEventListener('click', () => window.location.href = "https://www.google.com");
-        document.getElementById('btn-show-register').addEventListener('click', showRegisterForm);
-        document.getElementById('btn-show-login').addEventListener('click', showLoginForm);
-        document.getElementById('btn-login').addEventListener('click', handleLogin);
-        document.getElementById('btn-register').addEventListener('click', handleRegister);
+    // NOUVEAU: Actions de Réinitialisation du mot de passe
+    async function handleResetPassword() {
+        const nom = document.getElementById('reset-nom').value.trim();
+        const prenom = document.getElementById('reset-prenom').value.trim();
+        const dateN = document.getElementById('reset-dateNaissance').value;
+        const lieuN = document.getElementById('reset-lieuNaissance').value.trim();
+        const phone = document.getElementById('reset-phone').value.trim();
+        const newPass = document.getElementById('reset-new-password').value;
+        const confirmPass = document.getElementById('reset-confirm-password').value;
 
-        // Lancement
-        init();
-    </script>
+        if (!nom || !prenom || !dateN || !phone || !newPass || !confirmPass) {
+            return alert("Veuillez remplir tous les champs.");
+        }
+
+        if (newPass !== confirmPass) {
+            return alert("Les nouveaux mots de passe ne correspondent pas.");
+        }
+
+        try {
+            const docRef = doc(db, "utilisateurs", phone);
+            const docSnap = await getDoc(docRef);
+
+            if (!docSnap.exists()) {
+                return alert("Ce numéro n'est pas associé à un compte.");
+            }
+
+            const data = docSnap.data();
+
+            // VÉRIFICATION DES DONNÉES PERSONNELLES pour confirmer l'identité
+            if (data.nom.toLowerCase() !== nom.toLowerCase() ||
+                data.prenom.toLowerCase() !== prenom.toLowerCase() ||
+                data.lieuNaissance.toLowerCase() !== lieuN.toLowerCase() ||
+                data.dateNaissance !== dateN) { 
+                return alert("Les informations personnelles fournies ne correspondent pas à nos enregistrements. Veuillez vérifier le Nom, Prénom, Date ou Lieu de naissance.");
+            }
+
+            // Si les données correspondent, on hache et met à jour le mot de passe
+            const hashedPass = await hashPassword(newPass);
+
+            await updateDoc(docRef, { 
+                passwordHash: hashedPass,
+                derniereModification: serverTimestamp()
+            });
+            
+            alert("Mot de passe réinitialisé avec succès ! Vous pouvez maintenant vous connecter.");
+            showLoginForm();
+        } catch(e) { 
+            console.error(e); 
+            alert("Erreur technique lors de la réinitialisation."); 
+        }
+    }
+
+
+    function handleLogout() {
+        if(confirm("Voulez-vous vraiment vous déconnecter ?")) {
+            // 1. On supprime l'indicateur de connexion
+            localStorage.removeItem('currentUserPhone');
+            
+            // 2. On FORCE le compteur de visites à 4 (MAX_VISITS + 1)
+            localStorage.setItem('lumina_visits', MAX_VISITS + 1); 
+            
+            // 3. On recharge la page
+            location.reload();
+        }
+    }
+
+    // Listeners (Écouteurs d'événements)
+    btnOpenLogin.addEventListener('click', openLoginOverlay);
+    btnCloseOverlay.addEventListener('click', () => authOverlay.classList.add('hidden'));
+    btnDoLogout.addEventListener('click', handleLogout);
+    
+    document.getElementById('btn-reconnect').addEventListener('click', () => {
+        blockMsgDiv.classList.add('hidden'); // Masque le message de blocage et ses boutons
+        showLoginForm();                    // Affiche le formulaire de connexion
+    });
+
+    document.getElementById('btn-quit').addEventListener('click', () => window.location.href = "https://www.google.com");
+    document.getElementById('show-register').addEventListener('click', showRegisterForm); // Le lien dans le login
+    document.getElementById('btn-show-login').addEventListener('click', showLoginForm); // Le lien dans l'inscription
+    document.getElementById('btn-login').addEventListener('click', handleLogin);
+    document.getElementById('btn-register').addEventListener('click', handleRegister);
+
+    // NOUVEAU: Listeners pour la réinitialisation du mot de passe
+    showResetLink.addEventListener('click', showResetForm); // Lien "Mot de passe oublié ?" dans le login
+    showLoginFromResetLink.addEventListener('click', showLoginForm); // Lien "Retour à la connexion" dans le reset
+    btnReinitialiser.addEventListener('click', handleResetPassword); // Bouton "Réinitialiser le mot de passe"
+
+    // Lancement
+    init();
+</script>
+
 </body>
 </html>
