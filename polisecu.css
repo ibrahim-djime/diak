@@ -4,11 +4,11 @@
 * { box-sizing: border-box; margin: 0; padding: 0; }
 
 body {
-  font-family: 'Roboto', Arial, sans-serif;
-  background-color: #f7f7f8;
-  color: #111;
-  line-height: 1.6;
-  padding: 0;
+   font-family: 'Roboto', Arial, sans-serif;
+   background-color: #f7f7f8;
+   color: #111;
+   line-height: 1.6;
+ padding: 0;
 }
 
 /* Layout */
@@ -16,56 +16,56 @@ body {
 
 /* Sidebar (gauche) */
 .sidebar {
-  width: 260px;
-  background: #fff;
-  border-right: 1px solid #e6e6e6;
-  padding: 30px 20px;
-  position: sticky;
-  top: 0;
-  align-self: flex-start;
-  height: 100vh;
-  overflow: auto;
+   width: 260px;
+   background: #fff;
+   border-right: 1px solid #e6e6e6;
+   padding: 30px 20px;
+   position: sticky;
+   top: 0;
+   align-self: flex-start;
+   height: 100vh;
+   overflow: auto;
 }
 
 .brand {
-  font-weight: 700;
-  font-size: 20px;
-  margin-bottom: 18px;
-  color: #0b0b0b;
+   font-weight: 700;
+   font-size: 20px;
+   margin-bottom: 18px;
+   color: #0b0b0b;
 }
 
 .toc ul { list-style: none; }
 .toc li { margin: 8px 0; }
 .toc a {
-  color: #0b0b0b;
-  text-decoration: none;
-  padding: 8px 10px;
-  display: block;
-  border-radius: 6px;
-  transition: background .18s, color .18s;
-  font-size: 15px;
+   color: #0b0b0b;
+   text-decoration: none;
+   padding: 8px 10px;
+   display: block;
+   border-radius: 6px;
+   transition: background .18s, color .18s;
+   font-size: 15px;
 }
 .toc a:hover, .toc a:focus { background: #0b0b0b; color: #fff; }
 
 /* Content */
 .content {
-  flex: 1;
-  padding: 48px 60px;
-  max-width: 980px;
-  margin: 0 auto;
-  background: transparent;
+   flex: 1;
+   padding: 48px 60px;
+   max-width: 980px;
+   margin: 0 auto;
+   background: transparent;
 }
 
 .content-header h1 {
-  font-size: 44px;
-  font-weight: 700;
-  color: #111;
-  margin-bottom: 6px;
+   font-size: 44px;
+   font-weight: 700;
+   color: #111;
+   margin-bottom: 6px;
 }
 
 .last-updated {
-  color: #6b6b6b;
-  margin-bottom: 22px;
+   color: #6b6b6b;
+   margin-bottom: 22px;
 }
 
 /* Articles */
@@ -80,26 +80,26 @@ article ul li { margin-bottom: 6px; }
 
 /* .loi (spéciale) */
 .loi {
-  font-family: 'Roboto', Arial, sans-serif;
-  font-size: 16px;
-  color: #b30000; /* rouge mais lisible */
-  background: #fff6f6;
-  border-left: 4px solid #ffb3b3;
-  padding: 12px;
-  border-radius: 6px;
-  margin-bottom: 12px;
+   font-family: 'Roboto', Arial, sans-serif;
+   font-size: 16px;
+   color: #b30000; /* rouge mais lisible */
+   background: #fff6f6;
+   border-left: 4px solid #ffb3b3;
+   padding: 12px;
+   border-radius: 6px;
+   margin-bottom: 12px;
 }
 
 /* Liens "site" / "stat" (boutons légers) */
 .site, .stat {
-  display: inline-block;
-  padding: 6px 8px;
-  font-size: 14px;
-  text-decoration: none;
-  border-radius: 6px;
-  color: #111;
-  background: #f0f0f0;
-  border: 1px solid #e6e6e6;
+   display: inline-block;
+   padding: 6px 8px;
+   font-size: 14px;
+   text-decoration: none;
+   border-radius: 6px;
+   color: #111;
+   background: #f0f0f0;
+   border: 1px solid #e6e6e6;
 }
 .site:hover, .stat:hover { background: #111; color: #fff; }
 
@@ -110,147 +110,166 @@ article ul li { margin-bottom: 6px; }
 
 /* Responsive */
 @media (max-width: 980px) {
-  .layout { flex-direction: column; }
-  .sidebar { width: 100%; height: auto; position: relative; border-right: none; border-bottom: 1px solid #e6e6e6; }
-  .content { padding: 22px; }
-  .content-header h1 { font-size: 30px; }
+   .layout { flex-direction: column; }
+   .sidebar { width: 100%; height: auto; position: relative; border-right: none; border-bottom: 1px solid #e6e6e6; }
+   .content { padding: 22px; }
+   .content-header h1 { font-size: 30px; }
 }
 
 
 /* =============================
-   AUTH / LOGIN / REGISTER / BLOCAGE
+     AUTH / LOGIN / REGISTER / BLOCAGE
 ============================= */
 
 /* Overlay (Fond gris plein écran) */
 #auth-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.85); /* Fond plus sombre pour cacher le site */
-    backdrop-filter: blur(8px); /* Flou plus intense */
-    z-index: 2147483647; /* Valeur max pour être au-dessus de TOUT (même les pubs ou widgets) */
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    overflow-y: auto;
+   position: fixed;
+   top: 0;
+   left: 0;
+   width: 100%;
+   height: 100%;
+   background-color: rgba(0, 0, 0, 0.85); /* Fond plus sombre pour cacher le site */
+   backdrop-filter: blur(8px); /* Flou plus intense */
+   z-index: 2147483647; /* Valeur max pour être au-dessus de TOUT (même les pubs ou widgets) */
+   display: flex;
+   justify-content: center;
+   align-items: center;
+   overflow-y: auto;
 }
 
 /* Boîte blanche au centre */
 #auth-box {
-    background-color: #fff;
-    padding: 35px;
-    border-radius: 15px;
-    box-shadow: 0 15px 35px rgba(0,0,0,0.3);
-    width: 90%;
-    max-width: 420px;
-    position: relative;
-    border: 1px solid #e0e0e0;
+   background-color: #fff;
+   padding: 35px;
+   border-radius: 15px;
+   box-shadow: 0 15px 35px rgba(0,0,0,0.3);
+   width: 90%;
+   max-width: 420px;
+   position: relative;
+   border: 1px solid #e0e0e0;
+    /* NOUVEAU: Permet le défilement interne et fixe la hauteur sur les grands écrans */
+    max-height: 90vh; 
+    overflow-y: auto;
+}
+
+/* NOUVEAU CONTENEUR pour les champs de formulaire (uniquement besoin d'être défini ici) */
+.form-content {
+    display: flex;
+    flex-direction: column; /* Par défaut: une colonne pour le mobile */
+    gap: 15px 4%; /* Espace entre les champs (vertical et horizontal) */
 }
 
 /* Bouton fermer (la croix) - Caché si bloqué */
 #btn-close-overlay {
-    position: absolute;
-    top: 15px;
-    right: 15px;
-    background: none;
-    border: none;
-    font-size: 24px;
-    line-height: 1;
-    cursor: pointer;
-    color: #888;
-    transition: color 0.3s;
-    z-index: 10;
+   position: absolute;
+   top: 15px;
+   right: 15px;
+   background: none;
+   border: none;
+   font-size: 24px;
+   line-height: 1;
+   cursor: pointer;
+   color: #888;
+   transition: color 0.3s;
+   z-index: 10;
 }
 #btn-close-overlay:hover { color: #d32f2f; }
 
 /* Titres */
 #auth-box h2 {
-    text-align: center;
-    margin-bottom: 25px;
-    font-size: 24px;
-    color: #222;
-    font-weight: 700;
+   text-align: center;
+   margin-bottom: 25px;
+   font-size: 24px;
+   color: #222;
+   font-weight: 700;
 }
 
-/* Inputs */
-#auth-box input,
-#auth-box select {
-    width: 100%;
-    padding: 14px;
+/* Inputs (Cibler les inputs DANS .form-content pour mieux gérer le gap) */
+.form-content input,
+.form-content select {
+   width: 100%;
+   padding: 14px;
+   margin-bottom: 0; /* Supprimer la marge inférieure car géré par le gap */
+   border-radius: 8px;
+   border: 1px solid #ddd;
+   font-size: 16px;
+   box-sizing: border-box;
+   background-color: #f9f9f9;
+   transition: border-color 0.3s;
+}
+
+/* Les inputs hors .form-content (comme ceux du login initial) doivent garder leur margin-bottom */
+#auth-box input:not(.form-content input):not(#reg-dateNaissance),
+#auth-box select:not(.form-content select) {
+    /* Laisser les styles d'inputs de base pour les formulaires de base (login) qui n'ont pas .form-content */
     margin-bottom: 15px;
-    border-radius: 8px;
-    border: 1px solid #ddd;
-    font-size: 16px;
-    box-sizing: border-box;
-    background-color: #f9f9f9;
-    transition: border-color 0.3s;
 }
-#auth-box input:focus, #auth-box select:focus {
-    border-color: #007bff;
-    outline: none;
-    background-color: #fff;
+
+.form-content input:focus, .form-content select:focus {
+   border-color: #007bff;
+   outline: none;
+   background-color: #fff;
 }
+
 
 /* Boutons d'action (Bleu) */
 #auth-box button.action-btn, 
 #btn-login, 
 #btn-register,
 #btn-reconnect {
-    width: 100%;
-    padding: 14px;
-    border: none;
-    border-radius: 8px;
-    background-color: #007bff;
-    color: white;
-    font-size: 16px;
-    font-weight: bold;
-    cursor: pointer;
-    margin-bottom: 12px;
-    transition: background 0.3s;
+   width: 100%;
+   padding: 14px;
+   border: none;
+   border-radius: 8px;
+   background-color: #007bff;
+   color: white;
+   font-size: 16px;
+   font-weight: bold;
+   cursor: pointer;
+   margin-bottom: 12px;
+   transition: background 0.3s;
 }
 #auth-box button:hover { background-color: #0056b3; }
 
 /* Bouton Quitter (Rouge) */
 #btn-quit {
-    width: 100%;
-    padding: 14px;
-    border: none;
-    border-radius: 8px;
-    background-color: #dc3545;
-    color: white;
-    font-weight: bold;
-    cursor: pointer;
-    transition: background 0.3s;
+   width: 100%;
+   padding: 14px;
+   border: none;
+   border-radius: 8px;
+   background-color: #dc3545;
+   color: white;
+   font-weight: bold;
+   cursor: pointer;
+   transition: background 0.3s;
 }
 #btn-quit:hover { background-color: #b02a37; }
 
 /* Liens (basculer login/inscription) */
 #auth-box p {
-    text-align: center;
-    margin-top: 18px;
-    font-size: 15px;
-    color: #555;
+   text-align: center;
+   margin-top: 18px;
+   font-size: 15px;
+   color: #555;
 }
 .link-btn {
-    color: #007bff;
-    cursor: pointer;
-    text-decoration: underline;
-    font-weight: 600;
+   color: #007bff;
+   cursor: pointer;
+   text-decoration: underline;
+   font-weight: 600;
 }
 
 /* Message de blocage */
 #block-message p {
-    color: #c62828;
-    font-weight: 700;
-    text-align: center;
-    font-size: 19px;
-    margin-bottom: 25px;
-    background: #ffebee;
-    padding: 20px;
-    border-radius: 8px;
-    border: 1px solid #ef9a9a;
+   color: #c62828;
+   font-weight: 700;
+   text-align: center;
+   font-size: 19px;
+   margin-bottom: 25px;
+   background: #ffebee;
+   padding: 20px;
+   border-radius: 8px;
+   border: 1px solid #ef9a9a;
 }
 
 /* Utilitaire */
@@ -258,7 +277,42 @@ article ul li { margin-bottom: 6px; }
 
 /* Header Actions (Boutons en haut à droite) */
 #header-actions button {
-    font-size: 14px;
-    transition: opacity 0.3s;
+   font-size: 14px;
+   transition: opacity 0.3s;
 }
 #header-actions button:hover { opacity: 0.8; }
+
+
+/* =============================
+   MEDIA QUERY - GRANDS ÉCRANS (Deux colonnes)
+============================= */
+
+@media (min-width: 768px) {
+    /* Élargit la boîte de connexion pour accueillir deux colonnes */
+    #auth-box {
+        max-width: 700px; 
+    }
+
+    /* Transforme le conteneur du formulaire d'inscription en deux colonnes */
+    #register-form .form-content {
+        flex-direction: row; /* Aligne les éléments horizontalement */
+        flex-wrap: wrap; /* Permet aux éléments de passer à la ligne */
+        justify-content: space-between; /* Espace les colonnes */
+    }
+
+    /* Donne aux champs la moitié de la largeur */
+    #register-form .form-content input,
+    #register-form .form-content select,
+    #register-form .form-content label { /* Le label de la date doit aussi prendre la moitié */
+        width: 48%; /* Moins de 50% pour laisser de l'espace (gap) */
+        margin-bottom: 0;
+    }
+
+    /* Les boutons et le paragraphe de lien restent en pleine largeur */
+    #register-form button, 
+    #register-form p {
+        width: 100%;
+        margin-left: 0;
+        margin-right: 0;
+    }
+}
