@@ -1,312 +1,326 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-1Y80YWCNCP"></script>
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-      gtag('config', 'G-1Y80YWCNCP');
-    </script>
-    <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-    'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-    })(window,document,'script','dataLayer','GTM-MN9542FK');</script>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="polisecu.css">
-    <title>Conditions d'utilisation - Lumesys</title>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-1Y80YWCNCP"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-1Y80YWCNCP');
+    </script>
+    <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+    'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+    })(window,document,'script','dataLayer','GTM-MN9542FK');</script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="polisecu.css">
+    <title>Conditions d'utilisation - Lumesys</title>
 </head>
 <body>
-    <header style="display: flex; justify-content: space-between; align-items: center; padding: 15px 20px; background: #fff; border-bottom: 1px solid #ddd;">
-        <h1>Conditions d'utilisation</h1>
-        <div id="header-actions">
-            <button id="btn-open-login" style="padding: 8px 15px; background: #007bff; color: white; border: none; border-radius: 5px; cursor: pointer;">Se connecter</button>
-            <button id="btn-do-logout" class="hidden" style="padding: 8px 15px; background: #6c757d; color: white; border: none; border-radius: 5px; cursor: pointer;">Déconnexion</button>
-        </div>
-    </header>
+    <header style="display: flex; justify-content: space-between; align-items: center; padding: 15px 20px; background: #fff; border-bottom: 1px solid #ddd;">
+        <h1>Conditions d'utilisation</h1>
+        <div id="header-actions">
+            <button id="btn-open-login" style="padding: 8px 15px; background: #007bff; color: white; border: none; border-radius: 5px; cursor: pointer;">Se connecter</button>
+            <button id="btn-do-logout" class="hidden" style="padding: 8px 15px; background: #6c757d; color: white; border: none; border-radius: 5px; cursor: pointer;">Déconnexion</button>
+        </div>
+    </header>
 
-    <div id="auth-overlay" class="hidden">
-        <div id="auth-box">
-            <button id="btn-close-overlay" class="hidden" title="Fermer">✖</button>
+    <div id="auth-overlay" class="hidden">
+        <div id="auth-box">
+            <button id="btn-close-overlay" class="hidden" title="Fermer">✖</button>
 
-            <div id="block-message" class="hidden">
-                <p>Vous avez atteint votre limite hors connexion.<br>Veuillez vous connecter à LUMESYS.</p>
-                <button id="btn-reconnect">Se connecter</button>
-                <br>
-                <button id="btn-quit">Quitter le site</button>
-            </div>
+            <div id="block-message" class="hidden">
+                <p>Vous avez atteint votre limite hors connexion.<br>Veuillez vous connecter à LUMESYS.</p>
+                <button id="btn-reconnect">Se connecter</button>
+                <br>
+                <button id="btn-quit">Quitter le site</button>
+            </div>
 
-            <div id="login-form" class="hidden">
-                <h2>Connexion</h2>
-                <input type="tel" id="login-phone" placeholder="Numéro de téléphone" autocomplete="tel">
-                <input type="password" id="login-password" placeholder="Mot de passe">
-                <button id="btn-login">Se connecter</button>
-                <p>Pas encore inscrit ? <span id="btn-show-register" class="link-btn">S'inscrire</span></p>
-            </div>
+            <div id="login-form" class="hidden">
+                <h2>Connexion</h2>
+                <div class="form-content">                     <input type="tel" id="login-phone" placeholder="Numéro de téléphone" autocomplete="off">
+                    <input type="password" id="login-password" placeholder="Mot de passe">
+                </div>
+                <button id="btn-login">Se connecter</button>
+                <p>Pas encore inscrit ? <span id="btn-show-register" class="link-btn">S'inscrire</span></p>
+            </div>
 
-            <div id="register-form" class="hidden">
-                <h2>Inscription</h2>
-                <input type="text" id="reg-prenom" placeholder="Prénom">
-                <input type="text" id="reg-nom" placeholder="Nom">
-                <label style="font-size:13px; color:#555; margin-bottom:5px; display:block; font-weight:bold;">Date de naissance :</label>
-                <input type="date" id="reg-dateNaissance">
-                <input type="text" id="reg-lieuNaissance" placeholder="Lieu de naissance">
-                <select id="reg-sexe">
-                    <option value="">Sélectionnez le sexe</option>
-                    <option value="M">Masculin</option>
-                    <option value="F">Féminin</option>
-                </select>
-                <input type="tel" id="reg-phone" placeholder="Numéro de téléphone" autocomplete="tel">
-                <input type="email" id="reg-email" placeholder="Email (facultatif)" autocomplete="email">
-                <input type="password" id="reg-password" placeholder="Mot de passe">
-                <button id="btn-register">S'inscrire</button>
-                <p>Déjà inscrit ? <span id="btn-show-login" class="link-btn">Connexion</span></p>
-            </div>
-        </div>
-    </div>
+            <div id="register-form" class="hidden">
+                <h2>Inscription</h2>
+                <div class="form-content">                     <input type="text" id="reg-prenom" placeholder="Prénom" autocomplete="off">
+                    <input type="text" id="reg-nom" placeholder="Nom" autocomplete="off">
+                    <label style="font-size:13px; color:#555; margin-bottom:5px; display:block; font-weight:bold;">Date de naissance :</label>
+                    <input type="date" id="reg-dateNaissance" autocomplete="off">
+                    <input type="text" id="reg-lieuNaissance" placeholder="Lieu de naissance" autocomplete="off">
+                    <select id="reg-sexe">
+                        <option value="">Sélectionnez le sexe</option>
+                        <option value="M">Homme</option>
+                        <option value="F">Femme</option>
+                    </select>
+                    <input type="tel" id="reg-phone" placeholder="Numéro de téléphone" autocomplete="off">
+                    <input type="email" id="reg-email" placeholder="Email (facultatif)" autocomplete="off">
+                    <input type="password" id="reg-password" placeholder="Mot de passe" autocomplete="off">
+                </div>
+                <button id="btn-register">S'inscrire</button>
+                <p>Déjà inscrit ? <span id="btn-show-login" class="link-btn">Connexion</span></p>
+            </div>
+        </div>
+        
+    </div>
 
-    <div id="main-content">
-        <p>Bienvenue sur le site <a href="index.html" class="site">Lumesys</a>. En utilisant ce site web, vous acceptez les conditions d'utilisation décrites ci-dessous.</p>
+    <div id="main-content">
+        <p>Bienvenue sur le site <a href="index.html" class="site">Lumesys</a>. En utilisant ce site web, vous acceptez les conditions d'utilisation décrites ci-dessous.</p>
 
-        <h2>1. Acceptation des termes</h2>
-        <p>En accédant et en utilisant le site <a href="index.html" class="site">Lumesys</a>, vous acceptez les présentes conditions d'utilisation.</p>
+        <h2>1. Acceptation des termes</h2>
+        <p>En accédant et en utilisant le site <a href="index.html" class="site">Lumesys</a>, vous acceptez les présentes conditions d'utilisation.</p>
 
-        <h2>2. Utilisation du site</h2>
-        <p>Vous vous engagez à utiliser ce site conformément aux lois et règlements en vigueur.</p>
-        <ul>
-            <li>Transmettre du contenu illégal, nuisible, ou offensant.</li>
-            <li>Violer les droits d'autrui, y compris les droits de propriété intellectuelle.</li>
-        </ul>
+        <h2>2. Utilisation du site</h2>
+        <p>Vous vous engagez à utiliser ce site conformément aux lois et règlements en vigueur.</p>
+        <ul>
+            <li>Transmettre du contenu illégal, nuisible, ou offensant.</li>
+            <li>Violer les droits d'autrui, y compris les droits de propriété intellectuelle.</li>
+        </ul>
 
-        <h2>3. Propriété intellectuelle</h2>
-        <p>Tous les contenus présents sur le site proviennent de diverses sources.</p>
-        <p class="loi">Si vous êtes le titulaire des droits d'auteur d'une œuvre publiée sur notre site... contactez-nous au : 00223 76-85-66-31.</p>
+        <h2>3. Propriété intellectuelle</h2>
+        <p>Tous les contenus présents sur le site proviennent de diverses sources.</p>
+        <p class="loi">Si vous êtes le titulaire des droits d'auteur d'une œuvre publiée sur notre site... contactez-nous au : 00223 76-85-66-31.</p>
 
-        <h2>4. Limitation de responsabilité</h2>
-        <p>Nous ne sommes pas responsables des dommages directs ou indirects.</p>
+        <h2>4. Limitation de responsabilité</h2>
+        <p>Nous ne sommes pas responsables des dommages directs ou indirects.</p>
 
-        <h2>5. Modifications des conditions</h2>
-        <p>Nous nous réservons le droit de modifier ces conditions.</p>
+        <h2>5. Modifications des conditions</h2>
+        <p>Nous nous réservons le droit de modifier ces conditions.</p>
 
-        <h2>6. Loi applicable</h2>
-        <p>Ces conditions sont régies par les lois en vigueur au Mali.</p>
+        <h2>6. Loi applicable</h2>
+        <p>Ces conditions sont régies par les lois en vigueur au Mali.</p>
 
-        <p>Dernière mise à jour : 23 février 2024</p>
+        <p>Dernière mise à jour : 23 février 2024</p>
 
-        <footer>
-            <div class="social-icons">
-                 <a href="#" class="social-button"><img src="icone/wa.png" alt="WA"></a>
-                 <a href="#" class="social-button"><img src="icone/facebook.png" alt="FB"></a>
-                 <a href="#" class="social-button"><img src="icone/x.png" alt="X"></a>
-                 <a href="#" class="social-button"><img src="icone/insta.png" alt="Insta"></a>
-                 <a href="#" class="social-button"><img src="icone/tiktok.png" alt="TikTok"></a>
-            </div>
-            <p>&copy; 2025 Ibrahim Djimé Diakité. Tous droits réservés.</p>
-            <script type="text/javascript">
-            var sc_project=13046048; var sc_invisible=0; var sc_security="ff489f98"; 
-            var scJsHost = "https://";
-            document.write("<sc"+"ript type='text/javascript' src='" + scJsHost+ "statcounter.com/counter/counter.js'></"+"script>");
-            </script>
-            <noscript><div class="statcounter"><a href="https://statcounter.com/" target="_blank"><img class="statcounter" src="https://c.statcounter.com/13046048/0/ff489f98/0/" alt="site stats"></a></div></noscript>
-        </footer>
-    </div>
+        <footer>
+            <div class="social-icons">
+                 <a href="#" class="social-button"><img src="icone/wa.png" alt="WA"></a>
+                 <a href="#" class="social-button"><img src="icone/facebook.png" alt="FB"></a>
+                 <a href="#" class="social-button"><img src="icone/x.png" alt="X"></a>
+                 <a href="#" class="social-button"><img src="icone/insta.png" alt="Insta"></a>
+                 <a href="#" class="social-button"><img src="icone/tiktok.png" alt="TikTok"></a>
+            </div>
+            <p>&copy; 2025 Ibrahim Djimé Diakité. Tous droits réservés.</p>
+            <script type="text/javascript">
+            var sc_project=13046048; var sc_invisible=0; var sc_security="ff489f98"; 
+            var scJsHost = "https://";
+            document.write("<sc"+"ript type='text/javascript' src='" + scJsHost+ "statcounter.com/counter/counter.js'></"+"script>");
+            </script>
+            <noscript><div class="statcounter"><a href="https://statcounter.com/" target="_blank"><img class="statcounter" src="https://c.statcounter.com/13046048/0/ff489f98/0/" alt="site stats"></a></div></noscript>
+        </footer>
+    </div>
 
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";
-        import { getFirestore, doc, getDoc, setDoc, updateDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";
+        import { getFirestore, doc, getDoc, setDoc, updateDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
 
-        const firebaseConfig = {
-            apiKey: "AIzaSyAClwRQe3g4Cg9CAsn28l_sAihwlMQtGUI",
-            authDomain: "lumina-analytics.firebaseapp.com",
-            projectId: "lumina-analytics",
-            storageBucket: "lumina-analytics.firebasestorage.app",
-            messagingSenderId: "239329398532",
-            appId: "1:239329398532:web:2f68b196df0c4e6400ca51",
-            measurementId: "G-J7LLPRXLJH"
-        };
+        const firebaseConfig = {
+            apiKey: "AIzaSyAClwRQe3g4Cg9CAsn28l_sAihwlMQtGUI",
+            authDomain: "lumina-analytics.firebaseapp.com",
+            projectId: "lumina-analytics",
+            storageBucket: "lumina-analytics.firebasestorage.app",
+            messagingSenderId: "239329398532",
+            appId: "1:239329398532:web:2f68b196df0c4e6400ca51",
+            measurementId: "G-J7LLPRXLJH"
+        };
 
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
 
-        // Variables
-        const MAX_VISITS = 3; 
-        let visits = Number(localStorage.getItem('lumina_visits')) || 0;
-        let currentUserPhone = localStorage.getItem('currentUserPhone');
+        // Variables
+        const MAX_VISITS = 3; 
+        let visits = Number(localStorage.getItem('lumina_visits')) || 0;
+        let currentUserPhone = localStorage.getItem('currentUserPhone');
 
-        // Elements DOM
-        const authOverlay = document.getElementById('auth-overlay');
-        const mainContent = document.getElementById('main-content');
-        const blockMsgDiv = document.getElementById('block-message');
-        const loginDiv = document.getElementById('login-form');
-        const registerDiv = document.getElementById('register-form');
-        const btnOpenLogin = document.getElementById('btn-open-login');
-        const btnDoLogout = document.getElementById('btn-do-logout');
-        const btnCloseOverlay = document.getElementById('btn-close-overlay');
+        // Elements DOM
+        const authOverlay = document.getElementById('auth-overlay');
+        const mainContent = document.getElementById('main-content');
+        const blockMsgDiv = document.getElementById('block-message');
+        const loginDiv = document.getElementById('login-form');
+        const registerDiv = document.getElementById('register-form');
+        const btnOpenLogin = document.getElementById('btn-open-login');
+        const btnDoLogout = document.getElementById('btn-do-logout');
+        const btnCloseOverlay = document.getElementById('btn-close-overlay');
 
-        // Initialisation
-        async function init() {
-            if (currentUserPhone) {
-                console.log("Utilisateur connecté :", currentUserPhone);
-                setConnectedState();
-            } else {
-                console.log("Visiteur non connecté");
-                setDisconnectedState();
-                // On n'incrémente QUE si on n'est pas connecté
-                visits++;
-                localStorage.setItem('lumina_visits', visits);
-                console.log("Visite numéro :", visits);
-                
-                if (visits > MAX_VISITS) {
-                    console.log("Limite atteinte. Blocage activé.");
-                    showBlockScreen();
-                }
-            }
-        }
+        // Initialisation
+        async function init() {
+            if (currentUserPhone) {
+                console.log("Utilisateur connecté :", currentUserPhone);
+                setConnectedState();
+            } else {
+                console.log("Visiteur non connecté");
+                setDisconnectedState();
+                // On n'incrémente QUE si on n'est pas connecté
+                visits++;
+                localStorage.setItem('lumina_visits', visits);
+                console.log("Visite numéro :", visits);
+                
+                if (visits > MAX_VISITS) {
+                    console.log("Limite atteinte. Blocage activé.");
+                    showBlockScreen();
+                }
+            }
+        }
 
-        // Gestion Affichage
-        function setConnectedState() {
-            mainContent.classList.remove('hidden');
-            authOverlay.classList.add('hidden');
-            btnOpenLogin.classList.add('hidden');
-            btnDoLogout.classList.remove('hidden');
-        }
+        // Gestion Affichage
+        function setConnectedState() {
+            mainContent.classList.remove('hidden');
+            authOverlay.classList.add('hidden');
+            btnOpenLogin.classList.add('hidden');
+            btnDoLogout.classList.remove('hidden');
+        }
 
-        function setDisconnectedState() {
-            btnOpenLogin.classList.remove('hidden');
-            btnDoLogout.classList.add('hidden');
-        }
+        function setDisconnectedState() {
+            btnOpenLogin.classList.remove('hidden');
+            btnDoLogout.classList.add('hidden');
+        }
 
-        function showBlockScreen() {
-            authOverlay.classList.remove('hidden');
-            mainContent.classList.add('hidden'); // Cache le contenu derrière
-            blockMsgDiv.classList.remove('hidden');
-            loginDiv.classList.add('hidden');
-            registerDiv.classList.add('hidden');
-            btnCloseOverlay.classList.add('hidden'); // FORCE le blocage (pas de croix)
-        }
+        function showBlockScreen() {
+            authOverlay.classList.remove('hidden');
+            mainContent.classList.add('hidden'); // Cache le contenu derrière
+            blockMsgDiv.classList.remove('hidden');
+            loginDiv.classList.add('hidden');
+            registerDiv.classList.add('hidden');
+            btnCloseOverlay.classList.add('hidden'); // FORCE le blocage (pas de croix)
+        }
 
-        function openLoginOverlay() {
-            authOverlay.classList.remove('hidden');
-            blockMsgDiv.classList.add('hidden');
-            showLoginForm();
-            // Si le visiteur est bloqué, on ne met PAS la croix. Sinon on la met.
-            if (visits > MAX_VISITS) {
-                btnCloseOverlay.classList.add('hidden');
-            } else {
-                btnCloseOverlay.classList.remove('hidden');
-            }
-        }
+        function openLoginOverlay() {
+            authOverlay.classList.remove('hidden');
+            blockMsgDiv.classList.add('hidden');
+            showLoginForm();
+            // Si le visiteur est bloqué, on ne met PAS la croix. Sinon on la met.
+            if (visits > MAX_VISITS) {
+                btnCloseOverlay.classList.add('hidden');
+            } else {
+                btnCloseOverlay.classList.remove('hidden');
+            }
+        }
 
-        function showLoginForm() {
-            registerDiv.classList.add('hidden');
-            loginDiv.classList.remove('hidden');
-        }
+        function showLoginForm() {
+            registerDiv.classList.add('hidden');
+            loginDiv.classList.remove('hidden');
+        }
 
-        function showRegisterForm() {
-            loginDiv.classList.add('hidden');
-            registerDiv.classList.remove('hidden');
-        }
+        function showRegisterForm() {
+            loginDiv.classList.add('hidden');
+            registerDiv.classList.remove('hidden');
+        }
 
-        // Hachage (Sécurité Mot de passe)
-        async function hashPassword(password) {
-            const encoder = new TextEncoder();
-            const data = encoder.encode(password);
-            const hashBuffer = await crypto.subtle.digest('SHA-256', data);
-            const hashArray = Array.from(new Uint8Array(hashBuffer));
-            return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
-        }
+        // Hachage (Sécurité Mot de passe)
+        async function hashPassword(password) {
+            const encoder = new TextEncoder();
+            const data = encoder.encode(password);
+            const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+            const hashArray = Array.from(new Uint8Array(hashBuffer));
+            return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+        }
 
-        // Actions de Connexion
-        async function handleLogin() {
-            const phone = document.getElementById('login-phone').value.trim();
-            const pass = document.getElementById('login-password').value;
-            if(!phone || !pass) return alert("Veuillez remplir tous les champs.");
+        // Actions de Connexion
+        async function handleLogin() {
+            const phone = document.getElementById('login-phone').value.trim();
+            const pass = document.getElementById('login-password').value;
+            if(!phone || !pass) return alert("Veuillez remplir tous les champs.");
 
-            try {
-                const docRef = doc(db, "utilisateurs", phone);
-                const docSnap = await getDoc(docRef);
-                
-                if (!docSnap.exists()) {
-                    return alert("Ce numéro n'est pas inscrit. Veuillez créer un compte.");
-                }
+            try {
+                const docRef = doc(db, "utilisateurs", phone);
+                const docSnap = await getDoc(docRef);
+                
+                if (!docSnap.exists()) {
+                    return alert("Ce numéro n'est pas inscrit. Veuillez créer un compte.");
+                }
 
-                const data = docSnap.data();
-                const hashedPass = await hashPassword(pass);
+                const data = docSnap.data();
+                const hashedPass = await hashPassword(pass);
 
-                if (data.passwordHash === hashedPass) {
-                    await updateDoc(docRef, { derniereConnexion: serverTimestamp(), statut: "connecté" });
-                    localStorage.setItem('currentUserPhone', phone);
-                    localStorage.setItem('lumina_visits', 0); // On remet les visites à 0
-                    alert("Connexion réussie !");
-                    location.reload();
-                } else {
-                    alert("Mot de passe incorrect.");
-                }
-            } catch(e) { console.error(e); alert("Erreur technique de connexion."); }
-        }
+                if (data.passwordHash === hashedPass) {
+                    await updateDoc(docRef, { derniereConnexion: serverTimestamp(), statut: "connecté" });
+                    localStorage.setItem('currentUserPhone', phone);
+                    localStorage.setItem('lumina_visits', 0); // On remet les visites à 0
+                    alert("Connexion réussie !");
+                    location.reload();
+                } else {
+                    alert("Mot de passe incorrect.");
+                }
+            } catch(e) { console.error(e); alert("Erreur technique de connexion."); }
+        }
 
-        // Actions d'Inscription
-        async function handleRegister() {
-            const prenom = document.getElementById('reg-prenom').value.trim();
-            const nom = document.getElementById('reg-nom').value.trim();
-            const dateN = document.getElementById('reg-dateNaissance').value;
-            const lieuN = document.getElementById('reg-lieuNaissance').value.trim();
-            const sexe = document.getElementById('reg-sexe').value;
-            const phone = document.getElementById('reg-phone').value.trim();
-            const email = document.getElementById('reg-email').value.trim();
-            const pass = document.getElementById('reg-password').value;
+        // Actions d'Inscription
+        async function handleRegister() {
+            const prenom = document.getElementById('reg-prenom').value.trim();
+            const nom = document.getElementById('reg-nom').value.trim();
+            const dateN = document.getElementById('reg-dateNaissance').value;
+            const lieuN = document.getElementById('reg-lieuNaissance').value.trim();
+            const sexe = document.getElementById('reg-sexe').value;
+            const phone = document.getElementById('reg-phone').value.trim();
+            const email = document.getElementById('reg-email').value.trim();
+            const pass = document.getElementById('reg-password').value;
 
-            if (!prenom || !nom || !phone || !pass || !dateN || !sexe) {
-                return alert("Veuillez remplir tous les champs obligatoires.");
-            }
+            if (!prenom || !nom || !phone || !pass || !dateN || !sexe) {
+                return alert("Veuillez remplir tous les champs obligatoires.");
+            }
 
-            try {
-                const docRef = doc(db, "utilisateurs", phone);
-                const docSnap = await getDoc(docRef);
-                if (docSnap.exists()) { 
-                    alert("Ce numéro possède déjà un compte. Veuillez vous connecter."); 
-                    showLoginForm(); 
-                    return; 
-                }
+            try {
+                const docRef = doc(db, "utilisateurs", phone);
+                const docSnap = await getDoc(docRef);
+                if (docSnap.exists()) { 
+                    alert("Ce numéro possède déjà un compte. Veuillez vous connecter."); 
+                    showLoginForm(); 
+                    return; 
+                }
 
-                const hashedPass = await hashPassword(pass);
-                const userData = {
-                    prenom, nom, dateNaissance: dateN, lieuNaissance: lieuN, sexe,
-                    phone, email, passwordHash: hashedPass,
-                    typeCompte: "visiteur", statut: "connecté",
-                    derniereConnexion: serverTimestamp()
-                };
+                const hashedPass = await hashPassword(pass);
+                const userData = {
+                    prenom, nom, dateNaissance: dateN, lieuNaissance: lieuN, sexe,
+                    phone, email, passwordHash: hashedPass,
+                    typeCompte: "visiteur", statut: "connecté",
+                    derniereConnexion: serverTimestamp()
+                };
 
-                await setDoc(docRef, userData);
-                localStorage.setItem('currentUserPhone', phone);
-                localStorage.setItem('lumina_visits', 0);
-                alert("Compte créé avec succès !");
-                location.reload();
-            } catch(e) { console.error(e); alert("Erreur lors de l'inscription."); }
-        }
+                await setDoc(docRef, userData);
+                localStorage.setItem('currentUserPhone', phone);
+                localStorage.setItem('lumina_visits', 0);
+                alert("Compte créé avec succès !");
+                location.reload();
+            } catch(e) { console.error(e); alert("Erreur lors de l'inscription."); }
+        }
 
-        function handleLogout() {
-            if(confirm("Voulez-vous vraiment vous déconnecter ?")) {
-                localStorage.removeItem('currentUserPhone');
-                location.reload();
-            }
-        }
+        function handleLogout() {
+            if(confirm("Voulez-vous vraiment vous déconnecter ?")) {
+                // 1. On supprime l'indicateur de connexion
+                localStorage.removeItem('currentUserPhone');
+                
+                // 2. On FORCE le compteur de visites à 4 (MAX_VISITS + 1)
+                localStorage.setItem('lumina_visits', MAX_VISITS + 1); 
+                
+                // 3. On recharge la page
+                location.reload();
+            }
+        }
 
-        // Listeners (Écouteurs d'événements)
-        btnOpenLogin.addEventListener('click', openLoginOverlay);
-        btnCloseOverlay.addEventListener('click', () => authOverlay.classList.add('hidden'));
-        btnDoLogout.addEventListener('click', handleLogout);
-        document.getElementById('btn-reconnect').addEventListener('click', showLoginForm);
-        document.getElementById('btn-quit').addEventListener('click', () => window.location.href = "https://www.google.com");
-        document.getElementById('btn-show-register').addEventListener('click', showRegisterForm);
-        document.getElementById('btn-show-login').addEventListener('click', showLoginForm);
-        document.getElementById('btn-login').addEventListener('click', handleLogin);
-        document.getElementById('btn-register').addEventListener('click', handleRegister);
+        // Listeners (Écouteurs d'événements)
+        btnOpenLogin.addEventListener('click', openLoginOverlay);
+        btnCloseOverlay.addEventListener('click', () => authOverlay.classList.add('hidden'));
+        btnDoLogout.addEventListener('click', handleLogout);
+        
+        document.getElementById('btn-reconnect').addEventListener('click', () => {
+            blockMsgDiv.classList.add('hidden'); // Masque le message de blocage et ses boutons
+            showLoginForm();                    // Affiche le formulaire de connexion
+        });
 
-        // Lancement
-        init();
-    </script>
+        document.getElementById('btn-quit').addEventListener('click', () => window.location.href = "https://www.google.com");
+        document.getElementById('btn-show-register').addEventListener('click', showRegisterForm);
+        document.getElementById('btn-show-login').addEventListener('click', showLoginForm);
+        document.getElementById('btn-login').addEventListener('click', handleLogin);
+        document.getElementById('btn-register').addEventListener('click', handleRegister);
+
+        // Lancement
+        init();
+    </script>
 </body>
 </html>
