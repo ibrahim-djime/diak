@@ -74,7 +74,6 @@ referrerPolicy="no-referrer-when-downgrade"></a></div></noscript>
     </div>
 
 </div>
-
 <script type="module">
 /* =============================
    IMPORTS Firebase
@@ -236,8 +235,8 @@ async function signupWithPhone(){
         derniereConnexion: serverTimestamp()
     });
 
-    // 🔥 Historique
-    await setDoc(doc(db,"connections", Date.now().toString()),{
+    // 🔥 Historique (corrigé)
+    await setDoc(doc(db,"utilisateurs", phone, "connections", Date.now().toString()),{
         nom,
         prenom,
         phone,
@@ -275,8 +274,8 @@ async function loginWithPhone(){
         derniereConnexion: serverTimestamp()
     }, { merge:true });
 
-    // 🔥 Historique
-    await setDoc(doc(db,"connections", Date.now().toString()),{
+    // 🔥 Historique (corrigé)
+    await setDoc(doc(db,"utilisateurs", phone, "connections", Date.now().toString()),{
         nom: data.nom,
         prenom: data.prenom,
         phone,
@@ -317,8 +316,8 @@ async function resetPasswordPhone(){
 
     await setDoc(ref,{ passwordHash:newHash },{ merge:true });
 
-    // 🔥 Historique
-    await setDoc(doc(db,"connections", Date.now().toString()),{
+    // 🔥 Historique (corrigé)
+    await setDoc(doc(db,"utilisateurs", phone, "connections", Date.now().toString()),{
         nom,
         prenom,
         phone,
