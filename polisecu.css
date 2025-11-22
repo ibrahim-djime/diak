@@ -117,70 +117,148 @@ article ul li { margin-bottom: 6px; }
 }
 
 
+/* =============================
+   AUTH / LOGIN / REGISTER / BLOCAGE
+============================= */
 
-/* ------ OVERLAY FOND ------ */
-.overlayTela {
-    display: none;
+/* Overlay (Fond gris plein écran) */
+#auth-overlay {
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0,0,0,0.85);
-    color: white;
-    z-index: 9999;
+    background-color: rgba(0, 0, 0, 0.85); /* Fond plus sombre pour cacher le site */
+    backdrop-filter: blur(8px); /* Flou plus intense */
+    z-index: 2147483647; /* Valeur max pour être au-dessus de TOUT (même les pubs ou widgets) */
+    display: flex;
     justify-content: center;
     align-items: center;
+    overflow-y: auto;
 }
 
-/* ------ CARD CENTRALE ------ */
-.overlayBoxTela {
-    background: #111;
-    padding: 25px;
+/* Boîte blanche au centre */
+#auth-box {
+    background-color: #fff;
+    padding: 35px;
+    border-radius: 15px;
+    box-shadow: 0 15px 35px rgba(0,0,0,0.3);
     width: 90%;
-    max-width: 350px;
-    border-radius: 12px;
+    max-width: 420px;
+    position: relative;
+    border: 1px solid #e0e0e0;
+}
+
+/* Bouton fermer (la croix) - Caché si bloqué */
+#btn-close-overlay {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background: none;
+    border: none;
+    font-size: 24px;
+    line-height: 1;
+    cursor: pointer;
+    color: #888;
+    transition: color 0.3s;
+    z-index: 10;
+}
+#btn-close-overlay:hover { color: #d32f2f; }
+
+/* Titres */
+#auth-box h2 {
     text-align: center;
+    margin-bottom: 25px;
+    font-size: 24px;
+    color: #222;
+    font-weight: 700;
 }
 
-/* ------ INPUTS ------ */
-.overlayBoxTela input {
+/* Inputs */
+#auth-box input,
+#auth-box select {
     width: 100%;
-    padding: 12px;
+    padding: 14px;
+    margin-bottom: 15px;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+    font-size: 16px;
+    box-sizing: border-box;
+    background-color: #f9f9f9;
+    transition: border-color 0.3s;
+}
+#auth-box input:focus, #auth-box select:focus {
+    border-color: #007bff;
+    outline: none;
+    background-color: #fff;
+}
+
+/* Boutons d'action (Bleu) */
+#auth-box button.action-btn, 
+#btn-login, 
+#btn-register,
+#btn-reconnect {
+    width: 100%;
+    padding: 14px;
+    border: none;
+    border-radius: 8px;
+    background-color: #007bff;
+    color: white;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
     margin-bottom: 12px;
-    border: none;
-    border-radius: 8px;
-    background: #222;
-    color: white;
-    font-size: 15px;
+    transition: background 0.3s;
 }
+#auth-box button:hover { background-color: #0056b3; }
 
-/* ------ BOUTON FERMER ------ */
-.btnCloseTela {
+/* Bouton Quitter (Rouge) */
+#btn-quit {
     width: 100%;
-    padding: 10px;
-    background: #444;
-    color: white;
+    padding: 14px;
     border: none;
     border-radius: 8px;
-    cursor: pointer;
-    margin-top: 10px;
-}
-
-.btnCloseTela:hover {
-    background: #666;
-}
-
-/* ------ BOUTON D’OUVERTURE (optionnel) ------ */
-.btnLoginTela {
-    padding: 12px 20px;
-    border: none;
-    background: #007bff;
+    background-color: #dc3545;
     color: white;
-    border-radius: 8px;
+    font-weight: bold;
     cursor: pointer;
+    transition: background 0.3s;
+}
+#btn-quit:hover { background-color: #b02a37; }
+
+/* Liens (basculer login/inscription) */
+#auth-box p {
+    text-align: center;
+    margin-top: 18px;
+    font-size: 15px;
+    color: #555;
+}
+.link-btn {
+    color: #007bff;
+    cursor: pointer;
+    text-decoration: underline;
+    font-weight: 600;
 }
 
-.btnLoginTela:hover {
-    background: #0056c5;
+/* Message de blocage */
+#block-message p {
+    color: #c62828;
+    font-weight: 700;
+    text-align: center;
+    font-size: 19px;
+    margin-bottom: 25px;
+    background: #ffebee;
+    padding: 20px;
+    border-radius: 8px;
+    border: 1px solid #ef9a9a;
 }
+
+/* Utilitaire */
+.hidden { display: none !important; }
+
+/* Header Actions (Boutons en haut à droite) */
+#header-actions button {
+    font-size: 14px;
+    transition: opacity 0.3s;
+}
+#header-actions button:hover { opacity: 0.8; }
