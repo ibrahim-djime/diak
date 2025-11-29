@@ -364,17 +364,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
 
-<div class="section" id="languageSelector">
-    
-    <a href="index.html"><img src="icone/fr.png" alt="French"></a>
-    <a href="index_en.html"><img src="icone/en.png" alt="English"></a>
-</div>
-
-<p id="status">Non connecté</p>
-<button id="loginBtn">Se connecter</button>
-<button id="logoutBtn">Se déconnecter</button>
-
-
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-app.js";
   import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
@@ -529,27 +518,32 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
 <main>
+ 
 
-	<section id="#Home" class="container">
+    <!-- LANGUE -->
+  <div class="section" id="languageSelector">
+    <a href="index.html"><img src="icone/fr.png" alt="French"></a>
+    <a href="index_en.html"><img src="icone/en.png" alt="English"></a>
+  </div>
+
+  
+<div id="liaisons">
+  <button id="loginBtn">Connexion via Google</button>
+  <button id="logoutBtn">Se déconnecter</button>
+</div>
+
+
+
+<section id="#Accueil" class="container">
     <div class="section">
-                <button id="dark-mode-toggle">Dark Mode</button>
+           
 
-<script>
-    // Dark mode initialization
-    const toggleDarkMode = () => {
-        document.body.classList.toggle("dark-mode");
-        localStorage.setItem("darkMode", document.body.classList.contains("dark-mode"));
-    };
+<div class="verificat01ion">Verification: 983e7a3b50a4c1c3</div>
 
-    document.getElementById("dark-mode-toggle").onclick = toggleDarkMode;
+                <div id="maccueil">
+  <h2 class="verbaccueil"><strong>Home</strong></h2>
+                
 
-    // Load dark mode if it is enabled
-    if (localStorage.getItem("darkMode") === "true") {
-        document.body.classList.add("dark-mode");
-    }
-</script>
-
-                <h2><strong>Home</strong></h2>
 <p>Welcome to <strong>Lumina</strong>! This site offers a variety of <strong>services</strong> tailored to your <strong>needs</strong>:</br>- Discover a <strong>selection of items</strong> to buy and sell in a <strong>secure space</strong>. We connect <strong>buyers</strong> and <strong>sellers</strong> directly to facilitate your <strong>transactions</strong>.
       <a href="#Marketplace" class="btn2"><strong>Buy items and Items for Sale</strong></a>,</br> 
       - Want to <strong>promote</strong> your <strong>products</strong>? Our <strong>advertising space</strong> allows you to reach a <strong>wide audience</strong> to sell your <strong>items</strong>.<a href="#contacts" class="btn4"><strong>Advertising Space</strong></a>,</br>
@@ -1579,6 +1573,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
 </main>
+
 <!-- Button to scroll up -->
 <button id="scrollUp" class="scroll-button" onclick="scrollToTop()">&#8679;</button>
 
