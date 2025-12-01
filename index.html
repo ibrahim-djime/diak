@@ -408,32 +408,60 @@ document.addEventListener("DOMContentLoaded", function () {
   const loginBtn = document.getElementById("loginBtn");
   const logoutBtn = document.getElementById("logoutBtn");
 
-  // === Fonction pour récupérer la localisation ===
+  // === Popup pour numéro + sexe ===
+  function demandeInfosProfil() {
+    if (document.getElementById("formProfil")) return;
+
+    const div = document.createElement("div");
+    div.id = "formProfil";
+    div.style.cssText = `
+      position: fixed; top:0; left:0; width:100%; height:100%;
+      background: rgba(0,0,0,0.85); display:flex; justify-content:center;
+      align-items:center; z-index:9999; color:white;
+    `;
+    div.innerHTML = `
+      <div style="background:#111; padding:20px; border-radius:8px;">
+        <h2>Compléter votre profil</h2>
+        <p>Entrez votre numéro et votre sexe :</p>
+
+        <input id="numeroUser" placeholder="Numéro (+223 ...)" style="width:100%; padding:8px; margin:6px 0;">
+        
+        <select id="sexeUser" style="width:100%; padding:8px; margin:6px 0;">
+          <option value="">Sélectionnez le sexe</option>
+          <option value="Homme">Homme</option>
+          <option value="Femme">Femme</option>
+        </select>
+
+        <button id="validerProfil" style="padding:10px; width:100%;">Valider</button>
+      </div>
+    `;
+    document.body.appendChild(div);
+  }
+
+  // === Fonction localisation ===
   async function getUserLocation() {
     try {
-      const response = await fetch("https://ipapi.co/json/");
-      const data = await response.json();
+      const r = await fetch("https://ipapi.co/json/");
+      const d = await r.json();
       return {
-        pays: data.country_name,
-        ville: data.city,
-        region: data.region,
-        ip: data.ip
+        pays: d.country_name,
+        ville: d.city,
+        region: d.region,
+        ip: d.ip
       };
-    } catch (e) {
-      console.error("Erreur localisation:", e);
+    } catch {
       return { pays: "Inconnu", ville: "Inconnue", region: "Inconnue", ip: "Inconnue" };
     }
   }
 
-  // === Fonction overlay connexion ===
+  // === Overlay limite visite ===
   function showOverlay() {
     if (document.getElementById("overlayConnexion")) return;
-
     const overlay = document.createElement('div');
     overlay.id = "overlayConnexion";
     overlay.style.cssText = `
-      position:fixed; top:0; left:0; width:100%; height:100%; 
-      background: rgba(0,0,0,0.85); display:flex; flex-direction:column; 
+      position:fixed; top:0; left:0; width:100%; height:100%;
+      background: rgba(0,0,0,0.85); display:flex; flex-direction:column;
       justify-content:center; align-items:center; color:white; z-index:9999;
     `;
     overlay.innerHTML = `
@@ -445,20 +473,19 @@ document.addEventListener("DOMContentLoaded", function () {
     document.body.appendChild(overlay);
 
     document.getElementById('loginBtnOverlay').addEventListener('click', () => {
-      signInWithPopup(auth, provider).catch(e => console.error(e));
+      signInWithPopup(auth, provider);
     });
     document.getElementById('quitBtnOverlay').addEventListener('click', () => {
-      document.body.removeChild(overlay);
       window.location.href = 'https://www.google.com';
     });
   }
 
   function removeOverlay() {
-    const overlay = document.getElementById("overlayConnexion");
-    if (overlay) overlay.remove();
+    const o = document.getElementById("overlayConnexion");
+    if (o) o.remove();
   }
 
-  // === Gestion visites / téléchargements ===
+  // == Compteurs visite/téléchargement ==
   const pageKey = "visites_" + window.location.pathname;
   const MAX_VISITES = 2;
   let visites = parseInt(localStorage.getItem(pageKey)) || 0;
@@ -469,6 +496,7 @@ document.addEventListener("DOMContentLoaded", function () {
   const MAX_DOWNLOADS = 3;
   let downloads = parseInt(localStorage.getItem(downloadKey)) || 0;
 
+  // == Surveiller les clics sur liens ==
   document.querySelectorAll('a[target="_blank"]').forEach(link => {
     link.addEventListener('click', (e) => {
       onAuthStateChanged(auth, (user) => {
@@ -483,7 +511,7 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   });
 
-  // === Suivi de l'état de connexion ===
+  // === Authentification ===
   onAuthStateChanged(auth, async (user) => {
     if (user) {
       loginBtn.style.display = "none";
@@ -491,19 +519,43 @@ document.addEventListener("DOMContentLoaded", function () {
       removeOverlay();
 
       const loc = await getUserLocation();
-      const userRef = doc(db, "utilisateurs", user.email);
-      const userSnap = await getDoc(userRef);
+      const ref = doc(db, "utilisateurs", user.email);
+      const snap = await getDoc(ref);
+
       let nombreConnexions = 1;
       let badge = "Nouveau";
+      let numero = null;
+      let sexe = null;
 
-      if (userSnap.exists()) {
-        const data = userSnap.data();
-        nombreConnexions = (data.nombreConnexions || 0) + 1;
+      if (snap.exists()) {
+        const d = snap.data();
+        nombreConnexions = (d.nombreConnexions || 0) + 1;
+        numero = d.numero || null;
+        sexe = d.sexe || null;
+
         if (nombreConnexions >= 50) badge = "Contributeur";
         else if (nombreConnexions >= 10) badge = "Fidèle";
       }
 
-      await setDoc(userRef, {
+      // → Formulaire si numéro/sexe manquant
+      if (!numero || !sexe) {
+        demandeInfosProfil();
+
+        document.getElementById("validerProfil").onclick = async () => {
+          const num = document.getElementById("numeroUser").value.trim();
+          const sx = document.getElementById("sexeUser").value.trim();
+          if (!num || !sx) return alert("Veuillez remplir les deux champs.");
+
+          await setDoc(ref, {
+            numero: num,
+            sexe: sx
+          }, { merge: true });
+
+          document.getElementById("formProfil").remove();
+        };
+      }
+
+      await setDoc(ref, {
         nom: user.displayName,
         email: user.email,
         photo: user.photoURL,
@@ -512,8 +564,6 @@ document.addEventListener("DOMContentLoaded", function () {
         nombreConnexions,
         badge
       }, { merge: true });
-
-      console.log("Utilisateur connecté :", user.email);
 
     } else {
       loginBtn.style.display = "inline-block";
@@ -525,14 +575,8 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   });
 
-  // === Actions sur les boutons ===
-  loginBtn.addEventListener("click", () => {
-    signInWithPopup(auth, provider).catch(e => console.error(e));
-  });
-
-  logoutBtn.addEventListener("click", () => {
-    signOut(auth).catch(e => console.error(e));
-  });
+  loginBtn.addEventListener("click", () => signInWithPopup(auth, provider));
+  logoutBtn.addEventListener("click", () => signOut(auth));
 </script>
 
 
