@@ -557,7 +557,472 @@ document.addEventListener("DOMContentLoaded", function () {
 
   loginBtn.addEventListener("click", () => signInWithPopup(auth, provider));
   logoutBtn.addEventListener("click", () => signOut(auth));
+
+  // ----- UI minimal ajoutée -----
+  const chatPanelHtml = `
+  <style>
+    #lumesysChatLauncher {
+      position: fixed; right: 18px; bottom: 18px; z-index: 9999;
+    }
+    #lumesysChatButton {
+      background:#0b76ef; color:white; border:none; padding:12px 14px;
+      border-radius:50px; cursor:pointer; box-shadow:0 6px 18px rgba(3,3,3,0.2);
+    }
+    #lumesysChatWindow {
+      position: fixed; right: 18px; bottom: 72px; width:360px; max-height:70vh;
+      background:white; border-radius:10px; box-shadow:0 8px 30px rgba(0,0,0,0.2);
+      overflow:hidden; display:none; z-index:10000; font-family: Arial, sans-serif;
+    }
+    #lumesysChatHeader { padding:10px; background:#f5f7fb; display:flex; justify-content:space-between; align-items:center; }
+    #lumesysChatBody { display:flex; height:420px; }
+    #lumesysContacts { width:40%; border-right:1px solid #eee; overflow:auto; padding:8px; }
+    #lumesysConversation { width:60%; display:flex; flex-direction:column; }
+    #lumesysMessages { flex:1; overflow:auto; padding:8px; background:#fbfcff; }
+    .lumesysMsg { padding:6px 8px; margin:6px 0; border-radius:8px; max-width:80%; }
+    .fromMe { background:#d0e9ff; align-self:flex-end; }
+    .fromOther { background:#fff; align-self:flex-start; border:1px solid #eee; }
+    #lumesysSendArea { padding:8px; border-top:1px solid #eee; display:flex; gap:6px; }
+    #lumesysSendInput { flex:1; padding:8px; border-radius:6px; border:1px solid #ddd; }
+    .smallBtn { padding:6px 8px; border-radius:6px; border:none; cursor:pointer; background:#eee; }
+    #lumesysImportArea { padding:8px; border-top:1px dashed #eee; font-size:13px; }
+    .contactItem { padding:6px; border-bottom:1px solid #f0f0f0; display:flex; justify-content:space-between; align-items:center; gap:6px; }
+  </style>
+
+  <div id="lumesysChatLauncher">
+    <button id="lumesysChatButton" title="Ouvrir chat">💬 Lumesys</button>
+    <div id="lumesysChatWindow">
+      <div id="lumesysChatHeader">
+        <strong>Messagerie Lumesys</strong>
+        <div>
+          <button id="lumesysClose" class="smallBtn">✕</button>
+        </div>
+      </div>
+
+      <div id="lumesysChatBody">
+        <div id="lumesysContacts">
+          <div style="display:flex; gap:6px; margin-bottom:6px;">
+            <input id="lumesysSearchEmail" placeholder="Chercher par email" style="flex:1; padding:6px; border:1px solid #ddd; border-radius:6px;">
+            <button id="lumesysSearchBtn" class="smallBtn">Rechercher</button>
+          </div>
+
+          <div id="lumesysContactsList">
+            <div style="font-size:13px; color:#666; margin-bottom:6px;">Conversations</div>
+            <div id="lumesysConversationsList"></div>
+
+            <hr>
+            <div style="font-size:13px; color:#666; margin:6px 0;">Importer contacts (CSV / coller)</div>
+            <textarea id="lumesysContactsPaste" placeholder="+2236...,email@example.com" style="width:100%; height:70px; padding:6px; border:1px solid #ddd; border-radius:6px;"></textarea>
+            <div style="display:flex; gap:6px; margin-top:6px;">
+              <button id="lumesysImportBtn" class="smallBtn">Importer</button>
+              <button id="lumesysSuggestBtn" class="smallBtn">Proposer du sexe opposé</button>
+            </div>
+            <div id="lumesysImportResults" style="margin-top:6px; font-size:13px;"></div>
+          </div>
+        </div>
+
+        <div id="lumesysConversation">
+          <div id="lumesysMessages"></div>
+          <div id="lumesysSendArea">
+            <input id="lumesysSendInput" placeholder="Écrire un message..." />
+            <button id="lumesysSendBtn" class="smallBtn">Envoyer</button>
+          </div>
+          <div id="lumesysImportArea"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  `;
+
+  // inject UI
+  const wrapper = document.createElement('div');
+  wrapper.innerHTML = chatPanelHtml;
+  document.body.appendChild(wrapper);
+
+  // DOM refs
+  const openBtn = document.getElementById('lumesysChatButton');
+  const win = document.getElementById('lumesysChatWindow');
+  const closeBtn = document.getElementById('lumesysClose');
+  const searchInput = document.getElementById('lumesysSearchEmail');
+  const searchBtn = document.getElementById('lumesysSearchBtn');
+  const conversationsList = document.getElementById('lumesysConversationsList');
+  const messagesDiv = document.getElementById('lumesysMessages');
+  const sendInput = document.getElementById('lumesysSendInput');
+  const sendBtn = document.getElementById('lumesysSendBtn');
+  const importTxt = document.getElementById('lumesysContactsPaste');
+  const importBtn = document.getElementById('lumesysImportBtn');
+  const importResults = document.getElementById('lumesysImportResults');
+  const suggestBtn = document.getElementById('lumesysSuggestBtn');
+
+  let currentUser = null;
+  let currentChatId = null;
+  let unsubscribeMessages = null;
+
+  openBtn.onclick = () => win.style.display = (win.style.display === 'block') ? 'none' : 'block';
+  closeBtn.onclick = () => win.style.display = 'none';
+
+  // ----- Helpers -----
+  function uidFromEmail(email) {
+    // use email as id (consistent with tes règles)
+    return email;
+  }
+
+  function formatTime(ts) {
+    try {
+      const d = ts.toDate ? ts.toDate() : new Date(ts);
+      return d.toLocaleString();
+    } catch {
+      return '';
+    }
+  }
+
+  // normalize phone numbers minimally (remove spaces, dashes)
+  function normalizeNumber(n) {
+    return n.replace(/\s+/g, '').replace(/[^+\d]/g, '');
+  }
+
+  // ----- Auth state -----
+  onAuthStateChanged(auth, async (user) => {
+    currentUser = user ? { email: user.email, name: user.displayName } : null;
+    await refreshConversationsList();
+  });
+
+  // ----- Conversations list (chats where user is participant) -----
+  async function refreshConversationsList() {
+    conversationsList.innerHTML = '';
+    if (!currentUser) {
+      conversationsList.innerHTML = '<div style="color:#999">Connectez-vous pour voir vos conversations.</div>';
+      return;
+    }
+
+    try {
+      // retrouve tous les chats contenant l'email de l'utilisateur
+      const q = query(collection(db, 'chats'), where('participants', 'array-contains', currentUser.email), orderBy('updatedAt', 'desc'));
+      const snap = await getDocs(q);
+      if (snap.empty) {
+        conversationsList.innerHTML = '<div style="color:#666; font-size:13px;">Aucune conversation.</div>';
+        return;
+      }
+      snap.forEach(docSnap => {
+        const data = docSnap.data();
+        const other = data.participants.find(e => e !== currentUser.email) || data.participants[0];
+        const el = document.createElement('div');
+        el.className = 'contactItem';
+        el.innerHTML = `<div>
+                          <strong style="font-size:14px">${other}</strong>
+                          <div style="font-size:12px;color:#666">${data.dernierMessage ? data.dernierMessage.slice(0,40) : ''}</div>
+                        </div>
+                        <div>
+                          <button class="smallBtn openChatBtn" data-chatid="${docSnap.id}" data-other="${other}">Ouvrir</button>
+                        </div>`;
+        conversationsList.appendChild(el);
+      });
+
+      // attach events
+      document.querySelectorAll('.openChatBtn').forEach(b => {
+        b.onclick = () => openChatById(b.dataset.chatid, b.dataset.other);
+      });
+    } catch (err) {
+      console.error('Erreur refreshConversationsList', err);
+      conversationsList.innerHTML = '<div style="color:#900">Impossible de charger vos conversations (erreur). Vérifiez la console.</div>';
+    }
+  }
+
+  // ----- Open or create chat between currentUser.email and otherEmail -----
+  async function openOrCreateChatWith(otherEmail) {
+    if (!currentUser) return alert('Connectez-vous d’abord.');
+    otherEmail = otherEmail.trim().toLowerCase();
+    if (!otherEmail) return;
+
+    // 1) Rechercher un chat déjà existant contenant les deux participants
+    try {
+      const q = query(collection(db, 'chats'), where('participants', 'array-contains', currentUser.email));
+      const snap = await getDocs(q);
+      let found = null;
+      snap.forEach(docSnap => {
+        const p = docSnap.data().participants || [];
+        if (p.includes(otherEmail)) found = { id: docSnap.id, data: docSnap.data() };
+      });
+
+      if (found) {
+        openChatById(found.id, otherEmail);
+        return;
+      }
+
+      // 2) sinon créer
+      const newChatRef = await addDoc(collection(db, 'chats'), {
+        participants: [currentUser.email, otherEmail],
+        createdAt: serverTimestamp(),
+        updatedAt: serverTimestamp(),
+        dernierMessage: ''
+      });
+
+      openChatById(newChatRef.id, otherEmail);
+      await refreshConversationsList();
+    } catch (err) {
+      console.error('Erreur openOrCreateChatWith', err);
+      alert('Erreur lors de l\'ouverture/création du chat. Voir console.');
+    }
+  }
+
+  // ----- Open chat by ID and listen messages -----
+  async function openChatById(chatId, otherEmail) {
+    // cleanup previous listener
+    if (unsubscribeMessages) unsubscribeMessages();
+
+    currentChatId = chatId;
+    messagesDiv.innerHTML = `<div style="color:#777; font-size:13px">Ouverture conversation avec ${otherEmail}...</div>`;
+
+    // écoutes messages en temps réel
+    try {
+      const msgsCol = collection(db, 'chats', chatId, 'messages');
+      const q = query(msgsCol, orderBy('createdAt', 'asc'));
+      const unsub = onSnapshot(q, (snap) => {
+        messagesDiv.innerHTML = '';
+        snap.forEach(docSnap => {
+          const m = docSnap.data();
+          const div = document.createElement('div');
+          div.className = 'lumesysMsg ' + ((m.auteur === currentUser.email) ? 'fromMe' : 'fromOther');
+          div.innerHTML = `<div style="font-size:12px;color:#333">${m.texte}</div>
+                           <div style="font-size:11px;color:#666;margin-top:6px">${m.auteur} · ${formatTime(m.createdAt)}</div>`;
+
+          // delete button for own messages
+          if (m.auteur === currentUser.email) {
+            const del = document.createElement('button');
+            del.className = 'smallBtn';
+            del.style.marginLeft = '8px';
+            del.textContent = 'Supprimer';
+            del.onclick = async () => {
+              if (!confirm('Supprimer ce message ?')) return;
+              try {
+                await deleteDoc(doc(db, 'chats', chatId, 'messages', docSnap.id));
+              } catch (e) {
+                console.error('delete message error', e);
+                alert('Impossible de supprimer (vérifier règles).');
+              }
+            };
+            div.appendChild(del);
+          }
+
+          messagesDiv.appendChild(div);
+        });
+        messagesDiv.scrollTop = messagesDiv.scrollHeight;
+      }, err => {
+        console.error('listen messages error', err);
+        messagesDiv.innerHTML = '<div style="color:#900">Impossible d\'écouter les messages (permission ?).</div>';
+      });
+
+      unsubscribeMessages = unsub;
+    } catch (err) {
+      console.error('openChatById error', err);
+      messagesDiv.innerHTML = '<div style="color:#900">Erreur ouverture conversation.</div>';
+    }
+  }
+
+  // ----- send message in current chat -----
+  sendBtn.onclick = async () => {
+    const txt = sendInput.value.trim();
+    if (!txt) return;
+    if (!currentUser || !currentChatId) return alert('Ouvrez une conversation d\'abord.');
+
+    try {
+      const msgRef = await addDoc(collection(db, 'chats', currentChatId, 'messages'), {
+        texte: txt,
+        auteur: currentUser.email,
+        createdAt: serverTimestamp()
+      });
+
+      // update parent chat dernierMessage & updatedAt
+      await setDoc(doc(db, 'chats', currentChatId), {
+        dernierMessage: txt,
+        updatedAt: serverTimestamp()
+      }, { merge: true });
+
+      sendInput.value = '';
+    } catch (err) {
+      console.error('send message error', err);
+      alert('Erreur envoi message (voir console).');
+    }
+  };
+
+  // Allow Enter to send
+  sendInput.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      sendBtn.click();
+    }
+  });
+
+  // ----- Search user by email and open chat -----
+  searchBtn.onclick = async () => {
+    const email = searchInput.value.trim().toLowerCase();
+    if (!email) return;
+    openOrCreateChatWith(email);
+  };
+
+  // ----- Import contacts (paste or CSV lines) -----
+  importBtn.onclick = async () => {
+    importResults.innerHTML = 'Recherche des correspondances...';
+    const raw = importTxt.value.trim();
+    if (!raw) {
+      importResults.innerHTML = 'Collez des numéros ou emails.';
+      return;
+    }
+
+    // split by comma / newline
+    const items = raw.split(/[\n,;]+/).map(s => s.trim()).filter(Boolean);
+    const found = [];
+    const notFound = [];
+
+    for (const it of items) {
+      // simple detection: contains @ => email, else phone
+      if (it.includes('@')) {
+        // try to find user by email in collection utilisateurs (may be blocked by rules)
+        try {
+          const q = query(collection(db, 'utilisateurs'), where('__name__', '==', it)); // your docs keyed by email
+          const snap = await getDocs(q);
+          if (!snap.empty) {
+            snap.forEach(s => found.push({ type: 'email', raw: it, doc: s.data() }));
+          } else {
+            notFound.push({ type: 'email', raw: it });
+          }
+        } catch (err) {
+          console.error('permission or other error searching by email', err);
+          importResults.innerHTML = 'Impossible de lire la collection utilisateurs (règles Firestore). Pour que la détection fonctionne, il faut autoriser la lecture publique d\'un index ou créer `public_profiles`.';
+          return;
+        }
+      } else {
+        const norm = normalizeNumber(it);
+        try {
+          const q = query(collection(db, 'utilisateurs'), where('numero', '==', norm));
+          const snap = await getDocs(q);
+          if (!snap.empty) {
+            snap.forEach(s => found.push({ type: 'numero', raw: it, doc: s.data() }));
+          } else {
+            notFound.push({ type: 'numero', raw: it });
+          }
+        } catch (err) {
+          console.error('permission or other error searching by numero', err);
+          importResults.innerHTML = 'Impossible de lire la collection utilisateurs (règles Firestore). Pour que la détection fonctionne, il faut autoriser la lecture publique d\'un index ou créer `public_profiles`.';
+          return;
+        }
+      }
+    }
+
+    // build results UI
+    importResults.innerHTML = '';
+    if (found.length) {
+      const fdiv = document.createElement('div');
+      fdiv.innerHTML = `<strong>Correspondances trouvées (${found.length})</strong>`;
+      found.forEach(f => {
+        const row = document.createElement('div');
+        row.style.display = 'flex'; row.style.justifyContent = 'space-between'; row.style.padding = '6px 0';
+        row.innerHTML = `<div style="font-size:13px">${f.raw} → ${f.doc.email || '—'} (${f.doc.sexe || '—'})</div>
+                         <div><button class="smallBtn startWith" data-email="${f.doc.email}">Contacter</button></div>`;
+        fdiv.appendChild(row);
+      });
+      importResults.appendChild(fdiv);
+
+      document.querySelectorAll('.startWith').forEach(b => {
+        b.onclick = () => openOrCreateChatWith(b.dataset.email);
+      });
+    }
+
+    if (notFound.length) {
+      const nd = document.createElement('div');
+      nd.style.marginTop = '8px';
+      nd.innerHTML = `<strong>Non trouvés (${notFound.length})</strong><div style="font-size:13px;color:#666">${notFound.map(n => n.raw).join(', ')}</div>`;
+      importResults.appendChild(nd);
+    }
+  };
+
+  // ----- Suggest users of opposite sex (requires public access or public_profiles) -----
+  suggestBtn.onclick = async () => {
+    if (!currentUser) return alert('Connectez-vous d\'abord.');
+    importResults.innerHTML = 'Recherche suggestions...';
+    try {
+      // get current user's sexe (must read /utilisateurs/<email>)
+      const meQ = query(collection(db, 'utilisateurs'), where('__name__', '==', currentUser.email));
+      const meSnap = await getDocs(meQ);
+      if (meSnap.empty) {
+        importResults.innerHTML = 'Profil introuvable. Assurez-vous que votre profil comporte le champ "sexe".';
+        return;
+      }
+      const meData = meSnap.docs[0].data();
+      const mySexe = meData.sexe;
+      const target = mySexe === 'Homme' ? 'Femme' : 'Homme';
+
+      // try to query public_profiles (recommended) first
+      let suggestions = [];
+
+      try {
+        // if you have a public_profiles collection (recommended), use that
+        const pubQ = query(collection(db, 'public_profiles'), where('sexe', '==', target));
+        const pubSnap = await getDocs(pubQ);
+        pubSnap.forEach(d => suggestions.push(d.data()));
+      } catch (e) {
+        // fallback: try reading utilisateurs (may be denied by rules)
+        const uQ = query(collection(db, 'utilisateurs'), where('sexe', '==', target));
+        const uSnap = await getDocs(uQ);
+        uSnap.forEach(d => suggestions.push(d.data()));
+      }
+
+      if (!suggestions.length) {
+        importResults.innerHTML = 'Aucune suggestion trouvée (ou lecture bloquée par les règles).';
+        return;
+      }
+
+      // show up to 10
+      suggestions = suggestions.slice(0, 10);
+      importResults.innerHTML = '<strong>Suggestions</strong>';
+      suggestions.forEach(s => {
+        const row = document.createElement('div');
+        row.style.display = 'flex'; row.style.justifyContent = 'space-between'; row.style.padding = '6px 0';
+        row.innerHTML = `<div style="font-size:13px">${s.nom || s.email} · ${s.sexe || ''}</div>
+                         <div><button class="smallBtn contactSuggest" data-email="${s.email}">Contacter</button></div>`;
+        importResults.appendChild(row);
+      });
+
+      document.querySelectorAll('.contactSuggest').forEach(b => {
+        b.onclick = () => openOrCreateChatWith(b.dataset.email);
+      });
+
+    } catch (err) {
+      console.error('suggestBtn error', err);
+      importResults.innerHTML = 'Erreur recherche suggestions (voir console).';
+    }
+  };
+
+  // ----- finalize - refresh conv list every X seconds -----
+  setInterval(() => {
+    if (currentUser) refreshConversationsList();
+  }, 30000); // rafraîchir toutes les 30s
+
+  // initial load
+  refreshConversationsList();
+
+ // Import the functions you need from the SDKs you need
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+  import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-analytics.js";
+  // TODO: Add SDKs for Firebase products that you want to use
+  // https://firebase.google.com/docs/web/setup#available-libraries
+
+  // Your web app's Firebase configuration
+  // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+  const firebaseConfig = {
+    apiKey: "AIzaSyAClwRQe3g4Cg9CAsn28l_sAihwlMQtGUI",
+    authDomain: "lumina-analytics.firebaseapp.com",
+    projectId: "lumina-analytics",
+    storageBucket: "lumina-analytics.appspot.com",
+    messagingSenderId: "239329398532",
+    appId: "1:239329398532:web:d7bf53ebb229ddc500ca51",
+    measurementId: "G-GT6PJDHD60"
+  };
+
+  // Initialize Firebase
+  const app = initializeApp(firebaseConfig);
+  const analytics = getAnalytics(app);
 </script>
+
 
 
 
@@ -1782,498 +2247,11 @@ initializeAllCookies();
 
 
 
-  // Import the functions you need from the SDKs you need
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
-  import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-analytics.js";
-  // TODO: Add SDKs for Firebase products that you want to use
-  // https://firebase.google.com/docs/web/setup#available-libraries
-
-  // Your web app's Firebase configuration
-  // For Firebase JS SDK v7.20.0 and later, measurementId is optional
-  const firebaseConfig = {
-    apiKey: "AIzaSyAClwRQe3g4Cg9CAsn28l_sAihwlMQtGUI",
-    authDomain: "lumina-analytics.firebaseapp.com",
-    projectId: "lumina-analytics",
-    storageBucket: "lumina-analytics.appspot.com",
-    messagingSenderId: "239329398532",
-    appId: "1:239329398532:web:d7bf53ebb229ddc500ca51",
-    measurementId: "G-GT6PJDHD60"
-  };
-
-  // Initialize Firebase
-  const app = initializeApp(firebaseConfig);
-  const analytics = getAnalytics(app);
-</script>
+ 
 
 
 
-<script type="module">
-  // ----- Configuration (même que la tienne, inchangée) -----
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-app.js";
-  import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
-  import {
-    getFirestore, collection, doc, getDocs, query, where,
-    addDoc, setDoc, serverTimestamp, orderBy, onSnapshot, deleteDoc
-  } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
 
-  const firebaseConfig = {
-    apiKey: "AIzaSyAClwRQe3g4Cg9CAsn28l_sAihwlMQtGUI",
-    authDomain: "lumina-analytics.firebaseapp.com",
-    projectId: "lumina-analytics",
-    storageBucket: "lumina-analytics.appspot.com",
-    messagingSenderId: "239329398532",
-    appId: "1:239329398532:web:2f68b196df0c4e6400ca51",
-    measurementId: "G-J7LLPRXLJH"
-  };
-
-  // initialise (idempotent)
-  const app = initializeApp(firebaseConfig);
-  const auth = getAuth(app);
-  const db = getFirestore(app);
-
-  // ----- UI minimal ajoutée -----
-  const chatPanelHtml = `
-  <style>
-    #lumesysChatLauncher {
-      position: fixed; right: 18px; bottom: 18px; z-index: 9999;
-    }
-    #lumesysChatButton {
-      background:#0b76ef; color:white; border:none; padding:12px 14px;
-      border-radius:50px; cursor:pointer; box-shadow:0 6px 18px rgba(3,3,3,0.2);
-    }
-    #lumesysChatWindow {
-      position: fixed; right: 18px; bottom: 72px; width:360px; max-height:70vh;
-      background:white; border-radius:10px; box-shadow:0 8px 30px rgba(0,0,0,0.2);
-      overflow:hidden; display:none; z-index:10000; font-family: Arial, sans-serif;
-    }
-    #lumesysChatHeader { padding:10px; background:#f5f7fb; display:flex; justify-content:space-between; align-items:center; }
-    #lumesysChatBody { display:flex; height:420px; }
-    #lumesysContacts { width:40%; border-right:1px solid #eee; overflow:auto; padding:8px; }
-    #lumesysConversation { width:60%; display:flex; flex-direction:column; }
-    #lumesysMessages { flex:1; overflow:auto; padding:8px; background:#fbfcff; }
-    .lumesysMsg { padding:6px 8px; margin:6px 0; border-radius:8px; max-width:80%; }
-    .fromMe { background:#d0e9ff; align-self:flex-end; }
-    .fromOther { background:#fff; align-self:flex-start; border:1px solid #eee; }
-    #lumesysSendArea { padding:8px; border-top:1px solid #eee; display:flex; gap:6px; }
-    #lumesysSendInput { flex:1; padding:8px; border-radius:6px; border:1px solid #ddd; }
-    .smallBtn { padding:6px 8px; border-radius:6px; border:none; cursor:pointer; background:#eee; }
-    #lumesysImportArea { padding:8px; border-top:1px dashed #eee; font-size:13px; }
-    .contactItem { padding:6px; border-bottom:1px solid #f0f0f0; display:flex; justify-content:space-between; align-items:center; gap:6px; }
-  </style>
-
-  <div id="lumesysChatLauncher">
-    <button id="lumesysChatButton" title="Ouvrir chat">💬 Lumesys</button>
-    <div id="lumesysChatWindow">
-      <div id="lumesysChatHeader">
-        <strong>Messagerie Lumesys</strong>
-        <div>
-          <button id="lumesysClose" class="smallBtn">✕</button>
-        </div>
-      </div>
-
-      <div id="lumesysChatBody">
-        <div id="lumesysContacts">
-          <div style="display:flex; gap:6px; margin-bottom:6px;">
-            <input id="lumesysSearchEmail" placeholder="Chercher par email" style="flex:1; padding:6px; border:1px solid #ddd; border-radius:6px;">
-            <button id="lumesysSearchBtn" class="smallBtn">Rechercher</button>
-          </div>
-
-          <div id="lumesysContactsList">
-            <div style="font-size:13px; color:#666; margin-bottom:6px;">Conversations</div>
-            <div id="lumesysConversationsList"></div>
-
-            <hr>
-            <div style="font-size:13px; color:#666; margin:6px 0;">Importer contacts (CSV / coller)</div>
-            <textarea id="lumesysContactsPaste" placeholder="+2236...,email@example.com" style="width:100%; height:70px; padding:6px; border:1px solid #ddd; border-radius:6px;"></textarea>
-            <div style="display:flex; gap:6px; margin-top:6px;">
-              <button id="lumesysImportBtn" class="smallBtn">Importer</button>
-              <button id="lumesysSuggestBtn" class="smallBtn">Proposer du sexe opposé</button>
-            </div>
-            <div id="lumesysImportResults" style="margin-top:6px; font-size:13px;"></div>
-          </div>
-        </div>
-
-        <div id="lumesysConversation">
-          <div id="lumesysMessages"></div>
-          <div id="lumesysSendArea">
-            <input id="lumesysSendInput" placeholder="Écrire un message..." />
-            <button id="lumesysSendBtn" class="smallBtn">Envoyer</button>
-          </div>
-          <div id="lumesysImportArea"></div>
-        </div>
-      </div>
-    </div>
-  </div>
-  `;
-
-  // inject UI
-  const wrapper = document.createElement('div');
-  wrapper.innerHTML = chatPanelHtml;
-  document.body.appendChild(wrapper);
-
-  // DOM refs
-  const openBtn = document.getElementById('lumesysChatButton');
-  const win = document.getElementById('lumesysChatWindow');
-  const closeBtn = document.getElementById('lumesysClose');
-  const searchInput = document.getElementById('lumesysSearchEmail');
-  const searchBtn = document.getElementById('lumesysSearchBtn');
-  const conversationsList = document.getElementById('lumesysConversationsList');
-  const messagesDiv = document.getElementById('lumesysMessages');
-  const sendInput = document.getElementById('lumesysSendInput');
-  const sendBtn = document.getElementById('lumesysSendBtn');
-  const importTxt = document.getElementById('lumesysContactsPaste');
-  const importBtn = document.getElementById('lumesysImportBtn');
-  const importResults = document.getElementById('lumesysImportResults');
-  const suggestBtn = document.getElementById('lumesysSuggestBtn');
-
-  let currentUser = null;
-  let currentChatId = null;
-  let unsubscribeMessages = null;
-
-  openBtn.onclick = () => win.style.display = (win.style.display === 'block') ? 'none' : 'block';
-  closeBtn.onclick = () => win.style.display = 'none';
-
-  // ----- Helpers -----
-  function uidFromEmail(email) {
-    // use email as id (consistent with tes règles)
-    return email;
-  }
-
-  function formatTime(ts) {
-    try {
-      const d = ts.toDate ? ts.toDate() : new Date(ts);
-      return d.toLocaleString();
-    } catch {
-      return '';
-    }
-  }
-
-  // normalize phone numbers minimally (remove spaces, dashes)
-  function normalizeNumber(n) {
-    return n.replace(/\s+/g, '').replace(/[^+\d]/g, '');
-  }
-
-  // ----- Auth state -----
-  onAuthStateChanged(auth, async (user) => {
-    currentUser = user ? { email: user.email, name: user.displayName } : null;
-    await refreshConversationsList();
-  });
-
-  // ----- Conversations list (chats where user is participant) -----
-  async function refreshConversationsList() {
-    conversationsList.innerHTML = '';
-    if (!currentUser) {
-      conversationsList.innerHTML = '<div style="color:#999">Connectez-vous pour voir vos conversations.</div>';
-      return;
-    }
-
-    try {
-      // retrouve tous les chats contenant l'email de l'utilisateur
-      const q = query(collection(db, 'chats'), where('participants', 'array-contains', currentUser.email), orderBy('updatedAt', 'desc'));
-      const snap = await getDocs(q);
-      if (snap.empty) {
-        conversationsList.innerHTML = '<div style="color:#666; font-size:13px;">Aucune conversation.</div>';
-        return;
-      }
-      snap.forEach(docSnap => {
-        const data = docSnap.data();
-        const other = data.participants.find(e => e !== currentUser.email) || data.participants[0];
-        const el = document.createElement('div');
-        el.className = 'contactItem';
-        el.innerHTML = `<div>
-                          <strong style="font-size:14px">${other}</strong>
-                          <div style="font-size:12px;color:#666">${data.dernierMessage ? data.dernierMessage.slice(0,40) : ''}</div>
-                        </div>
-                        <div>
-                          <button class="smallBtn openChatBtn" data-chatid="${docSnap.id}" data-other="${other}">Ouvrir</button>
-                        </div>`;
-        conversationsList.appendChild(el);
-      });
-
-      // attach events
-      document.querySelectorAll('.openChatBtn').forEach(b => {
-        b.onclick = () => openChatById(b.dataset.chatid, b.dataset.other);
-      });
-    } catch (err) {
-      console.error('Erreur refreshConversationsList', err);
-      conversationsList.innerHTML = '<div style="color:#900">Impossible de charger vos conversations (erreur). Vérifiez la console.</div>';
-    }
-  }
-
-  // ----- Open or create chat between currentUser.email and otherEmail -----
-  async function openOrCreateChatWith(otherEmail) {
-    if (!currentUser) return alert('Connectez-vous d’abord.');
-    otherEmail = otherEmail.trim().toLowerCase();
-    if (!otherEmail) return;
-
-    // 1) Rechercher un chat déjà existant contenant les deux participants
-    try {
-      const q = query(collection(db, 'chats'), where('participants', 'array-contains', currentUser.email));
-      const snap = await getDocs(q);
-      let found = null;
-      snap.forEach(docSnap => {
-        const p = docSnap.data().participants || [];
-        if (p.includes(otherEmail)) found = { id: docSnap.id, data: docSnap.data() };
-      });
-
-      if (found) {
-        openChatById(found.id, otherEmail);
-        return;
-      }
-
-      // 2) sinon créer
-      const newChatRef = await addDoc(collection(db, 'chats'), {
-        participants: [currentUser.email, otherEmail],
-        createdAt: serverTimestamp(),
-        updatedAt: serverTimestamp(),
-        dernierMessage: ''
-      });
-
-      openChatById(newChatRef.id, otherEmail);
-      await refreshConversationsList();
-    } catch (err) {
-      console.error('Erreur openOrCreateChatWith', err);
-      alert('Erreur lors de l\'ouverture/création du chat. Voir console.');
-    }
-  }
-
-  // ----- Open chat by ID and listen messages -----
-  async function openChatById(chatId, otherEmail) {
-    // cleanup previous listener
-    if (unsubscribeMessages) unsubscribeMessages();
-
-    currentChatId = chatId;
-    messagesDiv.innerHTML = `<div style="color:#777; font-size:13px">Ouverture conversation avec ${otherEmail}...</div>`;
-
-    // écoutes messages en temps réel
-    try {
-      const msgsCol = collection(db, 'chats', chatId, 'messages');
-      const q = query(msgsCol, orderBy('createdAt', 'asc'));
-      const unsub = onSnapshot(q, (snap) => {
-        messagesDiv.innerHTML = '';
-        snap.forEach(docSnap => {
-          const m = docSnap.data();
-          const div = document.createElement('div');
-          div.className = 'lumesysMsg ' + ((m.auteur === currentUser.email) ? 'fromMe' : 'fromOther');
-          div.innerHTML = `<div style="font-size:12px;color:#333">${m.texte}</div>
-                           <div style="font-size:11px;color:#666;margin-top:6px">${m.auteur} · ${formatTime(m.createdAt)}</div>`;
-
-          // delete button for own messages
-          if (m.auteur === currentUser.email) {
-            const del = document.createElement('button');
-            del.className = 'smallBtn';
-            del.style.marginLeft = '8px';
-            del.textContent = 'Supprimer';
-            del.onclick = async () => {
-              if (!confirm('Supprimer ce message ?')) return;
-              try {
-                await deleteDoc(doc(db, 'chats', chatId, 'messages', docSnap.id));
-              } catch (e) {
-                console.error('delete message error', e);
-                alert('Impossible de supprimer (vérifier règles).');
-              }
-            };
-            div.appendChild(del);
-          }
-
-          messagesDiv.appendChild(div);
-        });
-        messagesDiv.scrollTop = messagesDiv.scrollHeight;
-      }, err => {
-        console.error('listen messages error', err);
-        messagesDiv.innerHTML = '<div style="color:#900">Impossible d\'écouter les messages (permission ?).</div>';
-      });
-
-      unsubscribeMessages = unsub;
-    } catch (err) {
-      console.error('openChatById error', err);
-      messagesDiv.innerHTML = '<div style="color:#900">Erreur ouverture conversation.</div>';
-    }
-  }
-
-  // ----- send message in current chat -----
-  sendBtn.onclick = async () => {
-    const txt = sendInput.value.trim();
-    if (!txt) return;
-    if (!currentUser || !currentChatId) return alert('Ouvrez une conversation d\'abord.');
-
-    try {
-      const msgRef = await addDoc(collection(db, 'chats', currentChatId, 'messages'), {
-        texte: txt,
-        auteur: currentUser.email,
-        createdAt: serverTimestamp()
-      });
-
-      // update parent chat dernierMessage & updatedAt
-      await setDoc(doc(db, 'chats', currentChatId), {
-        dernierMessage: txt,
-        updatedAt: serverTimestamp()
-      }, { merge: true });
-
-      sendInput.value = '';
-    } catch (err) {
-      console.error('send message error', err);
-      alert('Erreur envoi message (voir console).');
-    }
-  };
-
-  // Allow Enter to send
-  sendInput.addEventListener('keydown', (e) => {
-    if (e.key === 'Enter') {
-      e.preventDefault();
-      sendBtn.click();
-    }
-  });
-
-  // ----- Search user by email and open chat -----
-  searchBtn.onclick = async () => {
-    const email = searchInput.value.trim().toLowerCase();
-    if (!email) return;
-    openOrCreateChatWith(email);
-  };
-
-  // ----- Import contacts (paste or CSV lines) -----
-  importBtn.onclick = async () => {
-    importResults.innerHTML = 'Recherche des correspondances...';
-    const raw = importTxt.value.trim();
-    if (!raw) {
-      importResults.innerHTML = 'Collez des numéros ou emails.';
-      return;
-    }
-
-    // split by comma / newline
-    const items = raw.split(/[\n,;]+/).map(s => s.trim()).filter(Boolean);
-    const found = [];
-    const notFound = [];
-
-    for (const it of items) {
-      // simple detection: contains @ => email, else phone
-      if (it.includes('@')) {
-        // try to find user by email in collection utilisateurs (may be blocked by rules)
-        try {
-          const q = query(collection(db, 'utilisateurs'), where('__name__', '==', it)); // your docs keyed by email
-          const snap = await getDocs(q);
-          if (!snap.empty) {
-            snap.forEach(s => found.push({ type: 'email', raw: it, doc: s.data() }));
-          } else {
-            notFound.push({ type: 'email', raw: it });
-          }
-        } catch (err) {
-          console.error('permission or other error searching by email', err);
-          importResults.innerHTML = 'Impossible de lire la collection utilisateurs (règles Firestore). Pour que la détection fonctionne, il faut autoriser la lecture publique d\'un index ou créer `public_profiles`.';
-          return;
-        }
-      } else {
-        const norm = normalizeNumber(it);
-        try {
-          const q = query(collection(db, 'utilisateurs'), where('numero', '==', norm));
-          const snap = await getDocs(q);
-          if (!snap.empty) {
-            snap.forEach(s => found.push({ type: 'numero', raw: it, doc: s.data() }));
-          } else {
-            notFound.push({ type: 'numero', raw: it });
-          }
-        } catch (err) {
-          console.error('permission or other error searching by numero', err);
-          importResults.innerHTML = 'Impossible de lire la collection utilisateurs (règles Firestore). Pour que la détection fonctionne, il faut autoriser la lecture publique d\'un index ou créer `public_profiles`.';
-          return;
-        }
-      }
-    }
-
-    // build results UI
-    importResults.innerHTML = '';
-    if (found.length) {
-      const fdiv = document.createElement('div');
-      fdiv.innerHTML = `<strong>Correspondances trouvées (${found.length})</strong>`;
-      found.forEach(f => {
-        const row = document.createElement('div');
-        row.style.display = 'flex'; row.style.justifyContent = 'space-between'; row.style.padding = '6px 0';
-        row.innerHTML = `<div style="font-size:13px">${f.raw} → ${f.doc.email || '—'} (${f.doc.sexe || '—'})</div>
-                         <div><button class="smallBtn startWith" data-email="${f.doc.email}">Contacter</button></div>`;
-        fdiv.appendChild(row);
-      });
-      importResults.appendChild(fdiv);
-
-      document.querySelectorAll('.startWith').forEach(b => {
-        b.onclick = () => openOrCreateChatWith(b.dataset.email);
-      });
-    }
-
-    if (notFound.length) {
-      const nd = document.createElement('div');
-      nd.style.marginTop = '8px';
-      nd.innerHTML = `<strong>Non trouvés (${notFound.length})</strong><div style="font-size:13px;color:#666">${notFound.map(n => n.raw).join(', ')}</div>`;
-      importResults.appendChild(nd);
-    }
-  };
-
-  // ----- Suggest users of opposite sex (requires public access or public_profiles) -----
-  suggestBtn.onclick = async () => {
-    if (!currentUser) return alert('Connectez-vous d\'abord.');
-    importResults.innerHTML = 'Recherche suggestions...';
-    try {
-      // get current user's sexe (must read /utilisateurs/<email>)
-      const meQ = query(collection(db, 'utilisateurs'), where('__name__', '==', currentUser.email));
-      const meSnap = await getDocs(meQ);
-      if (meSnap.empty) {
-        importResults.innerHTML = 'Profil introuvable. Assurez-vous que votre profil comporte le champ "sexe".';
-        return;
-      }
-      const meData = meSnap.docs[0].data();
-      const mySexe = meData.sexe;
-      const target = mySexe === 'Homme' ? 'Femme' : 'Homme';
-
-      // try to query public_profiles (recommended) first
-      let suggestions = [];
-
-      try {
-        // if you have a public_profiles collection (recommended), use that
-        const pubQ = query(collection(db, 'public_profiles'), where('sexe', '==', target));
-        const pubSnap = await getDocs(pubQ);
-        pubSnap.forEach(d => suggestions.push(d.data()));
-      } catch (e) {
-        // fallback: try reading utilisateurs (may be denied by rules)
-        const uQ = query(collection(db, 'utilisateurs'), where('sexe', '==', target));
-        const uSnap = await getDocs(uQ);
-        uSnap.forEach(d => suggestions.push(d.data()));
-      }
-
-      if (!suggestions.length) {
-        importResults.innerHTML = 'Aucune suggestion trouvée (ou lecture bloquée par les règles).';
-        return;
-      }
-
-      // show up to 10
-      suggestions = suggestions.slice(0, 10);
-      importResults.innerHTML = '<strong>Suggestions</strong>';
-      suggestions.forEach(s => {
-        const row = document.createElement('div');
-        row.style.display = 'flex'; row.style.justifyContent = 'space-between'; row.style.padding = '6px 0';
-        row.innerHTML = `<div style="font-size:13px">${s.nom || s.email} · ${s.sexe || ''}</div>
-                         <div><button class="smallBtn contactSuggest" data-email="${s.email}">Contacter</button></div>`;
-        importResults.appendChild(row);
-      });
-
-      document.querySelectorAll('.contactSuggest').forEach(b => {
-        b.onclick = () => openOrCreateChatWith(b.dataset.email);
-      });
-
-    } catch (err) {
-      console.error('suggestBtn error', err);
-      importResults.innerHTML = 'Erreur recherche suggestions (voir console).';
-    }
-  };
-
-  // ----- finalize - refresh conv list every X seconds -----
-  setInterval(() => {
-    if (currentUser) refreshConversationsList();
-  }, 30000); // rafraîchir toutes les 30s
-
-  // initial load
-  refreshConversationsList();
-
-</script>
 
 
 
