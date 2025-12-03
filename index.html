@@ -3686,13 +3686,13 @@ document.addEventListener("DOMContentLoaded", function () {
        <!-- POPUP de partage -->
 <div id="popupPartage" class="popup-overlay">
   <div class="popup-content">
-    <h2>⛔ Accès temporairement bloqué</h2>
-    <p><strong>Pour que je puisse continuer à offrir gratuitement des livres et services utiles,</strong>  
-  <strong>partage ce site sur ton statut Facebook ou WhatsApp.</strong>  
-  <strong>Ton soutien est précieux</strong>  
-  et <strong>me motive à rendre l’accès aux livres toujours plus facile pour tous.</strong><br><br>
-  <em>Ibrahim Djimé Diakité (Sory)</em></p>
-    <a href="https://api.whatsapp.com/send?text=Ce%20site%20m%27a%20aid%C3%A9%20!%20Je%20le%20partage%20avec%20vous%20👉%20https://tonsite.com"
+    <h2>🤝 Un clic pour aider</h2>
+    <p>
+      Ce site rend l’accès aux <strong> services facile et gratuit.</strong>  
+      Si tu veux <strong>aider quelqu’un aujourd’hui, partage‑le.</strong>  
+      Merci de votre visite ! — <em>Ibrahim Djimé Diakité (Sory)</em>
+    </p>
+    <a href="https://wa.me/?text=Des%20livres%20et%20documents%20pratiques%20en%20acc%C3%A8s%20libre%20%E2%80%94%20d%C3%A9couvre-les%20vite%20!%20👉%20https://diak.vercel.app/"
        target="_blank"
        onclick="fermerPopup()"
        class="btn-whatsapp">
@@ -3702,18 +3702,54 @@ document.addEventListener("DOMContentLoaded", function () {
 </div>
 
 <script>
+  // Quand l'utilisateur appuie sur "Partager"
+  function utilisateurAPartage() {
+    localStorage.setItem('aPartage', 'oui');
+    fermerPopup();
+  }
+
   function fermerPopup() {
     document.getElementById('popupPartage').style.display = 'none';
     document.body.style.overflow = 'auto';
   }
 
   document.addEventListener('DOMContentLoaded', function() {
+    // Vérifier si l'utilisateur a déjà partagé
+    const dejaPartage = localStorage.getItem('aPartage') === 'oui';
+
     let visites = parseInt(localStorage.getItem('nombreVisites')) || 0;
     visites++;
     localStorage.setItem('nombreVisites', visites);
     console.log('Nombre de visites:', visites);
 
-    if (visites === 3 || (visites > 3 && (visites - 3) % 30 === 0)) {
+    // Les deux premiers termes de ta suite
+    const first = 5;
+    const second = 20;
+
+    // Générer la suite jusqu'à dépasser le nombre actuel de visites
+    let a = first;
+    let b = second;
+    let momentsPopup = [a, b];
+
+    while (b < visites) {
+      let c = a + b;
+      momentsPopup.push(c);
+      a = b;
+      b = c;
+    }
+
+    // ---- Correction importante ----
+    // Si l'utilisateur n'a pas partagé → popup seulement À PARTIR DE 5 VISITES
+    if (!dejaPartage) {
+      if (visites >= 5) {
+        document.getElementById('popupPartage').style.display = 'block';
+        document.body.style.overflow = 'hidden';
+      }
+      return;
+    }
+
+    // Sinon (il a partagé), popup seulement aux moments prévus
+    if (momentsPopup.includes(visites)) {
       document.getElementById('popupPartage').style.display = 'block';
       document.body.style.overflow = 'hidden';
     }
