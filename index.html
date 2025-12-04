@@ -3702,60 +3702,23 @@ document.addEventListener("DOMContentLoaded", function () {
 </div>
 
 <script>
-  // Quand l'utilisateur appuie sur "Partager"
-  function utilisateurAPartage() {
-    localStorage.setItem('aPartage', 'oui');
-    fermerPopup();
-  }
-
   function fermerPopup() {
     document.getElementById('popupPartage').style.display = 'none';
     document.body.style.overflow = 'auto';
   }
 
   document.addEventListener('DOMContentLoaded', function() {
-    // Vérifier si l'utilisateur a déjà partagé
-    const dejaPartage = localStorage.getItem('aPartage') === 'oui';
-
     let visites = parseInt(localStorage.getItem('nombreVisites')) || 0;
     visites++;
     localStorage.setItem('nombreVisites', visites);
     console.log('Nombre de visites:', visites);
 
-    // Les deux premiers termes de ta suite
-    const first = 5;
-    const second = 20;
-
-    // Générer la suite jusqu'à dépasser le nombre actuel de visites
-    let a = first;
-    let b = second;
-    let momentsPopup = [a, b];
-
-    while (b < visites) {
-      let c = a + b;
-      momentsPopup.push(c);
-      a = b;
-      b = c;
-    }
-
-    // ---- Correction importante ----
-    // Si l'utilisateur n'a pas partagé → popup seulement À PARTIR DE 5 VISITES
-    if (!dejaPartage) {
-      if (visites >= 5) {
-        document.getElementById('popupPartage').style.display = 'block';
-        document.body.style.overflow = 'hidden';
-      }
-      return;
-    }
-
-    // Sinon (il a partagé), popup seulement aux moments prévus
-    if (momentsPopup.includes(visites)) {
+    if (visites === 3 || (visites > 3 && (visites - 3) % 30 === 0)) {
       document.getElementById('popupPartage').style.display = 'block';
       document.body.style.overflow = 'hidden';
     }
   });
 </script>
-
 
 
 
