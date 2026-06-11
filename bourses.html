@@ -1,0 +1,831 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lumesys - Bourses</title>
+
+    <link rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <link rel="stylesheet" href="test.css">
+</head>
+
+<body>
+
+    <!-- TOP NAVBAR -->
+
+    <header class="top-navbar">
+
+        <div class="logo-area">
+            <img src="logo/Lumesys1.png" alt="Logo" class="logo">
+            <h1 class="site-name">Lumesys</h1>
+        </div>
+
+        <nav class="tabs-nav">
+
+            <button class="tab-btn active" data-tab="accueil">
+                <i class="fa-solid fa-house"></i>
+                <span>Accueil</span>
+            </button>
+
+            <button class="tab-btn" data-tab="bourses">
+                <i class="fa-solid fa-graduation-cap"></i>
+                <span>Bourses</span>
+            </button>
+
+            <button class="tab-btn" data-tab="documents">
+                <i class="fa-solid fa-file-lines"></i>
+                <span>Documents</span>
+            </button>
+
+            <button class="tab-btn" data-tab="postuler">
+                <i class="fa-solid fa-paper-plane"></i>
+                <span>Postuler</span>
+            </button>
+
+            <button class="tab-btn" data-tab="conseils">
+                <i class="fa-solid fa-lightbulb"></i>
+                <span>Conseils</span>
+            </button>
+
+        </nav>
+
+    </header>
+
+
+
+    <main>
+
+        <!-- ACCUEIL -->
+
+        <section class="tab-content active" id="accueil">
+
+            <!-- HERO -->
+
+            <section class="heroa">
+
+                <div class="slider">
+
+                    <img src="https://images.unsplash.com/photo-1523050854058-8df90110c9f1?q=80&w=1600"
+                    class="slide active">
+
+                    <img src="https://images.unsplash.com/photo-1523240795612-9a054b0db644?q=80&w=1600"
+                    class="slide">
+
+                    <img src="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?q=80&w=1600"
+                    class="slide">
+
+                    <img src="https://images.unsplash.com/photo-1529390079861-591de354faf5?q=80&w=1600"
+                    class="slide">
+
+                </div>
+
+
+                <div class="hero-content">
+
+                    <p class="hero-badge">
+                        Opportunités internationales • Licence • Master • Doctorat
+                    </p>
+
+                    <h2>
+                        Trouvez des bourses d’études internationales facilement
+                    </h2>
+
+                    <p>
+                        Accédez aux meilleures opportunités académiques,
+                        développez votre avenir et découvrez les programmes
+                        entièrement financés les plus recherchés au monde.
+                    </p>
+
+                    <div class="hero-buttons">
+
+                         <a href="#" class="hero-btn-primary" data-tab="bourses">
+                          Explorer les bourses
+                        </a>
+
+                        <a href="#" class="hero-btn-secondary" data-tab="documents">
+                          Préparer mon dossier
+                        </a>
+                    </div>
+
+                </div>
+
+            </section>
+
+
+
+            <!-- INTRO -->
+
+            <section class="intro-section">
+
+                <div class="section-header">
+
+                    <h2>
+                        Qu’est-ce qu’une bourse d’étude ?
+                    </h2>
+                     <p class="intro-description">
+
+            Une bourse d’étude est une aide financière destinée
+            aux étudiants afin de faciliter l’accès aux études
+            supérieures. Certaines bourses sont partiellement
+            financées tandis que d’autres couvrent entièrement
+            les dépenses académiques et le coût de la vie.
+
+        </p>
+
+                </div>
+
+
+                <div class="intro-grid">
+
+                    <div class="intro-card">
+
+                        <i class="fa-solid fa-graduation-cap"></i>
+
+                        <h3>Frais universitaires</h3>
+
+                        <p>
+                            Plusieurs programmes couvrent totalement les études
+                            universitaires dans des universités internationales.
+                        </p>
+
+                    </div>
+
+
+                    <div class="intro-card">
+
+                        <i class="fa-solid fa-plane"></i>
+
+                        <h3>Voyage & Visa</h3>
+
+                        <p>
+                            Certaines bourses prennent en charge le billet d’avion
+                            ainsi que les frais administratifs.
+                        </p>
+
+                    </div>
+
+
+                    <div class="intro-card">
+
+                        <i class="fa-solid fa-house"></i>
+
+                        <h3>Logement</h3>
+
+                        <p>
+                            Les étudiants peuvent bénéficier d’un hébergement
+                            universitaire ou d’une allocation logement.
+                        </p>
+
+                    </div>
+
+
+                    <div class="intro-card">
+
+                        <i class="fa-solid fa-users"></i>
+
+                        <h3>Famille</h3>
+
+                        <p>
+                            Quelques programmes permettent même de voyager
+                            avec sa famille selon les conditions.
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+        </section>
+
+
+
+           <!-- BOURSES -->
+             <section class="tab-content" id="bourses">
+
+<!-- ================= HEADER ================= -->
+<div class="bourses-header">
+    <h2 class="main-title">Opportunités internationales de financement</h2>
+    <p class="bourses-subtitle">
+        Explore les bourses disponibles et filtre selon ton niveau et ton objectif d’études.
+    </p>
+</div>
+
+<!-- ================= FILTRES ================= -->
+<div class="filters">
+
+    <div class="filter-group">
+        <h4>Niveau d’études</h4>
+        <button class="filter-btn active" data-filter="all">Tous</button>
+        <button class="filter-btn" data-filter="licence">Licence</button>
+        <button class="filter-btn" data-filter="master">Master</button>
+        <button class="filter-btn" data-filter="doctorat">Doctorat</button>
+    </div>
+
+    <div class="filter-group">
+        <h4>Financement</h4>
+        <button class="filter-btn" data-filter="all-f">Tous</button>
+        <button class="filter-btn" data-filter="total">Entièrement financé</button>
+        <button class="filter-btn" data-filter="partiel">Partiellement financé</button>
+    </div>
+
+</div>
+
+<!-- ================= CARDS ================= -->
+<div class="cards">
+
+<!-- Erasmus Mundus -->
+<div class="card" data-level="master" data-funding="total">
+    <img src="https://images.unsplash.com/photo-1523240795612-9a054b0db644?q=80&w=1600">
+    <h3>Erasmus Mundus</h3>
+    <p>Masters européens entièrement financés avec mobilité entre plusieurs universités partenaires.</p>
+    <a href="https://www.eacea.ec.europa.eu/scholarships/erasmus-mundus-catalogue_en" target="_blank">Explorer</a>
+</div>
+
+<!-- Banque Mondiale -->
+<div class="card" data-level="master" data-funding="total">
+    <img src="https://images.unsplash.com/photo-1517048676732-d65bc937f952?q=80&w=1600">
+    <h3>Banque Mondiale</h3>
+    <p>Programme de financement pour jeunes professionnels des pays en développement.</p>
+    <a href="https://www.worldbank.org/en/programs/scholarships/jj-wbgsp" target="_blank">Voir</a>
+</div>
+
+<!-- Turkiye -->
+<div class="card" data-level="licence master doctorat" data-funding="total">
+    <img src="https://images.unsplash.com/photo-1541432901042-2d8bd64b4a9b?q=80&w=1600">
+    <h3>Turkiye Burslari</h3>
+    <p>Bourse complète couvrant études, logement et voyage en Turquie.</p>
+    <a href="https://tbbs.turkiyeburslari.gov.tr" target="_blank">Voir</a>
+</div>
+
+<!-- VLIR -->
+<div class="card" data-level="master doctorat" data-funding="total">
+    <img src="https://images.unsplash.com/photo-1498243691581-b145c3f54a5a?q=80&w=1600">
+    <h3>VLIR-UOS Belgique</h3>
+    <p>Bourses belges axées sur recherche, développement et innovation.</p>
+    <a href="https://www.vliruos.be/get-funded/study-scholarships" target="_blank">Voir</a>
+</div>
+
+<!-- WASCAL -->
+<div class="card" data-level="master doctorat" data-funding="total">
+    <img src="https://images.unsplash.com/photo-1506744038136-46273834b3fb?q=80&w=1600">
+    <h3>WASCAL</h3>
+    <p>Programme africain spécialisé en climat, environnement et agriculture durable.</p>
+    <a href="https://wascal.org/fr/changement-climatique/" target="_blank">Explorer</a>
+</div>
+
+<!-- Innovative Medicine -->
+<div class="card" data-level="doctorat master" data-funding="total">
+    <img src="https://images.unsplash.com/photo-1532187863486-abf9dbad1b69?q=80&w=1600">
+    <h3>Innovative Medicine</h3>
+    <p>Programmes européens avancés en médecine, biotechnologie et recherche clinique.</p>
+    <a href="https://www.innovativemedicine.eu/imim" target="_blank">Voir plus</a>
+</div>
+
+<!-- Plant Health -->
+<div class="card" data-level="master" data-funding="total">
+    <img src="https://images.unsplash.com/photo-1464226184884-fa280b87c399?q=80&w=1600">
+    <h3>Plant Health</h3>
+    <p>Formation spécialisée en agriculture intelligente et santé végétale.</p>
+    <a href="https://www.planthealth.upv.es/web/apply/application-procedure/" target="_blank">Découvrir</a>
+</div>
+
+<!-- Agrifood -->
+<div class="card" data-level="master" data-funding="total">
+    <img src="https://images.unsplash.com/photo-1501004318641-b39e6451bec6?q=80&w=1600">
+    <h3>Agrifood Master</h3>
+    <p>Programme européen en innovation alimentaire et agriculture moderne.</p>
+    <a href="https://agrifoodmaster.eu/index.html" target="_blank">Accéder</a>
+</div>
+
+<!-- DAAD -->
+<div class="card" data-level="master doctorat" data-funding="total">
+    <img src="https://images.unsplash.com/photo-1523050854058-8df90110c9f1?q=80&w=1600">
+    <h3>DAAD Allemagne</h3>
+    <p>Bourses allemandes très réputées couvrant études et recherche internationale.</p>
+    <a href="https://www.daad.de/en/" target="_blank">Voir</a>
+</div>
+
+<!-- Fulbright -->
+<div class="card" data-level="master doctorat" data-funding="total">
+    <img src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?q=80&w=1600">
+    <h3>Fulbright (USA)</h3>
+    <p>Bourse américaine prestigieuse pour études et recherche aux États-Unis.</p>
+    <a href="https://foreign.fulbrightonline.org/" target="_blank">Voir</a>
+</div>
+
+<!-- Humphrey -->
+<div class="card" data-level="master doctorat" data-funding="total">
+    <img src="https://images.unsplash.com/photo-1503676260728-1c00da094a0b?q=80&w=1600">
+    <h3>Humphrey Fellowship</h3>
+    <p>Programme de leadership professionnel aux États-Unis sans diplôme.</p>
+    <a href="https://www.humphreyfellowship.org/" target="_blank">Voir</a>
+</div>
+
+<!-- AAUW -->
+<div class="card" data-level="master doctorat" data-funding="total">
+    <img src="https://images.unsplash.com/photo-1519389950473-47ba0277781c?q=80&w=1600">
+    <h3>AAUW Fellowship</h3>
+    <p>Bourses pour femmes internationales en master et doctorat aux USA.</p>
+    <a href="https://www.aauw.org/resources/programs/fellowships-grants/" target="_blank">Voir</a>
+</div>
+
+<!-- CSC -->
+<div class="card" data-level="licence master doctorat" data-funding="total">
+    <img src="https://images.unsplash.com/photo-1526481280695-3c687fd5432c?q=80&w=1600">
+    <h3>CSC Chine</h3>
+    <p>Bourses chinoises couvrant études complètes dans les universités publiques.</p>
+    <a href="https://www.csc.edu.cn/" target="_blank">Voir</a>
+</div>
+
+<!-- MEXT -->
+<div class="card" data-level="licence master doctorat" data-funding="total">
+    <img src="https://images.unsplash.com/photo-1503899036084-c55cdd92da26?q=80&w=1600">
+    <h3>MEXT Japon</h3>
+    <p>Bourse japonaise très compétitive couvrant études et frais de vie.</p>
+    <a href="https://www.studyinjapan.go.jp/en/" target="_blank">Voir</a>
+</div>
+
+<!-- GKS -->
+<div class="card" data-level="master doctorat" data-funding="total">
+    <img src="https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?q=80&w=1600">
+    <h3>GKS Corée</h3>
+    <p>Bourse sud-coréenne pour études complètes avec logement et allocation.</p>
+    <a href="https://www.studyinkorea.go.kr/" target="_blank">Voir</a>
+</div>
+
+<!-- Open Doors -->
+<div class="card" data-level="master doctorat" data-funding="total">
+    <img src="https://images.unsplash.com/photo-1501785888041-af3ef285b470?q=80&w=1600">
+    <h3>Open Doors Russie</h3>
+    <p>Bourse russe pour étudiants internationaux en master et doctorat.</p>
+    <a href="https://od.globaluni.ru/" target="_blank">Voir</a>
+</div>
+
+<!-- Eiffel -->
+<div class="card" data-level="master doctorat" data-funding="total">
+    <img src="https://images.unsplash.com/photo-1500534623283-312aade485b7?q=80&w=1600">
+    <h3>Eiffel Excellence</h3>
+    <p>Bourse française d’excellence pour étudiants internationaux haut niveau.</p>
+    <a href="https://www.campusfrance.org/en/eiffel-scholarship-program-of-excellence" target="_blank">Voir</a>
+</div>
+
+<!-- ARES -->
+<div class="card" data-level="master doctorat" data-funding="total">
+    <img src="https://images.unsplash.com/photo-1504384308090-c894fdcc538d?q=80&w=1600">
+    <h3>ARES Belgique</h3>
+    <p>Bourses belges pour formation et renforcement des capacités.</p>
+    <a href="https://www.ares-ac.be/en/" target="_blank">Voir</a>
+</div>
+
+<!-- Orange Knowledge -->
+<div class="card" data-level="master doctorat" data-funding="total">
+    <img src="https://images.unsplash.com/photo-1515168833906-d2a3b82b302a?q=80&w=1600">
+    <h3>Orange Knowledge</h3>
+    <p>Bourse néerlandaise pour développement et coopération internationale.</p>
+    <a href="https://www.studyinnl.org/scholarships/orange-knowledge-programme" target="_blank">Voir</a>
+</div>
+
+<!-- Swiss -->
+<div class="card" data-level="master doctorat" data-funding="total">
+    <img src="https://images.unsplash.com/photo-1505761671935-60b3a7427bad?q=80&w=1600">
+    <h3>Swiss Excellence</h3>
+    <p>Bourses suisses pour recherche avancée et doctorat.</p>
+    <a href="https://www.sbfi.admin.ch/scholarships_en.html" target="_blank">Voir</a>
+</div>
+
+<!-- Swedish -->
+<div class="card" data-level="master doctorat" data-funding="total">
+    <img src="https://images.unsplash.com/photo-1526772662000-3f88f10405ff?q=80&w=1600">
+    <h3>Swedish Institute</h3>
+    <p>Bourses suédoises pour master entièrement financé.</p>
+    <a href="https://si.se/en/apply/scholarships/" target="_blank">Voir</a>
+</div>
+
+<!-- Chevening -->
+<div class="card" data-level="master doctorat" data-funding="total">
+    <img src="https://images.unsplash.com/photo-1505765050516-f72dcac9c60b?q=80&w=1600">
+    <h3>Chevening UK</h3>
+    <p>Bourse britannique prestigieuse pour master entièrement financé.</p>
+    <a href="https://www.chevening.org/" target="_blank">Voir</a>
+</div>
+
+<!-- Commonwealth -->
+<div class="card" data-level="master doctorat" data-funding="total">
+    <img src="https://images.unsplash.com/photo-1515165562835-c1c3f8e0b8f4?q=80&w=1600">
+    <h3>Commonwealth</h3>
+    <p>Bourses pour étudiants des pays du Commonwealth.</p>
+    <a href="https://cscuk.fcdo.gov.uk/" target="_blank">Voir</a>
+</div>
+
+<!-- Gates -->
+<div class="card" data-level="master doctorat" data-funding="total">
+    <img src="https://images.unsplash.com/photo-1523580494863-6f3031224c94?q=80&w=1600">
+    <h3>Gates Cambridge</h3>
+    <p>Bourse de prestige pour études à Cambridge (UK).</p>
+    <a href="https://www.gatescambridge.org/" target="_blank">Voir</a>
+</div>
+
+<!-- Knight-Hennessy -->
+<div class="card" data-level="master doctorat" data-funding="total">
+    <img src="https://images.unsplash.com/photo-1523050854058-8df90110c9f1?q=80&w=1600">
+    <h3>Knight-Hennessy</h3>
+    <p>Bourse de leadership pour Stanford University.</p>
+    <a href="https://knight-hennessy.stanford.edu/" target="_blank">Voir</a>
+</div>
+
+<!-- Rotary -->
+<div class="card" data-level="master doctorat" data-funding="total">
+    <img src="https://images.unsplash.com/photo-1521737604893-d14cc237f11d?q=80&w=1600">
+    <h3>Rotary Foundation</h3>
+    <p>Bourses pour développement communautaire et leadership mondial.</p>
+    <a href="https://www.rotary.org/en/our-programs/scholarships" target="_blank">Voir</a>
+</div>
+
+<!-- IsDB -->
+<div class="card" data-level="master doctorat" data-funding="total">
+    <img src="https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?q=80&w=1600">
+    <h3>IsDB Scholarships</h3>
+    <p>Bourses de la Banque islamique de développement pour pays membres.</p>
+    <a href="https://www.isdb.org/scholarships" target="_blank">Voir</a>
+</div>
+
+<!-- African Union -->
+<div class="card" data-level="master doctorat" data-funding="total">
+    <img src="https://images.unsplash.com/photo-1520975958225-5d9c5a4f0a33?q=80&w=1600">
+    <h3>African Union</h3>
+    <p>Bourses de l’Union Africaine pour études supérieures et recherche.</p>
+    <a href="https://au.int/en/scholarships" target="_blank">Voir</a>
+</div>
+
+</div>
+              </section>
+
+
+    <!-- DOCUMENTS -->
+
+<section class="tab-content" id="documents">
+
+    <div class="bourses-header">
+        <h2 class="main-title">Documents à préparer pour une bourse</h2>
+        <p class="bourses-subtitle">
+            Chaque document est une pièce stratégique de votre candidature.
+            Voici comment les réussir efficacement.
+        </p>
+    </div>
+
+    <div class="documents-grid">
+
+        <!-- CV -->
+        <div class="doc-box">
+
+            <img src="https://images.unsplash.com/photo-1586281380349-632531db7ed4?q=80&w=1600" alt="CV">
+
+            <h3>CV académique</h3>
+
+            <p>
+                Le CV est le premier filtre des bourses. Il doit être clair,
+                structuré et orienté résultats (1–2 pages maximum).
+            </p>
+
+            <ul>
+                <li>✔ Compétences & projets</li>
+                <li>✔ Expériences académiques</li>
+                <li>✔ Langues maîtrisées</li>
+                <li>❌ Trop long ou flou</li>
+            </ul>
+
+            <div class="doc-links">
+                <a href="https://www.canva.com/resumes/templates/" target="_blank">Canva CV</a>
+                <a href="https://europa.eu/europass/fr/create-europass-cv" target="_blank">Europass</a>
+            </div>
+
+        </div>
+
+        <!-- LETTRE -->
+        <div class="doc-box">
+
+            <img src="https://images.unsplash.com/photo-1455390582262-044cdead277a?q=80&w=1600" alt="Lettre">
+
+            <h3>Lettre de motivation</h3>
+
+            <p>
+                Elle explique votre projet et votre motivation. Elle doit être
+                personnelle, claire et convaincante.
+            </p>
+
+            <ul>
+                <li>✔ Projet académique clair</li>
+                <li>✔ Motivation précise</li>
+                <li>✔ Lien avec la bourse</li>
+                <li>❌ Texte générique copié</li>
+            </ul>
+
+            <div class="doc-links">
+                <a href="https://zety.com/cover-letter-builder" target="_blank">Exemples</a>
+                <a href="https://novoresume.com/cover-letter-templates" target="_blank">Templates</a>
+            </div>
+
+        </div>
+
+        <!-- PASSEPORT -->
+        <div class="doc-box">
+
+            <img src="https://images.unsplash.com/photo-1524522173746-f628baad3644?q=80&w=1600" alt="Passeport">
+
+            <h3>Passeport</h3>
+
+            <p>
+                Document obligatoire pour toute candidature internationale.
+                Il doit être valide au moins 6 à 12 mois.
+            </p>
+
+            <ul>
+                <li>✔ Validité longue durée</li>
+                <li>✔ Données lisibles</li>
+                <li>❌ Passeport expiré</li>
+            </ul>
+
+        </div>
+
+        <!-- ANGLAIS -->
+        <div class="doc-box">
+
+            <img src="https://images.unsplash.com/photo-1529070538774-1843cb3265df?q=80&w=1600" alt="Anglais">
+
+            <h3>Certificat d’anglais</h3>
+
+            <p>
+                IELTS ou TOEFL sont souvent requis pour prouver votre niveau
+                dans les universités internationales.
+            </p>
+
+            <ul>
+                <li>✔ IELTS / TOEFL / Duolingo</li>
+                <li>✔ Score minimum requis</li>
+                <li>❌ Certificat non officiel</li>
+            </ul>
+
+            <div class="doc-links">
+                <a href="https://www.ielts.org/" target="_blank">IELTS</a>
+                <a href="https://www.ets.org/toefl" target="_blank">TOEFL</a>
+            </div>
+
+        </div>
+
+        <!-- PROJET -->
+        <div class="doc-box">
+
+            <img src="https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?q=80&w=1600" alt="Projet">
+
+            <h3>Projet d’études / recherche</h3>
+
+            <p>
+                Il décrit votre objectif académique et votre plan de carrière.
+                Très important pour Master et Doctorat.
+            </p>
+
+            <ul>
+                <li>✔ Objectif clair</li>
+                <li>✔ Problématique définie</li>
+                <li>✔ Impact du projet</li>
+                <li>❌ Projet vague</li>
+            </ul>
+
+        </div>
+
+        <!-- RECOMMANDATIONS -->
+        <div class="doc-box">
+
+            <img src="https://images.unsplash.com/photo-1551836022-d5d88e9218df?q=80&w=1600" alt="Recommandation">
+
+            <h3>Lettres de recommandation</h3>
+
+            <p>
+                Elles renforcent votre crédibilité académique auprès des jurys.
+                Elles doivent venir de professeurs ou encadrants sérieux.
+            </p>
+
+            <ul>
+                <li>✔ Professeur universitaire</li>
+                <li>✔ Encadrant de stage</li>
+                <li>❌ Ami ou membre de famille</li>
+            </ul>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+       <!-- POSTULER -->
+<section class="tab-content postuler-section" id="postuler">
+
+    <div class="postuler-header">
+        <h2>Votre chemin vers une bourse internationale</h2>
+        <p>
+            Obtenir une bourse n’est pas un hasard. C’est un processus stratégique qui ressemble davantage à une préparation de dossier d’excellence qu’à une simple candidature.
+            À travers ces étapes, vous allez comprendre comment un étudiant moyen peut devenir un candidat compétitif.
+        </p>
+    </div>
+
+    <!-- STEP 1 -->
+    <div class="postuler-block left">
+
+        <div class="postuler-text">
+            <h3>1. Choisir une direction claire (et éviter la dispersion)</h3>
+
+            <p>
+                Beaucoup d’étudiants échouent non pas par manque de niveau, mais parce qu’ils postulent partout sans logique.
+                Par exemple, un étudiant en informatique qui postule à des bourses en sciences sociales “par opportunité” réduit fortement ses chances.
+            </p>
+
+            <p>
+                L’objectif ici est simple : définir une trajectoire cohérente entre ton domaine, ton pays cible et ton projet professionnel.
+            </p>
+
+            <p class="advice">
+                💡 Exemple concret : si tu veux travailler dans l’IA, cible des bourses en Allemagne ou au Canada dans les programmes STEM, plutôt que des programmes généraux.
+            </p>
+        </div>
+
+        <div class="postuler-image">
+            <img src="https://images.unsplash.com/photo-1523240795612-9a054b0db644" alt="planification stratégie études">
+        </div>
+
+    </div>
+
+    <!-- STEP 2 -->
+    <div class="postuler-block right">
+
+        <div class="postuler-image">
+            <img src="https://images.unsplash.com/photo-1454165804606-c3d57bc86b40" alt="préparation dossier académique">
+        </div>
+
+        <div class="postuler-text">
+            <h3>2. Construire un dossier qui raconte une histoire</h3>
+
+            <p>
+                Un bon dossier ne liste pas des documents — il raconte un parcours.
+                Par exemple, un simple stage dans une ONG peut devenir un élément fort si tu expliques ce qu’il t’a appris.
+            </p>
+
+            <p>
+                Les jurys cherchent une cohérence : progression académique, motivation, et impact potentiel.
+            </p>
+
+            <p class="advice">
+                💡 Exemple : au lieu de dire “j’ai fait du bénévolat”, explique comment tu as organisé une activité avec 20 jeunes dans ton quartier.
+            </p>
+        </div>
+
+    </div>
+
+    <!-- STEP 3 -->
+    <div class="postuler-block left">
+
+        <div class="postuler-text">
+            <h3>3. Dépasser le simple score linguistique</h3>
+
+            <p>
+                Beaucoup pensent que réussir IELTS ou TOEFL suffit. En réalité, les universités évaluent ta capacité à penser, structurer et argumenter en anglais académique.
+            </p>
+
+            <p>
+                Un étudiant avec un bon score mais incapable d’écrire un essai structuré sera toujours désavantagé.
+            </p>
+
+            <p class="advice">
+                💡 Exemple : apprendre à écrire un essai avec introduction → argument → contre-argument → conclusion est plus important que mémoriser du vocabulaire.
+            </p>
+        </div>
+
+        <div class="postuler-image">
+            <img src="https://images.unsplash.com/photo-1434030216411-0b793f4b4173" alt="étude et apprentissage">
+        </div>
+
+    </div>
+
+    <!-- STEP 4 -->
+    <div class="postuler-block right">
+
+        <div class="postuler-image">
+            <img src="https://images.unsplash.com/photo-1450101499163-c8848c66ca85" alt="soumission candidature en ligne">
+        </div>
+
+        <div class="postuler-text">
+            <h3>4. Comprendre les règles invisibles des candidatures</h3>
+
+            <p>
+                Deux candidats peuvent avoir le même profil, mais l’un sera refusé simplement à cause d’erreurs de forme : document mal nommé, lettre trop générique, ou délai non respecté.
+            </p>
+
+            <p>
+                Les universités ne corrigent pas les erreurs — elles éliminent.
+            </p>
+
+            <p class="advice">
+                💡 Exemple : un PDF intitulé “final_final_v3.pdf” donne une impression d’amateurisme. Un nom propre et structuré change la perception.
+            </p>
+        </div>
+
+    </div>
+
+    <!-- STEP 5 -->
+    <div class="postuler-block left">
+
+        <div class="postuler-text">
+            <h3>5. Se préparer à vivre dans un nouvel environnement</h3>
+
+            <p>
+                Obtenir la bourse est une étape, mais l’adaptation en est une autre.
+                Beaucoup d’étudiants échouent après l’admission faute de préparation mentale, financière ou culturelle.
+            </p>
+
+            <p>
+                Il faut anticiper le logement, le budget, et surtout le choc académique.
+            </p>
+
+            <p class="advice">
+                💡 Exemple : dans certaines universités européennes, 70% du travail se fait en autonomie — ce qui surprend beaucoup d’étudiants africains au départ.
+            </p>
+        </div>
+
+        <div class="postuler-image">
+            <img src="https://images.unsplash.com/photo-1521737604893-d14cc237f11d" alt="étudiants internationaux">
+        </div>
+
+    </div>
+
+</section>
+
+
+
+        <!-- CONSEILS -->
+
+        <section class="tab-content" id="conseils">
+
+            <h2>Conseils Importants</h2>
+
+            <div class="tips-container">
+
+                <div class="tip-box">
+
+                    <h3>Éviter les arnaques</h3>
+
+                    <ul>
+                        <li>Ne jamais payer une fausse inscription</li>
+                        <li>Vérifier les domaines officiels</li>
+                        <li>Attention aux faux emails</li>
+                    </ul>
+
+                </div>
+
+
+                <div class="tip-box">
+
+                    <h3>Critères importants</h3>
+
+                    <ul>
+                        <li>Bonne motivation</li>
+                        <li>Bon niveau d’anglais</li>
+                        <li>Bons résultats académiques</li>
+                    </ul>
+
+                </div>
+
+
+                <div class="tip-box">
+
+                    <h3>Conseils pratiques</h3>
+
+                    <ul>
+                        <li>Commencer tôt les candidatures</li>
+                        <li>Préparer un CV professionnel</li>
+                        <li>Personnaliser chaque dossier</li>
+                    </ul>
+
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+
+    <footer>
+        <p>
+            Lumesys - Plateforme de Bourses Internationales
+        </p>
+    </footer>
+
+
+    <script src="test.js"></script>
+
+</body>
+</html>

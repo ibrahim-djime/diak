@@ -1,0 +1,795 @@
+/* Définir les polices personnalisées */
+@font-face {
+    font-family: 'INGAME';
+    src: url('pol/INGAME.ttf');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+@font-face {
+    font-family: 'Robot-Rebels';
+    src: url('pol/Robot-Rebels.ttf');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+@font-face {
+    font-family: 'Roboto-Regular';
+    src: url('pol/Roboto-Regular.ttf');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+@font-face {
+    font-family: 'Boul';
+    src: url('pol/Boul.otf');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+@font-face {
+    font-family: 'PlayfairDisplaySC-Bold';
+    src: url('pol/PlayfairDisplaySC-Bold.ttf');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+@font-face {
+    font-family: 'Sobatyan-Regular';
+    src: url('pol/Sobatyan-Regular.otf');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+@font-face {
+    font-family: 'Roboto-MediumItalic';
+    src: url('pol/Roboto-MediumItalic.ttf');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+@font-face {
+    font-family: 'MilestoneBrush';
+    src: url('pol/MilestoneBrush.otf');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+@font-face {
+    font-family: 'Rostack';
+    src: url('pol/Rostack.otf');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+@font-face {
+    font-family: 'Roboto-Black';
+    src: url('pol/Roboto-Black.ttf');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+@font-face {
+    font-family: 'Matemasie-Regular';
+    src: url('pol/Matemasie-Regular.ttf');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+@font-face {
+    font-family: 'NewAmsterdam-Regular';
+    src: url('pol/NewAmsterdam-Regular.ttf');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+@font-face {
+    font-family: 'NerkoOne-Regular';
+    src: url('pol/NerkoOne-Regular.ttf');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+@font-face {
+    font-family: 'Roboto-Bold';
+    src: url('pol/Roboto-Bold.ttf');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+@font-face {
+    font-family: 'DMSerifText-Regular';
+    src: url('pol/DMSerifText-Regular.ttf');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+
+/* Sélection universelle : applique ces règles à TOUS les éléments de la page */
+* {
+    margin: 0; /* Supprime toutes les marges externes par défaut */
+    padding: 0; /* Supprime tous les espacements internes par défaut */
+    box-sizing: border-box; /* Inclut padding + border dans la largeur/hauteur totale */
+    font-family: Arial, sans-serif; /* Définit la police principale du site */
+}
+
+/* Corps principal de la page */
+body {
+    background: #fcfcfc; /* Définit la couleur de fond globale */
+    color: #0e0924; /* Définit la couleur principale du texte */
+    font-family: 'NerkoOne-Regula', cursive; /* Police fun et dynamique */
+    letter-spacing: 0.7px; /* Espace léger entre les lettres */
+}
+
+/* ========================= */
+/* NAVBAR */
+/* ========================= */
+
+/* Barre de navigation principale */
+.top-navbar {
+    position: relative; /* Fixe la navbar en haut même pendant le scroll */
+    top: 0; /* Positionne la navbar tout en haut */
+    left: 0; /* Colle la navbar au bord gauche */
+    width: 100%; /* Donne toute la largeur de l’écran */
+    background: white; /* Couleur de fond blanche */
+    z-index: 9999; /* Place la navbar au-dessus des autres éléments */
+    display: flex; /* Active Flexbox */
+    justify-content: space-between; /* Espace les éléments gauche/droite */
+    align-items: center; /* Centre verticalement les éléments */
+    padding: 10px 30px; /* Ajoute un espace interne */
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1); /* Ajoute une ombre sous la navbar */
+}
+
+/* Zone contenant logo + nom du site */
+.logo-area {
+    display: flex; /* Active Flexbox */
+    align-items: center; /* Centre verticalement logo et texte */
+    gap: 10px; /* Espace entre logo et nom */
+}
+
+/* Image du logo */
+.logo {
+    width: 50px; /* Largeur du logo */
+    height: 50px; /* Hauteur du logo */
+    object-fit: contain; /* Garde les proportions du logo */
+}
+
+/* Nom du site */
+.site-name {
+    color: #004aad; /* Couleur bleue du texte */
+    font-size: 1.8rem; /* Taille du texte */
+}
+
+/* Conteneur des onglets/menu */
+.tabs-nav {
+    display: flex; /* Place les boutons horizontalement */
+    gap: 15px; /* Espace entre les boutons */
+}
+
+/* Bouton individuel des onglets */
+.tab-btn {
+    border: none; /* Supprime la bordure par défaut */
+    background: transparent; /* Fond transparent */
+    display: flex; /* Active Flexbox */
+    flex-direction: column; /* Place icône au-dessus du texte */
+    align-items: center; /* Centre horizontalement */
+    justify-content: center; /* Centre verticalement */
+    gap: 5px; /* Espace entre icône et texte */
+    cursor: pointer; /* Affiche le curseur main */
+    padding: 10px 15px; /* Espacement interne */
+    border-radius: 15px; /* Coins arrondis */
+    transition: 0.3s; /* Animation douce lors du hover */
+    color: #555; /* Couleur du texte/icône */
+}
+
+/* Icône à l’intérieur du bouton */
+.tab-btn i {
+    font-size: 1.3rem; /* Taille de l’icône */
+}
+
+/* Texte du bouton */
+.tab-btn span {
+    font-size: 0.85rem; /* Taille du texte */
+    font-weight: bold; /* Rend le texte gras */
+}
+
+/* Bouton actif OU survolé */
+.tab-btn.active,
+.tab-btn:hover {
+    background: #4585d8; /* Fond bleu */
+    color: white; /* Texte blanc */
+}
+
+/* ========================= */
+/* HERO */
+/* ========================= */
+
+/* Section Hero principale */
+.hero, .heroa {
+    margin-top: 20px; /* Espace au-dessus */
+    position: relative; /* Sert de référence aux éléments absolus internes */
+    overflow: hidden; /* Cache ce qui dépasse */
+}
+
+.hero {
+    height: 85vh; /* Hauteur = 85% de l’écran */
+}
+
+.heroa {
+    height: 100%; /* Hauteur = 85% de l’écran */
+}
+
+/* Conteneur du slider */
+.slider {
+    position: absolute; /* Place le slider au-dessus du hero */
+    width: 100%; /* Toute la largeur */
+    height: 100%; /* Toute la hauteur */
+}
+
+/* Image individuelle du slider */
+.slide {
+    position: absolute; /* Superpose les images */
+    width: 100%; /* Largeur complète */
+    height: 100%; /* Hauteur complète */
+    object-fit: cover; /* Remplit tout sans déformation */
+    opacity: 0; /* Rend invisible par défaut */
+    transition: opacity 1.5s ease; /* Animation douce d’apparition */
+}
+
+/* Slide actuellement visible */
+.slide.active {
+    opacity: 1; /* Rend l’image visible */
+}
+
+/* Contenu texte du Hero */
+.hero-content {
+    position: relative; /* Permet de rester au-dessus du slider */
+    z-index: 2; /* Place le texte devant les images */
+    width: 100%; /* Largeur complète */
+    height: 100%; /* Hauteur complète */
+    background: rgba(0,0,0,0.45); /* Couche sombre transparente */
+    display: flex; /* Active Flexbox */
+    flex-direction: column; /* Organise le contenu verticalement */
+    justify-content: center; /* Centre verticalement */
+    align-items: center; /* Centre horizontalement */
+    text-align: center; /* Centre le texte */
+    color: white; /* Texte blanc */
+    padding: 20px; /* Espace interne */
+}
+
+/* Grand titre du Hero */
+.hero-content h2 {
+    font-size: 4rem; /* Très grande taille */
+    margin-bottom: 20px; /* Espace sous le titre */
+}
+
+/* Paragraphe du Hero */
+.hero-content p {
+    max-width: 800px; /* Limite largeur du texte */
+    font-size: 1.3rem; /* Taille du texte */
+}
+
+/* ========================= */
+/* MAIN */
+/* ========================= */
+
+
+
+/* Onglet masqué par défaut */
+.tab-content {
+    display: none; /* Cache l’onglet */
+    animation: fade 0.5s ease; /* Animation d’apparition */
+}
+
+/* Onglet actuellement actif */
+.tab-content.active {
+    
+    magin-right: 2%; /* Espace à droite */
+    margin-bottom: 2%; /* Espace en bas */
+    display: block; /* Affiche le contenu */
+    background: white; /* Fond blanc */
+}
+
+/* Animation fade */
+@keyframes fade {
+
+    from {
+        opacity: 0; /* Départ invisible */
+        transform: translateY(20px); /* Départ légèrement plus bas */
+    }
+
+    to {
+        opacity: 1; /* Arrivée visible */
+        transform: translateY(0); /* Revient à sa position normale */
+    }
+}
+
+
+.postuler-section {
+        font-family: Arial, sans-serif;
+    color: #1a1a1a;
+    background: #ffffff;
+}
+
+/* HEADER */
+.postuler-header {
+    text-align: center;
+    margin-bottom: 80px;
+}
+
+.postuler-header h2 {
+    font-size: 38px;
+    margin-bottom: 15px;
+}
+
+.postuler-header p {
+    max-width: 850px;
+    margin: auto;
+    font-size: 17px;
+    color: #555;
+    line-height: 1.8;
+}
+
+/* BLOCK BASE */
+.postuler-block {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 90px;
+    gap: 5px;
+}
+
+/* ALTERNANCE GAUCHE / DROITE (RYTHME VISUEL) */
+.postuler-block.left .postuler-text {
+    margin-left: 5%;
+}
+
+.postuler-block.right .postuler-text  {
+    margin-right: 5%;
+}
+.postuler-image{
+    margin: 2%;
+}
+
+/* TEXTE */
+.postuler-text {
+    flex: 1;
+}
+
+.postuler-text h3 {
+    font-size: 24px;
+    margin-bottom: 2%;
+}
+
+.postuler-text p {
+    font-size: 16px;
+    line-height: 1.8;
+    margin-bottom: 15px;
+    color: #333;
+}
+
+/* EXEMPLE / CONSEIL */
+.advice {
+    background: #eef5ff;
+    border-left: 4px solid #2b6fff;
+    padding: 12px 15px;
+    font-size: 14px;
+    color: #1d3f7a;
+    border-radius: 6px;
+}
+
+/* IMAGE */
+.postuler-image {
+    flex: 1;
+}
+
+.postuler-image img {
+    width: 100%;
+    height: 320px;
+    object-fit: cover;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+}
+
+/* RESPONSIVE */
+@media (max-width: 900px) {
+    .postuler-block {
+        flex-direction: column;
+    }
+
+    .postuler-block.left .postuler-text,
+    .postuler-block.right .postuler-text {
+        margin: 0;
+    }
+
+    .postuler-image img {
+        height: 220px;
+    }
+
+    .postuler-header h2 {
+        font-size: 28px;
+    }
+}
+
+
+/* Tous les titres h2 */
+h2 {
+    text-align: center; /* Centre le texte */
+    margin-bottom: 40px; /* Espace sous le titre */
+    color: #004aad; /* Couleur bleue */
+}
+
+/* Section de bienvenue */
+.welcome-section {
+    display: grid; /* Active CSS Grid */
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); /* Colonnes adaptatives */
+    gap: 40px; /* Espace entre colonnes */
+    align-items: center; /* Centre verticalement */
+}
+
+/* Image dans la section bienvenue */
+.welcome-image img {
+    width: 100%; /* Prend toute la largeur disponible */
+    border-radius: 20px; /* Coins arrondis */
+}
+
+/* Conteneur des cartes */
+.cards {
+    margin-right: 2%; /* Espace à droite */
+    margin-left: 2%; /* Espace à gauche */
+    display: grid; /* Active CSS Grid */
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); /* Colonnes responsives */
+    gap: 25px; /* Espace entre les cartes */
+}
+
+/* Carte individuelle */
+.card {
+    background: white; /* Fond blanc */
+    border-radius: 2px; /* Coins arrondis */
+    overflow: hidden; /* Cache débordements */
+    box-shadow: 0 4px 15px rgba(0,0,0,0.06); /* Ombre légère */
+}
+
+/* Image de la carte */
+.card img {
+    width: 100%; /* Largeur complète */
+    height: 220px; /* Hauteur fixe */
+    object-fit: cover; /* Remplit sans déformation */
+}
+
+/* Titre de la carte */
+.card h3 {
+    padding: 15px; /* Espace interne */
+    color: #004aad; /* Couleur bleue */
+}
+
+/* Texte de la carte */
+.card p {
+    padding: 0 15px 20px; /* Espacement interne */
+}
+
+/* Bouton/lien de la carte */
+.card a {
+    display: inline-block; /* Permet largeur + marge */
+    margin: 0 15px 20px; /* Espacement externe */
+    background: #004aad; /* Fond bleu */
+    color: white; /* Texte blanc */
+    padding: 10px 18px; /* Espacement interne */
+    border-radius: 10px; /* Coins arrondis */
+    text-decoration: none; /* Supprime soulignement */
+}
+
+/* Grille des documents */
+.documents-grid {
+    display: grid; /* Active Grid */
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); /* Colonnes adaptatives */
+    gap: 20px; /* Espace entre blocs */
+}
+
+/* Bloc document */
+.doc-box {
+    background: white; /* Fond blanc */
+    padding: 25px; /* Espace interne */
+    border-radius: 15px; /* Coins arrondis */
+    text-align: center; /* Centre le texte */
+    font-weight: bold; /* Texte en gras */
+}
+
+/* Timeline verticale */
+.timeline {
+    display: flex; /* Active Flexbox */
+    flex-direction: column; /* Place les étapes verticalement */
+    gap: 20px; /* Espace entre étapes */
+}
+
+/* Étape individuelle */
+.step {
+    background: white; /* Fond blanc */
+    padding: 20px; /* Espace interne */
+    border-left: 5px solid #004aad; /* Barre bleue à gauche */
+    border-radius: 10px; /* Coins arrondis */
+}
+
+/* Conteneur des conseils */
+.tips-container {
+    display: grid; /* Active Grid */
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); /* Colonnes adaptatives */
+    gap: 25px; /* Espace entre éléments */
+}
+
+/* Boîte conseil */
+.tip-box {
+    background: white; /* Fond blanc */
+    padding: 25px; /* Espacement interne */
+    border-radius: 15px; /* Coins arrondis */
+}
+
+/* Titre d’un conseil */
+.tip-box h3 {
+    margin-bottom: 15px; /* Espace sous le titre */
+    color: #004aad; /* Couleur bleue */
+}
+
+/* Pied de page */
+footer {
+    background: #4585d8; /* Fond bleu foncé */
+    color: white; /* Texte blanc */
+    text-align: center; /* Centre le texte */
+    padding: 25px; /* Espacement interne */
+}
+
+/* ========================= */
+/* MOBILE */
+/* ========================= */
+
+/* Styles appliqués sur écran ≤ 768px */
+@media(max-width: 768px) {
+
+    /* Navbar version mobile */
+    .top-navbar {
+        flex-direction: column; /* Empile les éléments verticalement */
+        gap: 10px; /* Espace entre éléments */
+        padding: 10px; /* Réduit l’espacement interne */
+    }
+
+    /* Cache le logo sur mobile */
+    .logo {
+        display: none; /* Rend le logo invisible */
+    }
+
+    /* Nom du site version mobile */
+    .site-name {
+        font-size: 1.5rem; /* Réduit la taille du texte */
+    }
+
+    /* Navigation mobile */
+    .tabs-nav {
+        width: 100%; /* Largeur complète */
+        justify-content: space-around; /* Répartit les boutons */
+        gap: 5px; /* Petit espace entre boutons */
+    }
+
+    /* Bouton mobile */
+    .tab-btn {
+        padding: 8px; /* Réduit l’espace interne */
+    }
+
+    /* Icône mobile */
+    .tab-btn i {
+        font-size: 1rem; /* Réduit la taille des icônes */
+    }
+
+    /* Texte mobile */
+    .tab-btn span {
+        font-size: 0.7rem; /* Réduit la taille du texte */
+    }
+
+    /* Hero version mobile */
+    .hero {
+        margin-top: 20px; /* Espace supérieur */
+    }
+
+    /* Titre Hero mobile */
+    .hero-content h2 {
+        font-size: 2rem; /* Réduit taille du titre */
+    }
+
+    /* Texte Hero mobile */
+    .hero-content p {
+        font-size: 1rem; /* Réduit taille du texte */
+    }
+
+}
+
+
+
+
+
+
+/* ========================= */
+/* AJOUT CONTENU CODE 1 */
+/* ========================= */
+
+.hero-badge{
+    background: rgba(255,255,255,0.15);
+    padding: 12px 20px;
+    border-radius: 30px;
+    margin-bottom: 25px;
+    font-weight: bold;
+}
+
+.hero-buttons{
+    margin-top: 30px;
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.hero-btn-primary,
+.hero-btn-secondary{
+    padding: 15px 25px;
+    border-radius: 12px;
+    text-decoration: none;
+    font-weight: bold;
+    transition: 0.3s;
+}
+
+.hero-btn-primary{
+    background: #d4af37;
+    color: #111;
+}
+
+.hero-btn-secondary{
+    border: 2px solid white;
+    color: white;
+}
+
+.hero-btn-primary:hover,
+.hero-btn-secondary:hover{
+    transform: translateY(-4px);
+}
+
+.intro-section{
+    margin-top: 80px;
+    margin-left: 2%;
+margin-right: 2%;
+margin-bottom: 2%;
+}
+
+.section-header{
+    text-align: center;
+    margin-bottom: 50px;
+}
+
+.section-header span{
+    color: #d4af37;
+    font-weight: bold;
+}
+
+.section-header h2{
+    margin-top: 10px;
+}
+
+.intro-grid{
+    display: grid;
+    grid-template-columns: repeat(auto-fit,minmax(250px,1fr));
+    gap: 25px;
+}
+
+.intro-card{
+    background: white;
+    padding: 35px;
+    border-radius: 20px;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+    transition: 0.3s;
+}
+
+.intro-card:hover{
+    transform: translateY(-8px);
+}
+
+.intro-card i{
+    font-size: 40px;
+    color: #d4af37;
+    margin-bottom: 20px;
+}
+
+.intro-card h3{
+    margin-bottom: 15px;
+    color: #004aad;
+}
+
+.main-title{
+    text-align: center;
+    margin-bottom: 50px;
+}
+
+.doc-box{
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.doc-box i{
+    font-size: 35px;
+    color: #004aad;
+}
+
+.tip-box ul{
+    padding-left: 20px;
+}
+
+.tip-box li{
+    margin-bottom: 10px;
+    line-height: 1.6;
+}
+
+@media(max-width:768px){
+
+    .hero-buttons{
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .hero-content h2{
+        font-size: 2.2rem;
+    }
+}
+
+
+/* ================= HEADER ================= */
+
+.bourses-header {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.bourses-subtitle {
+    font-size: 15px;
+    color: #666;
+    max-width: 700px;
+    margin: 10px auto;
+}
+
+/* ================= FILTERS ================= */
+
+.filters {
+    display: flex;
+    flex-direction: column;
+    margin-left: 2%; /* Espace à gauche */
+    margin-bottom: 30px;
+}
+
+.filter-group {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px;
+}
+
+.filter-group h4 {
+    margin-right: 10px;
+    font-size: 14px;
+    color: #333;
+}
+
+.filter-btn {
+    padding: 6px 12px;
+    border: 1px solid #ddd;
+    background: #fff;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 13px;
+    transition: 0.3s;
+}
+
+.filter-btn:hover {
+    background: #f0f0f0;
+}
+
+.filter-btn.active {
+    background: #1a73e8;
+    color: white;
+    border-color: #1a73e8;
+}
