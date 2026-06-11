@@ -193,16 +193,11 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
       <!-- TÉLÉCHARGEMENTS -->
       <li class="nav-item dropdown">
-        <div class="nav-button">
-          <img src="ico/download.svg" alt="Téléchargements" class="nav-icon">
-          <span>Téléchargements</span>
-        </div>
-        <ul class="dropdown-content mega-menu">
-          <li><a href="#documents-educatifs">Documents Éducatifs</a></li>
-          <li><a href="#documents-administratifs">Documents Administratifs</a></li>
-          <li><a href="#documents-divers">Documents Divers</a></li>
-        </ul>
-      </li>
+        <a href="bourses.html" class="nav-button">
+          <img src="ico/chap.svg" alt="Bourses" class="nav-icon">
+          <span>Bourses</span>
+        </a>
+              </li>
 
       <!-- INFOS -->
       <li class="nav-item dropdown">
@@ -276,7 +271,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       <img src="ico/concours.svg" class="nav-icon-hamb"> Concours
     </a>
 
-    <a href="https://lumesys.vercel.app/#vesth">
+    <a href="https://lumeshop.vercel.app/#vesth">
       <img src="ico/store.svg" class="nav-icon-hamb"> Marché
     </a>
 
@@ -309,14 +304,14 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     </li>
 
     <li class="nav-item">
-      <a href="#telecharmo" class="nav-button">
-        <img src="ico/download.svg" alt="Téléchargements" class="nav-icon-mobile">
-        <span>Télécharger</span>
+      <a href="bourses.html" class="nav-button">
+        <img src="ico/chap.svg" alt="Bourses" class="nav-icon-mobile">
+        <span>Bourses</span>
       </a>
     </li>
 
     <li class="nav-item">
-      <a href="https://lumesys.vercel.app/#vesth" class="nav-button">
+      <a href="https://lumeshop.vercel.app/#vesth" class="nav-button">
         <img src="ico/store.svg" alt="Marché" class="nav-icon-mobile">
         <span>Marché</span>
       </a>
@@ -498,20 +493,58 @@ document.addEventListener("DOMContentLoaded", function () {
   const MAX_DOWNLOADS = 3;
   let downloads = parseInt(localStorage.getItem(downloadKey)) || 0;
 
-  // == Surveiller les clics sur liens ==
-  document.querySelectorAll('a[target="_blank"]').forEach(link => {
-    link.addEventListener('click', (e) => {
-      onAuthStateChanged(auth, (user) => {
-        if (!user && downloads >= MAX_DOWNLOADS) {
-          e.preventDefault();
-          showOverlay();
-        } else {
-          downloads++;
-          localStorage.setItem(downloadKey, downloads);
-        }
-      });
-    });
+  // == Suivi des téléchargements ==
+document.querySelectorAll('a[target="_blank"]').forEach(link => {
+
+  link.addEventListener('click', async (e) => {
+
+    const user = auth.currentUser;
+
+    if (user) {
+
+      try {
+
+        const ref = doc(db, "utilisateurs", user.email);
+
+        await setDoc(ref, {
+
+          dernierDocument: link.textContent.trim(),
+
+          dernierDocumentId: link.id || "",
+
+          dernierDocumentUrl: link.href,
+
+          dernierAppareil: navigator.userAgent,
+
+          dernierTelechargement: serverTimestamp(),
+
+          nombreTelechargements: downloads + 1
+
+        }, { merge: true });
+
+      } catch(err) {
+
+        console.error("Erreur téléchargement :", err);
+
+      }
+
+    }
+
+    if (!user && downloads >= MAX_DOWNLOADS) {
+
+      e.preventDefault();
+      showOverlay();
+
+    } else {
+
+      downloads++;
+      localStorage.setItem(downloadKey, downloads);
+
+    }
+
   });
+
+});
 
   // === Authentification ===
   onAuthStateChanged(auth, async (user) => {
@@ -576,6 +609,27 @@ document.addEventListener("DOMContentLoaded", function () {
       }
     }
   });
+
+  // ===== Scroll maximal =====
+
+   let maxScroll = 0;
+
+window.addEventListener('scroll', () => {
+
+  const hauteurTotale =
+    document.documentElement.scrollHeight - window.innerHeight;
+
+  if (hauteurTotale <= 0) return;
+
+  const scrollPercent = Math.round(
+    (window.scrollY / hauteurTotale) * 100
+  );
+
+  if (scrollPercent > maxScroll) {
+    maxScroll = scrollPercent;
+  }
+
+});
 
   loginBtn.addEventListener("click", () => signInWithPopup(auth, provider));
   logoutBtn.addEventListener("click", () => signOut(auth));
@@ -4244,9 +4298,6 @@ document.addEventListener("DOMContentLoaded", function () {
         <img src="icone/linkedin.png" alt="LinkedIn" />
     </a>
 
-    <a href="https://www.ewebdiscussion.com/forums/web-hosting-offers.67/">Hosting</a>
-<a href="https://www.ontoplist.com/marketing-agencies/" target="_blank"><img src="https://www.ontoplist.com/images/ontoplist31.png?id=69dbc97434bac" alt="Best Digital Marketing Companies - OnToplist.com" border="0" /></a>
-    
     <!-- Bouton Snapchat -->
     <a href="https://www.snapchat.com/scan?url=https://ibrahim-djime.github.io/diak/" 
        target="_blank" 
@@ -4260,27 +4311,27 @@ document.addEventListener("DOMContentLoaded", function () {
       <div class="caroull">
        
   <div class="ecard">
-    <a href="https://lumesys.vercel.app/#Chosse" alt="lien d'achat" class="lieAffi">
+    <a href="https://lumeshop.vercel.app/#Chosse" alt="lien d'achat" class="lieAffi">
       <img src="Articles/Chaussures/IMG-20250108-WA0013.jpg" alt="photo du produit1" title="clic pour voir plus!" class="phtaffi">
     </a>
   </div>
   <div class="ecard">
-    <a href="https://lumesys.vercel.app/#vesth" alt="lien d'achat" class="lieAffi">
+    <a href="https://lumeshop.vercel.app/#vesth" alt="lien d'achat" class="lieAffi">
       <img src="Articles/veste/IMG-20250109-WA0028.jpg" alt="photo du produit2" title="clic pour voir plus!" class="phtaffi">
     </a>
   </div>
   <div class="ecard">
-    <a href="https://lumesys.vercel.app/#lacost" alt="lien d'achat" class="lieAffi">
+    <a href="https://lumeshop.vercel.app/#lacost" alt="lien d'achat" class="lieAffi">
       <img src="Articles/lacoste2/IMG-20250109-WA0102.jpg" alt="photo du produit3" title="clic pour voir plus!" class="phtaffi">
     </a>
   </div>
   <div class="ecard">
-    <a href="https://lumesys.vercel.app/#ptissu" alt="lien d'achat" class="lieAffi">
+    <a href="https://lumeshop.vercel.app/#ptissu" alt="lien d'achat" class="lieAffi">
       <img src="Articles/tissu/IMG-20250108-WA0213.jpg" alt="photo du produit4" title="clic pour voir plus!" class="phtaffi">
     </a>
   </div>
   <div class="ecard">
-    <a href="https://lumesys.vercel.app/#bazin" alt="lien d'achat" class="lieAffi">
+    <a href="https://lumeshop.vercel.app/#bazin" alt="lien d'achat" class="lieAffi">
       <img src="Articles/bazin/IMG-20250110-WA0032.jpg" alt="photo du produit5" title="clic pour voir plus!" class="phtaffi">
     </a>
   </div>
@@ -4290,7 +4341,7 @@ document.addEventListener("DOMContentLoaded", function () {
     </a>
   </div>
   <div class="ecard">
-    <a href="https://lumesys.vercel.app/#cafpr" alt="lien d'achat" class="lieAffi">
+    <a href="https://lumeshop.vercel.app/#cafpr" alt="lien d'achat" class="lieAffi">
       <img src="Articles/cafePresse/IMG-20250108-WA0160.jpg" alt="photo du produit7" title="clic pour voir plus!" class="phtaffi">
     </a>
   </div>
@@ -4300,17 +4351,17 @@ document.addEventListener("DOMContentLoaded", function () {
     </a>
   </div>
 <div class="ecard">
-    <a href="https://lumesys.vercel.app/#survetus" alt="lien d'achat" class="lieAffi">
+    <a href="https://lumeshop.vercel.app/#survetus" alt="lien d'achat" class="lieAffi">
       <img src="Articles/survet3p/IMG-20250109-WA0039.jpg" alt="photo du produit9" title="clic pour voir plus!" class="phtaffi">
     </a>
   </div>
   <div class="ecard">
-    <a href="https://lumesys.vercel.app/#tisbrod" alt="lien d'achat" class="lieAffi">
+    <a href="https://lumeshop.vercel.app/#tisbrod" alt="lien d'achat" class="lieAffi">
     <img src="Articles/tissu_brode/IMG-20250110-WA0017.jpg" alt="photo du produit10" title="clic pour voir plus!" class="phtaffi">
     </a>
   </div>
   <div class="ecard">
-    <a href="https://lumesys.vercel.app/#Chosse" alt="lien d'achat" class="lieAffi">
+    <a href="https://lumeshop.vercel.app/#Chosse" alt="lien d'achat" class="lieAffi">
       <img src="Articles/Chaussures/IMG-20250108-WA0013.jpg" alt="photo du produit1" title="clic pour voir plus!" class="phtaffi">
     </a>
   </div>
@@ -4523,7 +4574,7 @@ document.addEventListener("DOMContentLoaded", function () {
   </div>
 
 
-<a href="https://lumesys.vercel.app/#vesth" target="_blank" class="lcard">
+<a href="https://lumeshop.vercel.app/#vesth" target="_blank" class="lcard">
   <div class="bcard">
     <div class="ccard">
       
@@ -4531,7 +4582,7 @@ document.addEventListener("DOMContentLoaded", function () {
       <p class="synb">
         >>
       </p>
-      <a href="https://lumesys.vercel.app/#vesth" class="bouton">Suivant</a>
+      <a href="https://lumeshop.vercel.app/#vesth" class="bouton">Suivant</a>
     </div>
   </div>
 </a>
@@ -4577,12 +4628,12 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
 
-<a href="https://lumesys.vercel.app/#mailltot" target="_blank" class="lcard">
+<a href="https://lumeshop.vercel.app/#mailltot" target="_blank" class="lcard">
   <div class="bcard">
     <div class="ccard">
       <h3>Voir plus +</h3>
       <p class="synb">>></p>
-      <a href="https://lumesys.vercel.app/#mailltot" class="bouton">Suivant</a>
+      <a href="https://lumeshop.vercel.app/#mailltot" class="bouton">Suivant</a>
     </div>
   </div>
 </a>
@@ -4632,12 +4683,12 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
     
-<a href="https://lumesys.vercel.app/#lacost" target="_blank" class="lcard">
+<a href="https://lumeshop.vercel.app/#lacost" target="_blank" class="lcard">
   <div class="bcard">
     <div class="ccard">
       <h3>Voir plus +</h3>
       <p class="synb">>></p>
-      <a href="https://lumesys.vercel.app/#lacost" class="bouton">Suivant</a>
+      <a href="https://lumeshop.vercel.app/#lacost" class="bouton">Suivant</a>
     </div>
   </div>
 </a>
@@ -4693,12 +4744,12 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
 
-    <a href="https://lumesys.vercel.app/#tapfem" target="_blank" class="lcard">
+    <a href="https://lumeshop.vercel.app/#tapfem" target="_blank" class="lcard">
   <div class="bcard">
     <div class="ccard">
       <h3>Voir plus +</h3>
       <p class="synb">>></p>
-      <a href="https://lumesys.vercel.app/#tapfem" class="bouton">Suivant</a>
+      <a href="https://lumeshop.vercel.app/#tapfem" class="bouton">Suivant</a>
     </div>
   </div>
 </a>
@@ -4749,12 +4800,12 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
 
-<a href="https://lumesys.vercel.app/#tisbrod" target="_blank" class="lcard">
+<a href="https://lumeshop.vercel.app/#tisbrod" target="_blank" class="lcard">
   <div class="bcard">
     <div class="ccard">
       <h3>Voir plus +</h3>
       <p class="synb">>></p>
-      <a href="https://lumesys.vercel.app/#tisbrod" class="bouton">Suivant</a>
+      <a href="https://lumeshop.vercel.app/#tisbrod" class="bouton">Suivant</a>
     </div>
   </div>
 </a>
@@ -4800,12 +4851,12 @@ document.addEventListener("DOMContentLoaded", function () {
 
    
 
-<a href="https://lumesys.vercel.app/#chem" target="_blank" class="lcard">
+<a href="https://lumeshop.vercel.app/#chem" target="_blank" class="lcard">
   <div class="bcard">
     <div class="ccard">
       <h3>Voir plus +</h3>
       <p class="synb">>></p>
-      <a href="https://lumesys.vercel.app/#chem" class="bouton">Suivant</a>
+      <a href="https://lumeshop.vercel.app/#chem" class="bouton">Suivant</a>
     </div>
   </div>
 </a>
@@ -4851,12 +4902,12 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
 
-<a href="https://lumesys.vercel.app/#Chosse" target="_blank" class="lcard">
+<a href="https://lumeshop.vercel.app/#Chosse" target="_blank" class="lcard">
   <div class="bcard">
     <div class="ccard">
       <h3>Voir plus +</h3>
       <p class="synb">>></p>
-      <a href="https://lumesys.vercel.app/#Chosse" class="bouton">Suivant</a>
+      <a href="https://lumeshop.vercel.app/#Chosse" class="bouton">Suivant</a>
     </div>
   </div>
 </a>
@@ -4907,12 +4958,12 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
 
-<a href="https://lumesys.vercel.app/#bazin" target="_blank" class="lcard">
+<a href="https://lumeshop.vercel.app/#bazin" target="_blank" class="lcard">
   <div class="bcard">
     <div class="ccard">
       <h3>Voir plus +</h3>
       <p class="synb">>></p>
-      <a href="https://lumesys.vercel.app/#bazin" class="bouton">Suivant</a>
+      <a href="https://lumeshop.vercel.app/#bazin" class="bouton">Suivant</a>
     </div>
   </div>
 </a>
@@ -4961,12 +5012,12 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
 
-<a href="https://lumesys.vercel.app/#panton" target="_blank" class="lcard">
+<a href="https://lumeshop.vercel.app/#panton" target="_blank" class="lcard">
   <div class="bcard">
     <div class="ccard">
       <h3>Voir plus +</h3>
       <p class="synb">>></p>
-      <a href="https://lumesys.vercel.app/#panton" class="bouton">Suivant</a>
+      <a href="https://lumeshop.vercel.app/#panton" class="bouton">Suivant</a>
     </div>
   </div>
 </a>
@@ -5015,12 +5066,12 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
 
-<a href="https://lumesys.vercel.app/#ptarfum" target="_blank" class="lcard">
+<a href="https://lumeshop.vercel.app/#ptarfum" target="_blank" class="lcard">
   <div class="bcard">
     <div class="ccard">
       <h3>Voir plus +</h3>
       <p class="synb">>></p>
-      <a href="https://lumesys.vercel.app/#ptarfum" class="bouton">Suivant</a>
+      <a href="https://lumeshop.vercel.app/#ptarfum" class="bouton">Suivant</a>
     </div>
   </div>
 </a>
@@ -5073,12 +5124,12 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
 
-<a href="https://lumesys.vercel.app/#ptissu" target="_blank" class="lcard">
+<a href="https://lumeshop.vercel.app/#ptissu" target="_blank" class="lcard">
   <div class="bcard">
     <div class="ccard">
       <h3>Voir plus +</h3>
       <p class="synb">>></p>
-      <a href="https://lumesys.vercel.app/#ptissu" class="bouton">Suivant</a>
+      <a href="https://lumeshop.vercel.app/#ptissu" class="bouton">Suivant</a>
     </div>
   </div>
 </a>
@@ -5134,12 +5185,12 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
 
-<a href="https://lumesys.vercel.app/#cafpr" target="_blank" class="lcard">
+<a href="https://lumeshop.vercel.app/#cafpr" target="_blank" class="lcard">
   <div class="bcard">
     <div class="ccard">
       <h3>Voir plus +</h3>
       <p class="synb">>></p>
-      <a href="https://lumesys.vercel.app/#cafpr" class="bouton">Suivant</a>
+      <a href="https://lumeshop.vercel.app/#cafpr" class="bouton">Suivant</a>
     </div>
   </div>
 </a>
@@ -5236,12 +5287,12 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
 
-<a href="https://lumesys.vercel.app/#survetus" target="_blank" class="lcard">
+<a href="https://lumeshop.vercel.app/#survetus" target="_blank" class="lcard">
   <div class="bcard">
     <div class="ccard">
       <h3>Voir plus +</h3>
       <p class="synb">>></p>
-      <a href="https://lumesys.vercel.app/#survetus" class="bouton">Suivant</a>
+      <a href="https://lumeshop.vercel.app/#survetus" class="bouton">Suivant</a>
     </div>
   </div>
 </a>
