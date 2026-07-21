@@ -37,7 +37,6 @@ import {
 
 /* =========================================================
    CONFIGURATION FIREBASE
-   EXACTEMENT CELLE DE TON SITE
 ========================================================= */
 
 const firebaseConfig = {
@@ -157,6 +156,7 @@ onAuthStateChanged(
             window.location.href = "index.html";
 
             return;
+
         }
 
 
@@ -193,10 +193,22 @@ onAuthStateChanged(
         }
 
 
-        await chargerProfilsPublics();
+        try {
 
+            await chargerProfilsPublics();
 
-        ecouterConversations();
+            ecouterConversations();
+
+        }
+
+        catch (error) {
+
+            afficherErreurFirebase(
+                "Initialisation de la messagerie",
+                error
+            );
+
+        }
 
     }
 
@@ -204,7 +216,7 @@ onAuthStateChanged(
 
 
 /* =========================================================
-   CHARGER LES UTILISATEURS DEPUIS public_profiles
+   CHARGER LES PROFILS PUBLICS
 ========================================================= */
 
 async function chargerProfilsPublics() {
@@ -212,22 +224,15 @@ async function chargerProfilsPublics() {
     try {
 
         const profilsReference =
-
             collection(
-
                 db,
-
                 "public_profiles"
-
             );
 
 
         const snapshot =
-
             await getDocs(
-
                 profilsReference
-
             );
 
 
@@ -238,25 +243,17 @@ async function chargerProfilsPublics() {
 
             (documentSnapshot) => {
 
-
                 const profil =
-
                     documentSnapshot.data();
 
 
                 const email =
-
                     documentSnapshot.id;
 
-
-                /*
-                    EXCLURE L'UTILISATEUR CONNECTÉ
-                */
 
                 if (
 
                     email.toLowerCase() ===
-
                     currentUser.email.toLowerCase()
 
                 ) {
@@ -285,24 +282,15 @@ async function chargerProfilsPublics() {
         );
 
 
-        afficherUtilisateurs(
-
-            allUsers
-
-        );
-
+        afficherUtilisateurs(allUsers);
 
     }
 
     catch (error) {
 
-
-        console.error(
-
-            "Erreur lors du chargement des profils :",
-
+        afficherErreurFirebase(
+            "Chargement des profils publics",
             error
-
         );
 
 
@@ -316,6 +304,8 @@ async function chargerProfilsPublics() {
 
         `;
 
+        throw error;
+
     }
 
 }
@@ -327,45 +317,33 @@ async function chargerProfilsPublics() {
 
 function ecouterConversations() {
 
-
     const chatsReference =
-
         collection(
-
             db,
-
             "chats"
-
         );
 
 
     const chatsQuery =
-
         query(
 
             chatsReference,
 
             where(
-
                 "participants",
-
                 "array-contains",
-
                 currentUser.email
-
             )
 
         );
 
 
     unsubscribeChats =
-
         onSnapshot(
 
             chatsQuery,
 
             (snapshot) => {
-
 
                 allChats = [];
 
@@ -374,16 +352,13 @@ function ecouterConversations() {
 
                     (chatDocument) => {
 
-
                         const chat =
-
                             chatDocument.data();
 
 
                         allChats.push({
 
                             id:
-
                                 chatDocument.id,
 
                             ...chat
@@ -395,30 +370,28 @@ function ecouterConversations() {
                 );
 
 
-                /*
-                    METTRE À JOUR LES DERNIERS MESSAGES
-                    DANS LES PROFILS
-                */
-
                 allUsers =
-
                     allUsers.map(
 
                         (user) => {
 
-
                             const chat =
-
                                 allChats.find(
 
                                     (chat) =>
 
-                                        chat.participants &&
+                                        Array.isArray(
+                                            chat.participants
+                                        )
+
+                                        &&
+
+                                        chat.participants.length === 2
+
+                                        &&
 
                                         chat.participants.includes(
-
                                             user.email
-
                                         )
 
                                 );
@@ -426,25 +399,17 @@ function ecouterConversations() {
 
                             if (chat) {
 
-
                                 return {
 
                                     ...user,
 
                                     lastMessage:
-
-                                        chat.dernierMessage ||
-
-                                        "",
+                                        chat.dernierMessage || "",
 
                                     updatedAt:
-
-                                        chat.updatedAt ||
-
-                                        null,
+                                        chat.updatedAt || null,
 
                                     chatId:
-
                                         chat.id
 
                                 };
@@ -465,13 +430,11 @@ function ecouterConversations() {
 
                 ) {
 
-
                     afficherConversationsRecentes();
 
                 }
 
                 else {
-
 
                     afficherUtilisateurs(
 
@@ -486,13 +449,9 @@ function ecouterConversations() {
 
             (error) => {
 
-
-                console.error(
-
-                    "Erreur d'écoute des conversations :",
-
+                afficherErreurFirebase(
+                    "Écoute des conversations",
                     error
-
                 );
 
             }
@@ -503,15 +462,10 @@ function ecouterConversations() {
 
 
 /* =========================================================
-   AFFICHER TOUS LES UTILISATEURS
+   AFFICHER LES UTILISATEURS
 ========================================================= */
 
-function afficherUtilisateurs(
-
-    utilisateurs
-
-) {
-
+function afficherUtilisateurs(utilisateurs) {
 
     contactsList.innerHTML = "";
 
@@ -521,7 +475,6 @@ function afficherUtilisateurs(
         utilisateurs.length === 0
 
     ) {
-
 
         contactsList.innerHTML = `
 
@@ -533,7 +486,6 @@ function afficherUtilisateurs(
 
         `;
 
-
         return;
 
     }
@@ -543,21 +495,11 @@ function afficherUtilisateurs(
 
         (user) => {
 
-
             const element =
-
-                creerElementUtilisateur(
-
-                    user
-
-                );
+                creerElementUtilisateur(user);
 
 
-            contactsList.appendChild(
-
-                element
-
-            );
+            contactsList.appendChild(element);
 
         }
 
@@ -570,34 +512,21 @@ function afficherUtilisateurs(
    CREER UNE CARTE UTILISATEUR
 ========================================================= */
 
-function creerElementUtilisateur(
-
-    user
-
-) {
-
+function creerElementUtilisateur(user) {
 
     const profile =
-
         user.profile;
 
 
     const element =
-
-        document.createElement(
-
-            "div"
-
-        );
+        document.createElement("div");
 
 
     element.className =
-
         "contact-item";
 
 
     const fullName =
-
         `${profile.prenom || ""} ${profile.nom || ""}`
 
             .trim() ||
@@ -606,12 +535,7 @@ function creerElementUtilisateur(
 
 
     const initial =
-
-        getInitial(
-
-            fullName
-
-        );
+        getInitial(fullName);
 
 
     let avatarHTML = `
@@ -633,7 +557,6 @@ function creerElementUtilisateur(
 
     ) {
 
-
         avatarHTML = `
 
             <div class="contact-avatar">
@@ -653,19 +576,17 @@ function creerElementUtilisateur(
     }
 
 
-    const location =
+    const location = [
 
-        [
+        profile.ville,
 
-            profile.ville,
+        profile.pays
 
-            profile.pays
+    ]
 
-        ]
+    .filter(Boolean)
 
-        .filter(Boolean)
-
-        .join(", ");
+    .join(", ");
 
 
     const dernierMessage =
@@ -674,9 +595,13 @@ function creerElementUtilisateur(
 
         user.lastMessage.trim() !== ""
 
-        ? user.lastMessage
+        ?
 
-        : "Commencer une conversation";
+        user.lastMessage
+
+        :
+
+        "Commencer une conversation";
 
 
     element.innerHTML = `
@@ -724,40 +649,23 @@ function creerElementUtilisateur(
 
         () => {
 
-
             document
 
-                .querySelectorAll(
-
-                    ".contact-item"
-
-                )
+                .querySelectorAll(".contact-item")
 
                 .forEach(
 
                     item =>
 
-                        item.classList.remove(
-
-                            "active"
-
-                        )
+                        item.classList.remove("active")
 
                 );
 
 
-            element.classList.add(
-
-                "active"
-
-            );
+            element.classList.add("active");
 
 
-            ouvrirConversation(
-
-                user
-
-            );
+            ouvrirConversation(user);
 
         }
 
@@ -770,17 +678,10 @@ function creerElementUtilisateur(
 
 
 /* =========================================================
-   CREER UN CHAT ID STABLE
+   CREER UN ID DE CHAT STABLE
 ========================================================= */
 
-function creerChatId(
-
-    email1,
-
-    email2
-
-) {
-
+function creerChatId(email1, email2) {
 
     return [
 
@@ -809,51 +710,40 @@ function creerChatId(
    OUVRIR UNE CONVERSATION
 ========================================================= */
 
-async function ouvrirConversation(
+async function ouvrirConversation(user) {
 
-    user
+    try {
 
-) {
-
-
-    selectedUser =
-
-        user;
+        selectedUser = user;
 
 
-    currentChatId =
+        currentChatId =
+            creerChatId(
 
-        creerChatId(
+                currentUser.email,
 
-            currentUser.email,
+                user.email
 
-            user.email
-
-        );
-
-
-    const profile =
-
-        user.profile;
+            );
 
 
-    const fullName =
-
-        `${profile.prenom || ""} ${profile.nom || ""}`
-
-            .trim() ||
-
-        user.email;
+        const profile =
+            user.profile;
 
 
-    chatUserName.textContent =
+        const fullName =
+            `${profile.prenom || ""} ${profile.nom || ""}`
 
-        fullName;
+                .trim() ||
+
+            user.email;
 
 
-    chatUserLocation.textContent =
+        chatUserName.textContent =
+            fullName;
 
-        [
+
+        chatUserLocation.textContent = [
 
             profile.ville,
 
@@ -870,78 +760,76 @@ async function ouvrirConversation(
         "Utilisateur Lumina";
 
 
-    chatUserAvatar.innerHTML =
+        chatUserAvatar.innerHTML =
+            getInitial(fullName);
 
-        getInitial(
 
-            fullName
+        if (
 
+            profile.photo &&
+
+            profile.photo.trim() !== ""
+
+        ) {
+
+            chatUserAvatar.innerHTML = `
+
+                <img
+
+                    src="${escapeAttribute(profile.photo)}"
+
+                    alt="${escapeAttribute(fullName)}"
+
+                >
+
+            `;
+
+        }
+
+
+        emptyConversation.style.display =
+            "none";
+
+
+        activeChat.classList.add(
+            "visible"
         );
 
 
-    if (
-
-        profile.photo &&
-
-        profile.photo.trim() !== ""
-
-    ) {
+        messengerContainer.classList.add(
+            "chat-open"
+        );
 
 
-        chatUserAvatar.innerHTML = `
+        await creerChatSiNecessaire();
 
-            <img
 
-                src="${escapeAttribute(profile.photo)}"
+        ecouterMessages();
 
-                alt="${escapeAttribute(fullName)}"
 
-            >
-
-        `;
+        messageInput.focus();
 
     }
 
+    catch (error) {
 
-    emptyConversation.style.display =
+        afficherErreurFirebase(
+            "Ouverture de la conversation",
+            error
+        );
 
-        "none";
-
-
-    activeChat.classList.add(
-
-        "visible"
-
-    );
-
-
-    messengerContainer.classList.add(
-
-        "chat-open"
-
-    );
-
-
-    await creerChatSiNecessaire();
-
-
-    ecouterMessages();
-
-
-    messageInput.focus();
+    }
 
 }
 
 
 /* =========================================================
-   CREER LE CHAT S'IL N'EXISTE PAS
+   CREER LE CHAT
 ========================================================= */
 
 async function creerChatSiNecessaire() {
 
-
     const chatReference =
-
         doc(
 
             db,
@@ -954,71 +842,90 @@ async function creerChatSiNecessaire() {
 
 
     const chatSnapshot =
+        await getDoc(chatReference);
 
-        await getDoc(
-
-            chatReference
-
-        );
-
-
-    /*
-        SI LE CHAT N'EXISTE PAS,
-        ON LE CRÉE.
-    */
 
     if (
 
-        !chatSnapshot.exists()
+        chatSnapshot.exists()
 
     ) {
 
-
-        await setDoc(
-
-            chatReference,
-
-            {
+        const chat =
+            chatSnapshot.data();
 
 
-                participants: [
+        if (
 
-                    currentUser.email,
+            !Array.isArray(chat.participants)
 
-                    selectedUser.email
+            ||
 
-                ]
+            chat.participants.length !== 2
 
-                .sort(),
+            ||
+
+            !chat.participants.includes(
+                currentUser.email
+            )
+
+            ||
+
+            !chat.participants.includes(
+                selectedUser.email
+            )
+
+        ) {
+
+            throw new Error(
+                "Ce chat ne correspond pas aux deux participants."
+            );
+
+        }
 
 
-                dernierMessage: "",
-
-
-                createdAt:
-
-                    serverTimestamp(),
-
-
-                updatedAt:
-
-                    serverTimestamp()
-
-            }
-
-        );
+        return;
 
     }
+
+
+    const participants = [
+
+        currentUser.email,
+
+        selectedUser.email
+
+    ]
+
+    .sort();
+
+
+    await setDoc(
+
+        chatReference,
+
+        {
+
+            participants: participants,
+
+            dernierMessage: "",
+
+            createdAt: serverTimestamp(),
+
+            updatedAt: serverTimestamp()
+
+        }
+
+    );
 
 }
 
 
 /* =========================================================
-   ECOUTER LES MESSAGES EN TEMPS REEL
+   ECOUTER LES MESSAGES
 ========================================================= */
 
 function ecouterMessages() {
-
 
     if (
 
@@ -1026,14 +933,12 @@ function ecouterMessages() {
 
     ) {
 
-
         unsubscribeMessages();
 
     }
 
 
     const messagesReference =
-
         collection(
 
             db,
@@ -1048,7 +953,6 @@ function ecouterMessages() {
 
 
     const messagesQuery =
-
         query(
 
             messagesReference,
@@ -1065,13 +969,11 @@ function ecouterMessages() {
 
 
     unsubscribeMessages =
-
         onSnapshot(
 
             messagesQuery,
 
             (snapshot) => {
-
 
                 messagesArea.innerHTML = "";
 
@@ -1079,7 +981,6 @@ function ecouterMessages() {
                 snapshot.forEach(
 
                     (messageDocument) => {
-
 
                         afficherMessage(
 
@@ -1093,7 +994,6 @@ function ecouterMessages() {
 
 
                 messagesArea.scrollTop =
-
                     messagesArea.scrollHeight;
 
             },
@@ -1101,13 +1001,9 @@ function ecouterMessages() {
 
             (error) => {
 
-
-                console.error(
-
-                    "Erreur des messages :",
-
+                afficherErreurFirebase(
+                    "Lecture des messages",
                     error
-
                 );
 
             }
@@ -1121,82 +1017,50 @@ function ecouterMessages() {
    AFFICHER UN MESSAGE
 ========================================================= */
 
-function afficherMessage(
-
-    message
-
-) {
-
+function afficherMessage(message) {
 
     const isMine =
-
         message.senderId ===
-
         currentUser.email;
 
 
     const row =
-
-        document.createElement(
-
-            "div"
-
-        );
+        document.createElement("div");
 
 
     row.className =
-
         isMine
 
-        ? "message-row mine"
+        ?
 
-        : "message-row other";
+        "message-row mine"
+
+        :
+
+        "message-row other";
 
 
     const bubble =
-
-        document.createElement(
-
-            "div"
-
-        );
+        document.createElement("div");
 
 
     bubble.className =
-
         "message-bubble";
 
 
     const messageText =
+        document.createElement("div");
 
-        document.createElement(
-
-            "div"
-
-        );
-
-
-    /*
-        textContent empêche
-        l'injection HTML
-    */
 
     messageText.textContent =
-
         message.text || "";
 
 
     const time =
-
-        document.createElement(
-
-            "div"
-
-        );
+        document.createElement("div");
 
 
     time.className =
-
         "message-time";
 
 
@@ -1205,19 +1069,15 @@ function afficherMessage(
         message.createdAt &&
 
         typeof message.createdAt.toDate ===
-
         "function"
 
     ) {
 
-
         const date =
-
             message.createdAt.toDate();
 
 
         time.textContent =
-
             date.toLocaleTimeString(
 
                 "fr-FR",
@@ -1235,32 +1095,13 @@ function afficherMessage(
     }
 
 
-    bubble.appendChild(
+    bubble.appendChild(messageText);
 
-        messageText
+    bubble.appendChild(time);
 
-    );
+    row.appendChild(bubble);
 
-
-    bubble.appendChild(
-
-        time
-
-    );
-
-
-    row.appendChild(
-
-        bubble
-
-    );
-
-
-    messagesArea.appendChild(
-
-        row
-
-    );
+    messagesArea.appendChild(row);
 
 }
 
@@ -1271,39 +1112,33 @@ function afficherMessage(
 
 async function envoyerMessage() {
 
-
     const text =
-
         messageInput.value.trim();
 
 
-    if (
-
-        !text
-
-    ) {
+    if (!text) {
 
         return;
 
     }
 
 
-    if (
+    if (!currentUser) {
 
-        !selectedUser
-
-    ) {
+        alert(
+            "Vous devez être connecté."
+        );
 
         return;
 
     }
 
 
-    if (
+    if (!selectedUser || !currentChatId) {
 
-        !currentChatId
-
-    ) {
+        alert(
+            "Veuillez sélectionner une conversation."
+        );
 
         return;
 
@@ -1312,9 +1147,69 @@ async function envoyerMessage() {
 
     try {
 
+        const chatReference =
+            doc(
+
+                db,
+
+                "chats",
+
+                currentChatId
+
+            );
+
+
+        const chatSnapshot =
+            await getDoc(chatReference);
+
+
+        if (!chatSnapshot.exists()) {
+
+            throw new Error(
+                "Le chat n'existe pas."
+            );
+
+        }
+
+
+        const chat =
+            chatSnapshot.data();
+
+
+        const participants =
+            chat.participants;
+
+
+        if (
+
+            !Array.isArray(participants)
+
+            ||
+
+            participants.length !== 2
+
+            ||
+
+            !participants.includes(
+                currentUser.email
+            )
+
+            ||
+
+            !participants.includes(
+                selectedUser.email
+            )
+
+        ) {
+
+            throw new Error(
+                "Vous ne faites pas partie de cette conversation."
+            );
+
+        }
+
 
         const messagesReference =
-
             collection(
 
                 db,
@@ -1334,19 +1229,13 @@ async function envoyerMessage() {
 
             {
 
-
                 senderId:
-
                     currentUser.email,
 
-
                 text:
-
                     text,
 
-
                 createdAt:
-
                     serverTimestamp()
 
             }
@@ -1356,26 +1245,14 @@ async function envoyerMessage() {
 
         await updateDoc(
 
-            doc(
-
-                db,
-
-                "chats",
-
-                currentChatId
-
-            ),
+            chatReference,
 
             {
 
-
                 dernierMessage:
-
                     text,
 
-
                 updatedAt:
-
                     serverTimestamp()
 
             }
@@ -1385,11 +1262,8 @@ async function envoyerMessage() {
 
         messageInput.value = "";
 
-
         messageInput.style.height =
-
             "auto";
-
 
         messageInput.focus();
 
@@ -1398,20 +1272,9 @@ async function envoyerMessage() {
 
     catch (error) {
 
-
-        console.error(
-
-            "Erreur lors de l'envoi :",
-
+        afficherErreurFirebase(
+            "Envoi du message",
             error
-
-        );
-
-
-        alert(
-
-            "Impossible d'envoyer le message."
-
         );
 
     }
@@ -1420,7 +1283,7 @@ async function envoyerMessage() {
 
 
 /* =========================================================
-   RECHERCHE UTILISATEUR
+   RECHERCHE
 ========================================================= */
 
 searchInput.addEventListener(
@@ -1429,51 +1292,32 @@ searchInput.addEventListener(
 
     () => {
 
-
         if (
 
             currentMode !== "users"
 
         ) {
 
-
             currentMode =
-
                 "users";
 
 
             document
 
-                .getElementById(
-
-                    "showAllUsers"
-
-                )
+                .getElementById("showAllUsers")
 
                 .classList
 
-                .add(
-
-                    "active"
-
-                );
+                .add("active");
 
 
             document
 
-                .getElementById(
-
-                    "showRecentChats"
-
-                )
+                .getElementById("showRecentChats")
 
                 .classList
 
-                .remove(
-
-                    "active"
-
-                );
+                .remove("active");
 
         }
 
@@ -1495,9 +1339,7 @@ searchInput.addEventListener(
 
 function filtrerUtilisateurs() {
 
-
     const search =
-
         searchInput.value
 
             .toLowerCase()
@@ -1505,12 +1347,7 @@ function filtrerUtilisateurs() {
             .trim();
 
 
-    if (
-
-        !search
-
-    ) {
-
+    if (!search) {
 
         return allUsers;
 
@@ -1521,38 +1358,35 @@ function filtrerUtilisateurs() {
 
         (user) => {
 
-
             const profile =
-
                 user.profile;
 
 
             const name =
-
                 `${profile.prenom || ""} ${profile.nom || ""}`
 
                     .toLowerCase();
 
 
             const location =
-
                 `${profile.ville || ""} ${profile.pays || ""}`
 
                     .toLowerCase();
 
 
             const email =
-
-                user.email
-
-                    .toLowerCase();
+                user.email.toLowerCase();
 
 
             return (
 
-                name.includes(search) ||
+                name.includes(search)
 
-                location.includes(search) ||
+                ||
+
+                location.includes(search)
+
+                ||
 
                 email.includes(search)
 
@@ -1566,7 +1400,7 @@ function filtrerUtilisateurs() {
 
 
 /* =========================================================
-   TEXTAREA AUTOMATIQUE
+   TEXTAREA
 ========================================================= */
 
 messageInput.addEventListener(
@@ -1575,14 +1409,11 @@ messageInput.addEventListener(
 
     () => {
 
-
         messageInput.style.height =
-
             "auto";
 
 
         messageInput.style.height =
-
             `${messageInput.scrollHeight}px`;
 
     }
@@ -1591,7 +1422,7 @@ messageInput.addEventListener(
 
 
 /* =========================================================
-   ENTER POUR ENVOYER
+   ENTRÉE POUR ENVOYER
 ========================================================= */
 
 messageInput.addEventListener(
@@ -1600,15 +1431,15 @@ messageInput.addEventListener(
 
     (event) => {
 
-
         if (
 
-            event.key === "Enter" &&
+            event.key === "Enter"
+
+            &&
 
             !event.shiftKey
 
         ) {
-
 
             event.preventDefault();
 
@@ -1636,16 +1467,12 @@ sendButton.addEventListener(
 
 
 /* =========================================================
-   CONVERSATIONS RECENTES
+   CONVERSATIONS RÉCENTES
 ========================================================= */
 
 document
 
-    .getElementById(
-
-        "showRecentChats"
-
-    )
+    .getElementById("showRecentChats")
 
     .addEventListener(
 
@@ -1653,44 +1480,26 @@ document
 
         () => {
 
-
             currentMode =
-
                 "recent";
 
 
             document
 
-                .getElementById(
-
-                    "showRecentChats"
-
-                )
+                .getElementById("showRecentChats")
 
                 .classList
 
-                .add(
-
-                    "active"
-
-                );
+                .add("active");
 
 
             document
 
-                .getElementById(
-
-                    "showAllUsers"
-
-                )
+                .getElementById("showAllUsers")
 
                 .classList
 
-                .remove(
-
-                    "active"
-
-                );
+                .remove("active");
 
 
             afficherConversationsRecentes();
@@ -1701,7 +1510,6 @@ document
 
 
 function afficherConversationsRecentes() {
-
 
     const conversations =
 
@@ -1721,18 +1529,20 @@ function afficherConversationsRecentes() {
 
                 (a, b) => {
 
-
                     const dateA =
 
                         a.updatedAt &&
 
                         typeof a.updatedAt.toDate ===
-
                         "function"
 
-                        ? a.updatedAt.toDate()
+                        ?
 
-                        : new Date(0);
+                        a.updatedAt.toDate()
+
+                        :
+
+                        new Date(0);
 
 
                     const dateB =
@@ -1740,12 +1550,15 @@ function afficherConversationsRecentes() {
                         b.updatedAt &&
 
                         typeof b.updatedAt.toDate ===
-
                         "function"
 
-                        ? b.updatedAt.toDate()
+                        ?
 
-                        : new Date(0);
+                        b.updatedAt.toDate()
+
+                        :
+
+                        new Date(0);
 
 
                     return dateB - dateA;
@@ -1761,7 +1574,6 @@ function afficherConversationsRecentes() {
 
     ) {
 
-
         contactsList.innerHTML = `
 
             <div class="no-results">
@@ -1772,17 +1584,12 @@ function afficherConversationsRecentes() {
 
         `;
 
-
         return;
 
     }
 
 
-    afficherUtilisateurs(
-
-        conversations
-
-    );
+    afficherUtilisateurs(conversations);
 
 }
 
@@ -1793,11 +1600,7 @@ function afficherConversationsRecentes() {
 
 document
 
-    .getElementById(
-
-        "mobileBackButton"
-
-    )
+    .getElementById("mobileBackButton")
 
     .addEventListener(
 
@@ -1805,39 +1608,29 @@ document
 
         () => {
 
-
             messengerContainer
 
                 .classList
 
-                .remove(
-
-                    "chat-open"
-
-                );
+                .remove("chat-open");
 
 
-            activeChat.classList
+            activeChat
 
-                .remove(
+                .classList
 
-                    "visible"
-
-                );
+                .remove("visible");
 
 
             emptyConversation.style.display =
-
                 "flex";
 
 
             selectedUser =
-
                 null;
 
 
             currentChatId =
-
                 null;
 
 
@@ -1847,8 +1640,10 @@ document
 
             ) {
 
-
                 unsubscribeMessages();
+
+                unsubscribeMessages =
+                    null;
 
             }
 
@@ -1861,12 +1656,7 @@ document
    UTILITAIRES
 ========================================================= */
 
-function getInitial(
-
-    name
-
-) {
-
+function getInitial(name) {
 
     return (
 
@@ -1878,31 +1668,22 @@ function getInitial(
 
             .toUpperCase()
 
-        || "?"
+        ||
+
+        "?"
 
     );
 
 }
 
 
-function escapeHTML(
-
-    text
-
-) {
-
+function escapeHTML(text) {
 
     const div =
-
-        document.createElement(
-
-            "div"
-
-        );
+        document.createElement("div");
 
 
     div.textContent =
-
         text;
 
 
@@ -1911,45 +1692,93 @@ function escapeHTML(
 }
 
 
-function escapeAttribute(
-
-    text
-
-) {
-
+function escapeAttribute(text) {
 
     return String(text)
 
-        .replace(
+        .replace(/&/g, "&amp;")
 
-            /&/g,
+        .replace(/"/g, "&quot;")
 
-            "&amp;"
+        .replace(/</g, "&lt;")
 
-        )
+        .replace(/>/g, "&gt;");
 
-        .replace(
+}
 
-            /"/g,
 
-            "&quot;"
+/* =========================================================
+   ERREURS FIREBASE
+========================================================= */
 
-        )
+function afficherErreurFirebase(contexte, error) {
 
-        .replace(
+    console.error(
 
-            /</g,
+        `Erreur Firebase — ${contexte}`,
 
-            "&lt;"
+        {
 
-        )
+            code: error?.code,
 
-        .replace(
+            message: error?.message,
 
-            />/g,
+            details: error
 
-            "&gt;"
+        }
 
-        );
+    );
+
+
+    let message =
+
+        "Une erreur est survenue.";
+
+
+    if (
+
+        error?.code ===
+        "permission-denied"
+
+    ) {
+
+        message =
+
+            "Accès refusé par les règles de sécurité Firestore.";
+
+    }
+
+
+    else if (
+
+        error?.code ===
+        "failed-precondition"
+
+    ) {
+
+        message =
+
+            "Firestore demande une configuration supplémentaire.";
+
+    }
+
+
+    else if (
+
+        error?.message
+
+    ) {
+
+        message =
+            error.message;
+
+    }
+
+
+    alert(
+
+        `${contexte} : ${message}`
+
+    );
 
 }
