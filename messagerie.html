@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <meta name="theme-color"
+          content="#8ecae6">
+
+    <title>Luma</title>
+
+    <link rel="icon"
+          href="logo/ls.png"
+          type="image/png">
+
+    <link rel="stylesheet"
+          href="messagerie.css">
+
+</head>
+
+<body>
+
+    <!-- =====================================================
+         FOND ATMOSPHÉRIQUE
+    ====================================================== -->
+
+    <div class="sky-background">
+
+        <div class="sun-glow"></div>
+
+        <div class="cloud cloud-one"></div>
+
+        <div class="cloud cloud-two"></div>
+
+        <div class="cloud cloud-three"></div>
+
+    </div>
+
+
+    <!-- =====================================================
+         APPLICATION
+    ====================================================== -->
+
+    <main class="lumina-messenger">
+
+
+        <!-- =================================================
+             BARRE LATERALE
+        ================================================== -->
+
+        <aside class="sidebar">
+
+
+            <!-- LOGO -->
+
+            <div class="brand-header">
+
+                <div class="brand-logo">
+
+                    <img src="logo/lumesys1.png"
+                         alt="Lumina">
+
+                </div>
+
+                <div>
+
+                    <h1>Lumina</h1>
+
+                    <span>Messages & connexions</span>
+
+                </div>
+
+            </div>
+
+
+            <!-- PROFIL UTILISATEUR CONNECTE -->
+
+            <div class="current-user-card">
+
+                <div class="current-user-avatar"
+                     id="currentUserAvatar">
+
+                    ?
+
+                </div>
+
+                <div class="current-user-info">
+
+                    <strong id="currentUserName">
+
+                        Chargement...
+
+                    </strong>
+
+                    <small id="currentUserEmail">
+
+                        Connexion...
+
+                    </small>
+
+                </div>
+
+                <div class="online-indicator"></div>
+
+            </div>
+
+
+            <!-- NAVIGATION -->
+
+            <div class="messenger-navigation">
+
+                <button class="navigation-button active"
+                        id="showAllUsers">
+
+                    <span>✦</span>
+
+                    Tous les utilisateurs
+
+                </button>
+
+                <button class="navigation-button"
+                        id="showRecentChats">
+
+                    <span>◌</span>
+
+                    Conversations récentes
+
+                </button>
+
+            </div>
+
+
+            <!-- RECHERCHE -->
+
+            <div class="search-box">
+
+                <span class="search-icon">⌕</span>
+
+                <input type="text"
+                       id="searchInput"
+                       placeholder="Rechercher une personne...">
+
+            </div>
+
+
+            <!-- LISTE DES UTILISATEURS -->
+
+            <div class="contacts-list"
+                 id="contactsList">
+
+                <div class="loading-state">
+
+                    <div class="loader"></div>
+
+                    <p>Chargement des utilisateurs...</p>
+
+                </div>
+
+            </div>
+
+
+            <!-- FOOTER -->
+
+            <div class="sidebar-footer">
+
+                <span>✦</span>
+
+                <span>Lumina • Connecter les esprits</span>
+
+            </div>
+
+        </aside>
+
+
+        <!-- =================================================
+             ZONE PRINCIPALE DE CONVERSATION
+        ================================================== -->
+
+        <section class="chat-section">
+
+
+            <!-- ETAT INITIAL -->
+
+            <div class="empty-conversation"
+                 id="emptyConversation">
+
+                <div class="empty-illustration">
+
+                    <div class="floating-bubble bubble-one">
+
+                        ✦
+
+                    </div>
+
+                    <div class="floating-bubble bubble-two">
+
+                        ☁
+
+                    </div>
+
+                    <div class="chat-orbit">
+
+                        <div class="orbit-dot"></div>
+
+                        <div class="orbit-dot"></div>
+
+                        <div class="orbit-dot"></div>
+
+                        <div class="center-chat-icon">
+
+                            ◌
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <h2>Une conversation commence<br>
+                    toujours par un message.</h2>
+
+                <p>
+
+                    Choisissez une personne dans votre réseau
+                    pour commencer à échanger.
+
+                </p>
+
+            </div>
+
+
+            <!-- CONVERSATION ACTIVE -->
+
+            <div class="active-chat"
+                 id="activeChat">
+
+
+                <!-- HEADER CONVERSATION -->
+
+                <header class="chat-header">
+
+
+                    <button class="mobile-back-button"
+                            id="mobileBackButton">
+
+                        ←
+
+                    </button>
+
+
+                    <div class="chat-user-avatar"
+                         id="chatUserAvatar">
+
+                        ?
+
+                    </div>
+
+
+                    <div class="chat-user-details">
+
+                        <h2 id="chatUserName">
+
+                            Utilisateur
+
+                        </h2>
+
+                        <span id="chatUserLocation">
+
+                            En ligne sur Lumina
+
+                        </span>
+
+                    </div>
+
+
+                    <div class="chat-header-actions">
+
+                        <button title="Rechercher dans la conversation">
+
+                            ⌕
+
+                        </button>
+
+                        <button title="Plus d'options">
+
+                            ⋮
+
+                        </button>
+
+                    </div>
+
+                </header>
+
+
+                <!-- MESSAGES -->
+
+                <div class="messages-area"
+                     id="messagesArea">
+
+                </div>
+
+
+                <!-- INDICATEUR DE SAISIE -->
+
+                <div class="typing-indicator"
+                     id="typingIndicator">
+
+                    <span></span>
+
+                    <span></span>
+
+                    <span></span>
+
+                </div>
+
+
+                <!-- ZONE DE SAISIE -->
+
+                <div class="message-composer">
+
+
+                    <button class="composer-button"
+                            id="emojiButton"
+                            title="Emoji">
+
+                        ☺
+
+                    </button>
+
+
+                    <textarea id="messageInput"
+                              placeholder="Écrire un message..."
+                              rows="1"></textarea>
+
+
+                    <button class="send-button"
+                            id="sendButton"
+                            title="Envoyer">
+
+                        <span>➤</span>
+
+                    </button>
+
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+    <!-- =====================================================
+         JAVASCRIPT
+    ====================================================== -->
+
+    <script type="module"
+            src="messagerie.js"></script>
+
+</body>
+
+</html>
