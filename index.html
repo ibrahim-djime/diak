@@ -377,262 +377,1523 @@ document.addEventListener("DOMContentLoaded", function () {
 </div>
 
 
-
-
 <script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-app.js";
-  import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
-  import { getFirestore, doc, setDoc, getDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
-  import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-analytics.js";
 
-  // === Initialisation Firebase ===
+  // ============================================================
+  // IMPORTS FIREBASE
+  // ============================================================
+
+  import {
+    initializeApp
+  } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-app.js";
+
+  import {
+    getAuth,
+    GoogleAuthProvider,
+    signInWithPopup,
+    signOut,
+    onAuthStateChanged
+  } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
+
+  import {
+    getFirestore,
+    doc,
+    setDoc,
+    getDoc,
+    serverTimestamp
+  } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
+
+  import {
+    getAnalytics
+  } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-analytics.js";
+
+
+  // ============================================================
+  // CONFIGURATION FIREBASE
+  // ============================================================
+
   const firebaseConfig = {
+
     apiKey: "AIzaSyAClwRQe3g4Cg9CAsn28l_sAihwlMQtGUI",
-    authDomain: "lumina-analytics.firebaseapp.com",
-    projectId: "lumina-analytics",
-    storageBucket: "lumina-analytics.appspot.com",
-    messagingSenderId: "239329398532",
-    appId: "1:239329398532:web:2f68b196df0c4e6400ca51",
-    measurementId: "G-J7LLPRXLJH"
+
+    authDomain:
+      "lumina-analytics.firebaseapp.com",
+
+    projectId:
+      "lumina-analytics",
+
+    storageBucket:
+      "lumina-analytics.appspot.com",
+
+    messagingSenderId:
+      "239329398532",
+
+    appId:
+      "1:239329398532:web:2f68b196df0c4e6400ca51",
+
+    measurementId:
+      "G-J7LLPRXLJH"
+
   };
 
-  const app = initializeApp(firebaseConfig);
-  const analytics = getAnalytics(app);
-  const auth = getAuth(app);
-  const provider = new GoogleAuthProvider();
-  const db = getFirestore(app);
 
-  const loginBtn = document.getElementById("loginBtn");
-  const logoutBtn = document.getElementById("logoutBtn");
+  // ============================================================
+  // INITIALISATION FIREBASE
+  // ============================================================
 
-  // === Popup pour numéro + sexe ===
+  const app =
+    initializeApp(firebaseConfig);
+
+  const analytics =
+    getAnalytics(app);
+
+  const auth =
+    getAuth(app);
+
+  const provider =
+    new GoogleAuthProvider();
+
+  const db =
+    getFirestore(app);
+
+
+  // ============================================================
+  // BOUTONS
+  // ============================================================
+
+  const loginBtn =
+    document.getElementById("loginBtn");
+
+  const logoutBtn =
+    document.getElementById("logoutBtn");
+
+
+  // ============================================================
+  // FORMULAIRE PROFIL
+  // ============================================================
+
   function demandeInfosProfil() {
-    if (document.getElementById("formProfil")) return;
 
-    const div = document.createElement("div");
-    div.id = "formProfil";
+    if (
+      document.getElementById("formProfil")
+    ) {
+
+      return;
+
+    }
+
+
+    const div =
+      document.createElement("div");
+
+
+    div.id =
+      "formProfil";
+
+
     div.style.cssText = `
-      position: fixed; top:0; left:0; width:100%; height:100%;
-      background: rgba(0,0,0,0.85); display:flex; justify-content:center;
-      align-items:center; z-index:9999; color:white;
-    `;
-    div.innerHTML = `
-      <div style="background:#111; padding:20px; border-radius:8px;">
-        <h2>Compléter votre profil</h2>
-        <p>Entrez votre numéro et votre sexe :</p>
 
-        <input id="numeroUser" placeholder="Numéro (+223 ...)" style="width:100%; padding:8px; margin:6px 0;">
-        
-        <select id="sexeUser" style="width:100%; padding:8px; margin:6px 0;">
-          <option value="">Sélectionnez le sexe</option>
-          <option value="Homme">Homme</option>
-          <option value="Femme">Femme</option>
+      position: fixed;
+
+      top: 0;
+
+      left: 0;
+
+      width: 100%;
+
+      height: 100%;
+
+      background: rgba(0,0,0,0.85);
+
+      display: flex;
+
+      justify-content: center;
+
+      align-items: center;
+
+      z-index: 9999;
+
+      color: white;
+
+    `;
+
+
+    div.innerHTML = `
+
+      <div style="
+
+        background: #111;
+
+        padding: 25px;
+
+        border-radius: 12px;
+
+        width: 90%;
+
+        max-width: 400px;
+
+        box-shadow: 0 0 30px rgba(255,255,255,0.15);
+
+      ">
+
+        <h2>
+
+          Compléter votre profil
+
+        </h2>
+
+
+        <p>
+
+          Ces informations permettront aux autres utilisateurs de vous retrouver dans la messagerie.
+
+        </p>
+
+
+        <input
+
+          id="numeroUser"
+
+          placeholder="Numéro (+223 ...)"
+
+          style="
+
+            width: 100%;
+
+            padding: 12px;
+
+            margin: 8px 0;
+
+            box-sizing: border-box;
+
+          "
+
+        >
+
+
+        <select
+
+          id="sexeUser"
+
+          style="
+
+            width: 100%;
+
+            padding: 12px;
+
+            margin: 8px 0;
+
+            box-sizing: border-box;
+
+          "
+
+        >
+
+          <option value="">
+
+            Sélectionnez le sexe
+
+          </option>
+
+          <option value="Homme">
+
+            Homme
+
+          </option>
+
+          <option value="Femme">
+
+            Femme
+
+          </option>
+
         </select>
 
-        <button id="validerProfil" style="padding:10px; width:100%;">Valider</button>
+
+        <button
+
+          id="validerProfil"
+
+          style="
+
+            padding: 12px;
+
+            width: 100%;
+
+            cursor: pointer;
+
+          "
+
+        >
+
+          Valider
+
+        </button>
+
       </div>
+
     `;
+
+
     document.body.appendChild(div);
+
   }
 
-  // === Fonction localisation ===
+
+  // ============================================================
+  // LOCALISATION
+  // ============================================================
+
   async function getUserLocation() {
+
     try {
-      const r = await fetch("https://ipapi.co/json/");
-      const d = await r.json();
+
+      const r =
+        await fetch(
+          "https://ipapi.co/json/"
+        );
+
+
+      const d =
+        await r.json();
+
+
       return {
-        pays: d.country_name,
-        ville: d.city,
-        region: d.region,
-        ip: d.ip
+
+        pays:
+          d.country_name || "Inconnu",
+
+        ville:
+          d.city || "Inconnue",
+
+        region:
+          d.region || "Inconnue",
+
+        ip:
+          d.ip || "Inconnue"
+
       };
-    } catch {
-      return { pays: "Inconnu", ville: "Inconnue", region: "Inconnue", ip: "Inconnue" };
+
     }
+
+    catch (error) {
+
+      console.error(
+        "Erreur localisation :",
+        error
+      );
+
+
+      return {
+
+        pays:
+          "Inconnu",
+
+        ville:
+          "Inconnue",
+
+        region:
+          "Inconnue",
+
+        ip:
+          "Inconnue"
+
+      };
+
+    }
+
   }
 
-  // === Overlay limite visite ===
+
+  // ============================================================
+  // SYNCHRONISATION UTILISATEUR → PROFIL PUBLIC
+  // ============================================================
+
+  async function synchroniserProfilPublic(
+
+    user,
+
+    donneesUtilisateur
+
+  ) {
+
+
+    if (
+
+      !user ||
+
+      !user.email
+
+    ) {
+
+      return;
+
+    }
+
+
+    const publicProfileRef =
+
+      doc(
+
+        db,
+
+        "public_profiles",
+
+        user.email
+
+      );
+
+
+    const displayName =
+
+      user.displayName || "";
+
+
+    const partiesNom =
+
+      displayName
+
+        .trim()
+
+        .split(/\s+/);
+
+
+    const prenom =
+
+      partiesNom[0] || "";
+
+
+    const nom =
+
+      partiesNom
+
+        .slice(1)
+
+        .join(" ");
+
+
+    try {
+
+
+      await setDoc(
+
+        publicProfileRef,
+
+        {
+
+          prenom:
+
+            prenom,
+
+
+          nom:
+
+            nom,
+
+
+          sexe:
+
+            donneesUtilisateur.sexe || "",
+
+
+          ville:
+
+            donneesUtilisateur.localisation?.ville || "",
+
+
+          region:
+
+            donneesUtilisateur.localisation?.region || "",
+
+
+          pays:
+
+            donneesUtilisateur.localisation?.pays || "",
+
+
+          photo:
+
+            donneesUtilisateur.photo || "",
+
+
+          telephone:
+
+            donneesUtilisateur.numero || "",
+
+
+          updatedAt:
+
+            serverTimestamp()
+
+        },
+
+        {
+
+          merge:
+
+            true
+
+        }
+
+      );
+
+
+      console.log(
+
+        "Profil public synchronisé avec succès :",
+
+        user.email
+
+      );
+
+
+    }
+
+    catch (error) {
+
+
+      console.error(
+
+        "Erreur synchronisation public_profiles :",
+
+        error
+
+      );
+
+
+    }
+
+  }
+
+
+  // ============================================================
+  // OVERLAY LIMITE VISITE
+  // ============================================================
+
   function showOverlay() {
-    if (document.getElementById("overlayConnexion")) return;
-    const overlay = document.createElement('div');
-    overlay.id = "overlayConnexion";
-    overlay.style.cssText = `
-      position:fixed; top:0; left:0; width:100%; height:100%;
-      background: rgba(0,0,0,0.85); display:flex; flex-direction:column;
-      justify-content:center; align-items:center; color:white; z-index:9999;
-    `;
-    overlay.innerHTML = `
-      <h2>Connexion requise</h2>
-      <p>Vous avez atteint votre limite. Veuillez vous connecter ou quitter.</p>
-      <button id="loginBtnOverlay">Connexion via Google</button>
-      <button id="quitBtnOverlay">Quitter</button>
-    `;
-    document.body.appendChild(overlay);
 
-    document.getElementById('loginBtnOverlay').addEventListener('click', () => {
-      signInWithPopup(auth, provider);
-    });
-    document.getElementById('quitBtnOverlay').addEventListener('click', () => {
-      window.location.href = 'https://www.google.com';
-    });
+
+    if (
+
+      document.getElementById(
+
+        "overlayConnexion"
+
+      )
+
+    ) {
+
+      return;
+
+    }
+
+
+    const overlay =
+
+      document.createElement(
+
+        "div"
+
+      );
+
+
+    overlay.id =
+
+      "overlayConnexion";
+
+
+    overlay.style.cssText = `
+
+      position: fixed;
+
+      top: 0;
+
+      left: 0;
+
+      width: 100%;
+
+      height: 100%;
+
+      background: rgba(0,0,0,0.85);
+
+      display: flex;
+
+      flex-direction: column;
+
+      justify-content: center;
+
+      align-items: center;
+
+      color: white;
+
+      z-index: 9999;
+
+    `;
+
+
+    overlay.innerHTML = `
+
+      <h2>
+
+        Connexion requise
+
+      </h2>
+
+
+      <p>
+
+        Vous avez atteint votre limite.
+
+        Veuillez vous connecter ou quitter.
+
+      </p>
+
+
+      <button id="loginBtnOverlay">
+
+        Connexion via Google
+
+      </button>
+
+
+      <button id="quitBtnOverlay">
+
+        Quitter
+
+      </button>
+
+    `;
+
+
+    document.body.appendChild(
+
+      overlay
+
+    );
+
+
+    document
+
+      .getElementById(
+
+        "loginBtnOverlay"
+
+      )
+
+      .addEventListener(
+
+        "click",
+
+        () => {
+
+          signInWithPopup(
+
+            auth,
+
+            provider
+
+          );
+
+        }
+
+      );
+
+
+    document
+
+      .getElementById(
+
+        "quitBtnOverlay"
+
+      )
+
+      .addEventListener(
+
+        "click",
+
+        () => {
+
+          window.location.href =
+
+            "https://www.google.com";
+
+        }
+
+      );
+
   }
+
 
   function removeOverlay() {
-    const o = document.getElementById("overlayConnexion");
-    if (o) o.remove();
+
+
+    const o =
+
+      document.getElementById(
+
+        "overlayConnexion"
+
+      );
+
+
+    if (o) {
+
+      o.remove();
+
+    }
+
   }
 
-  // == Compteurs visite/téléchargement ==
-  const pageKey = "visites_" + window.location.pathname;
-  const MAX_VISITES = 2;
-  let visites = parseInt(localStorage.getItem(pageKey)) || 0;
+
+  // ============================================================
+  // COMPTEURS DE VISITES
+  // ============================================================
+
+  const pageKey =
+
+    "visites_" +
+
+    window.location.pathname;
+
+
+  const MAX_VISITES =
+
+    2;
+
+
+  let visites =
+
+    parseInt(
+
+      localStorage.getItem(
+
+        pageKey
+
+      )
+
+    ) || 0;
+
+
   visites++;
-  localStorage.setItem(pageKey, visites);
 
-  const downloadKey = "telechargements_gratuits";
-  const MAX_DOWNLOADS = 3;
-  let downloads = parseInt(localStorage.getItem(downloadKey)) || 0;
 
-  // == Suivi des téléchargements ==
-document.querySelectorAll('a[target="_blank"]').forEach(link => {
+  localStorage.setItem(
 
-  link.addEventListener('click', async (e) => {
+    pageKey,
 
-    const user = auth.currentUser;
+    visites
 
-    if (user) {
-
-      try {
-
-        const ref = doc(db, "utilisateurs", user.email);
-
-        await setDoc(ref, {
-
-          dernierDocument: link.textContent.trim(),
-
-          dernierDocumentId: link.id || "",
-
-          dernierDocumentUrl: link.href,
-
-          dernierAppareil: navigator.userAgent,
-
-          dernierTelechargement: serverTimestamp(),
-
-          nombreTelechargements: downloads + 1
-
-        }, { merge: true });
-
-      } catch(err) {
-
-        console.error("Erreur téléchargement :", err);
-
-      }
-
-    }
-
-    if (!user && downloads >= MAX_DOWNLOADS) {
-
-      e.preventDefault();
-      showOverlay();
-
-    } else {
-
-      downloads++;
-      localStorage.setItem(downloadKey, downloads);
-
-    }
-
-  });
-
-});
-
-  // === Authentification ===
-  onAuthStateChanged(auth, async (user) => {
-    if (user) {
-      loginBtn.style.display = "none";
-      logoutBtn.style.display = "inline-block";
-      removeOverlay();
-
-      const loc = await getUserLocation();
-      const ref = doc(db, "utilisateurs", user.email);
-      const snap = await getDoc(ref);
-
-      let nombreConnexions = 1;
-      let badge = "Nouveau";
-      let numero = null;
-      let sexe = null;
-
-      if (snap.exists()) {
-        const d = snap.data();
-        nombreConnexions = (d.nombreConnexions || 0) + 1;
-        numero = d.numero || null;
-        sexe = d.sexe || null;
-
-        if (nombreConnexions >= 50) badge = "Contributeur";
-        else if (nombreConnexions >= 10) badge = "Fidèle";
-      }
-
-      // → Formulaire si numéro/sexe manquant
-      if (!numero || !sexe) {
-        demandeInfosProfil();
-
-        document.getElementById("validerProfil").onclick = async () => {
-          const num = document.getElementById("numeroUser").value.trim();
-          const sx = document.getElementById("sexeUser").value.trim();
-          if (!num || !sx) return alert("Veuillez remplir les deux champs.");
-
-          await setDoc(ref, {
-            numero: num,
-            sexe: sx
-          }, { merge: true });
-
-          document.getElementById("formProfil").remove();
-        };
-      }
-
-      await setDoc(ref, {
-        nom: user.displayName,
-        email: user.email,
-        photo: user.photoURL,
-        derniereConnexion: serverTimestamp(),
-        localisation: loc,
-        nombreConnexions,
-        badge
-      }, { merge: true });
-
-    } else {
-      loginBtn.style.display = "inline-block";
-      logoutBtn.style.display = "none";
-
-      if (visites > MAX_VISITES || downloads >= MAX_DOWNLOADS) {
-        showOverlay();
-      }
-    }
-  });
-
-  // ===== Scroll maximal =====
-
-   let maxScroll = 0;
-
-window.addEventListener('scroll', () => {
-
-  const hauteurTotale =
-    document.documentElement.scrollHeight - window.innerHeight;
-
-  if (hauteurTotale <= 0) return;
-
-  const scrollPercent = Math.round(
-    (window.scrollY / hauteurTotale) * 100
   );
 
-  if (scrollPercent > maxScroll) {
-    maxScroll = scrollPercent;
-  }
 
-});
+  const downloadKey =
 
-  loginBtn.addEventListener("click", () => signInWithPopup(auth, provider));
-  logoutBtn.addEventListener("click", () => signOut(auth));
+    "telechargements_gratuits";
+
+
+  const MAX_DOWNLOADS =
+
+    3;
+
+
+  let downloads =
+
+    parseInt(
+
+      localStorage.getItem(
+
+        downloadKey
+
+      )
+
+    ) || 0;
+
+
+  // ============================================================
+  // SUIVI DES TÉLÉCHARGEMENTS
+  // ============================================================
+
+  document
+
+    .querySelectorAll(
+
+      'a[target="_blank"]'
+
+    )
+
+    .forEach(
+
+      link => {
+
+
+        link.addEventListener(
+
+          "click",
+
+          async e => {
+
+
+            const user =
+
+              auth.currentUser;
+
+
+            if (user) {
+
+
+              try {
+
+
+                const ref =
+
+                  doc(
+
+                    db,
+
+                    "utilisateurs",
+
+                    user.email
+
+                  );
+
+
+                await setDoc(
+
+                  ref,
+
+                  {
+
+                    dernierDocument:
+
+                      link.textContent.trim(),
+
+
+                    dernierDocumentId:
+
+                      link.id || "",
+
+
+                    dernierDocumentUrl:
+
+                      link.href,
+
+
+                    dernierAppareil:
+
+                      navigator.userAgent,
+
+
+                    dernierTelechargement:
+
+                      serverTimestamp(),
+
+
+                    nombreTelechargements:
+
+                      downloads + 1
+
+                  },
+
+                  {
+
+                    merge:
+
+                      true
+
+                  }
+
+                );
+
+
+              }
+
+
+              catch (err) {
+
+
+                console.error(
+
+                  "Erreur téléchargement :",
+
+                  err
+
+                );
+
+              }
+
+            }
+
+
+            if (
+
+              !user &&
+
+              downloads >= MAX_DOWNLOADS
+
+            ) {
+
+
+              e.preventDefault();
+
+
+              showOverlay();
+
+
+            }
+
+
+            else {
+
+
+              downloads++;
+
+
+              localStorage.setItem(
+
+                downloadKey,
+
+                downloads
+
+              );
+
+            }
+
+          }
+
+        );
+
+      }
+
+    );
+
+
+  // ============================================================
+  // AUTHENTIFICATION
+  // ============================================================
+
+  onAuthStateChanged(
+
+    auth,
+
+    async user => {
+
+
+      if (user) {
+
+
+        loginBtn.style.display =
+
+          "none";
+
+
+        logoutBtn.style.display =
+
+          "inline-block";
+
+
+        removeOverlay();
+
+
+        try {
+
+
+          // ============================================
+          // 1. RÉCUPÉRATION LOCALISATION
+          // ============================================
+
+          const loc =
+
+            await getUserLocation();
+
+
+          // ============================================
+          // 2. DOCUMENT UTILISATEUR
+          // ============================================
+
+          const ref =
+
+            doc(
+
+              db,
+
+              "utilisateurs",
+
+              user.email
+
+            );
+
+
+          const snap =
+
+            await getDoc(ref);
+
+
+          let nombreConnexions =
+
+            1;
+
+
+          let badge =
+
+            "Nouveau";
+
+
+          let numero =
+
+            "";
+
+
+          let sexe =
+
+            "";
+
+
+          if (
+
+            snap.exists()
+
+          ) {
+
+
+            const d =
+
+              snap.data();
+
+
+            nombreConnexions =
+
+              (
+
+                d.nombreConnexions ||
+
+                0
+
+              ) + 1;
+
+
+            numero =
+
+              d.numero ||
+
+              "";
+
+
+            sexe =
+
+              d.sexe ||
+
+              "";
+
+
+            if (
+
+              nombreConnexions >=
+
+              50
+
+            ) {
+
+
+              badge =
+
+                "Contributeur";
+
+            }
+
+
+            else if (
+
+              nombreConnexions >=
+
+              10
+
+            ) {
+
+
+              badge =
+
+                "Fidèle";
+
+            }
+
+
+            else {
+
+
+              badge =
+
+                d.badge ||
+
+                "Nouveau";
+
+            }
+
+          }
+
+
+          // ============================================
+          // 3. ENREGISTREMENT UTILISATEUR
+          // ============================================
+
+          await setDoc(
+
+            ref,
+
+            {
+
+              nom:
+
+                user.displayName || "",
+
+
+              email:
+
+                user.email,
+
+
+              photo:
+
+                user.photoURL || "",
+
+
+              derniereConnexion:
+
+                serverTimestamp(),
+
+
+              localisation:
+
+                loc,
+
+
+              nombreConnexions,
+
+
+              badge,
+
+
+              numero,
+
+
+              sexe
+
+            },
+
+            {
+
+              merge:
+
+                true
+
+            }
+
+          );
+
+
+          // ============================================
+          // 4. SI PROFIL INCOMPLET
+          // ============================================
+
+          if (
+
+            !numero ||
+
+            !sexe
+
+          ) {
+
+
+            demandeInfosProfil();
+
+
+            const boutonValidation =
+
+              document.getElementById(
+
+                "validerProfil"
+
+              );
+
+
+            boutonValidation.onclick =
+
+              async () => {
+
+
+                const num =
+
+                  document
+
+                    .getElementById(
+
+                      "numeroUser"
+
+                    )
+
+                    .value
+
+                    .trim();
+
+
+                const sx =
+
+                  document
+
+                    .getElementById(
+
+                      "sexeUser"
+
+                    )
+
+                    .value
+
+                    .trim();
+
+
+                if (
+
+                  !num ||
+
+                  !sx
+
+                ) {
+
+
+                  alert(
+
+                    "Veuillez remplir les deux champs."
+
+                  );
+
+
+                  return;
+
+                }
+
+
+                try {
+
+
+                  // ============================================
+                  // 5. MISE À JOUR UTILISATEUR
+                  // ============================================
+
+                  await setDoc(
+
+                    ref,
+
+                    {
+
+                      numero:
+
+                        num,
+
+
+                      sexe:
+
+                        sx
+
+                    },
+
+                    {
+
+                      merge:
+
+                        true
+
+                    }
+
+                  );
+
+
+                  // ============================================
+                  // 6. SYNCHRONISATION PROFIL PUBLIC
+                  // ============================================
+
+                  await synchroniserProfilPublic(
+
+                    user,
+
+                    {
+
+                      numero:
+
+                        num,
+
+
+                      sexe:
+
+                        sx,
+
+
+                      photo:
+
+                        user.photoURL || "",
+
+
+                      localisation:
+
+                        loc
+
+                    }
+
+                  );
+
+
+                  document
+
+                    .getElementById(
+
+                      "formProfil"
+
+                    )
+
+                    .remove();
+
+
+                  console.log(
+
+                    "Utilisateur ajouté à public_profiles :",
+
+
+                    user.email
+
+                  );
+
+
+                }
+
+
+                catch (error) {
+
+
+                  console.error(
+
+                    "Erreur création profil public :",
+
+
+                    error
+
+                  );
+
+
+                  alert(
+
+                    "Une erreur est survenue pendant la synchronisation."
+
+                  );
+
+                }
+
+              };
+
+          }
+
+
+          else {
+
+
+            // ============================================
+            // 7. PROFIL DÉJÀ COMPLET
+            // ============================================
+
+            await synchroniserProfilPublic(
+
+              user,
+
+              {
+
+                numero:
+
+                  numero,
+
+
+                sexe:
+
+                  sexe,
+
+
+                photo:
+
+                  user.photoURL || "",
+
+
+                localisation:
+
+                  loc
+
+              }
+
+            );
+
+          }
+
+
+        }
+
+
+        catch (error) {
+
+
+          console.error(
+
+            "Erreur générale connexion :",
+
+            error
+
+          );
+
+        }
+
+
+      }
+
+
+      else {
+
+
+        loginBtn.style.display =
+
+          "inline-block";
+
+
+        logoutBtn.style.display =
+
+          "none";
+
+
+        if (
+
+          visites >
+
+          MAX_VISITES ||
+
+          downloads >=
+
+          MAX_DOWNLOADS
+
+        ) {
+
+
+          showOverlay();
+
+        }
+
+      }
+
+    }
+
+  );
+
+
+  // ============================================================
+  // SUIVI DU SCROLL
+  // ============================================================
+
+  let maxScroll =
+
+    0;
+
+
+  window.addEventListener(
+
+    "scroll",
+
+    () => {
+
+
+      const hauteurTotale =
+
+        document.documentElement
+
+          .scrollHeight -
+
+        window.innerHeight;
+
+
+      if (
+
+        hauteurTotale <=
+
+        0
+
+      ) {
+
+        return;
+
+      }
+
+
+      const scrollPercent =
+
+        Math.round(
+
+          (
+
+            window.scrollY /
+
+            hauteurTotale
+
+          ) * 100
+
+        );
+
+
+      if (
+
+        scrollPercent >
+
+        maxScroll
+
+      ) {
+
+
+        maxScroll =
+
+          scrollPercent;
+
+      }
+
+    }
+
+  );
+
+
+  // ============================================================
+  // BOUTONS CONNEXION / DÉCONNEXION
+  // ============================================================
+
+  loginBtn.addEventListener(
+
+    "click",
+
+    () => {
+
+      signInWithPopup(
+
+        auth,
+
+        provider
+
+      );
+
+    }
+
+  );
+
+
+  logoutBtn.addEventListener(
+
+    "click",
+
+    () => {
+
+      signOut(auth);
+
+    }
+
+  );
+
 </script>
 
 
@@ -4186,6 +5447,7 @@ window.addEventListener('scroll', () => {
     Parce qu’au fond, tout devient plus simple quand l’essentiel est réuni au même endroit et c’est souvent tout ce qu’il faut pour avancer sans effort.  
     Découvrez comment nous pouvons vous aider à atteindre vos objectifs.
   </p>
+  <a href="messagerie.html">message</a>
 
   <p class="intro-mobile">
     Vous méritez un espace simple pour accéder aux services et aux ressources qui comptent pour vous.  
