@@ -1,131 +1,105 @@
-const CACHE_NAME = 'lumesys-cache-v4';
+const CACHE_NAME = "lumesys-cache-v6";
 
 // ============================================================
-// RESSOURCES ESSENTIELLES À METTRE EN CACHE
+// RESSOURCES À PRÉCHARGER
 // ============================================================
 
 const urlsToCache = [
 
-// ============================================================
-// PAGES PRINCIPALES
-// ============================================================
+  // Pages
+  "./",
+  "./index.html",
+  "./index_en.html",
+  "./messagerie.html",
+  "./page5.html",
 
-'./',
-'./index.html',
-'./index_en.html',
-'./messagerie.html',
-'./page5.html',
+  // Styles
+  "./style4.css",
+  "./messagerie.css",
+  "./policescu.css",
 
-// ============================================================
-// STYLES
-// ============================================================
+  // Scripts
+  "./scripts.js",
+  "./scripts2.js",
+  "./messagerie.js",
 
-'./style4.css',
-'./messagerie.css',
-'./policescu.css',
+  // Images
+  "./images/icon-192x192.png",
+  "./images/icon-512x512.png",
+  "./images/lumesys.png",
+  "./images/lumesys.jpg",
+  "./logo/ls.png",
 
-// ============================================================
-// SCRIPTS
-// ============================================================
-
-'./scripts.js',
-'./scripts2.js',
-'./messagerie.js',
-
-// ============================================================
-// LOGOS ET IMAGES
-// ============================================================
-
-'./images/icon-192x192.png',
-'./images/icon-512x512.png',
-'./images/lumesys.png',
-'./images/lumesys.jpg',
-'./logo/ls.png',
-
-// ============================================================
-// POLICES
-// ============================================================
-
-'./pol/INGAME.ttf',
-'./pol/Robot-Rebels.ttf',
-'./pol/Roboto-Regular.ttf',
-'./pol/Boul.otf',
-'./pol/PlayfairDisplaySC-Bold.ttf',
-'./pol/Sobatyan-Regular.otf',
-'./pol/Roboto-MediumItalic.ttf',
-'./pol/MilestoneBrush.otf',
-'./pol/Rostack.otf',
-'./pol/Roboto-Black.ttf',
-'./pol/Matemasie-Regular.ttf',
-'./pol/NewAmsterdam-Regular.ttf',
-'./pol/NerkoOne-Regular.ttf',
-'./pol/Roboto-Bold.ttf',
-'./pol/DMSerifText-Regular.ttf'
+  // Polices
+  "./pol/INGAME.ttf",
+  "./pol/Robot-Rebels.ttf",
+  "./pol/Roboto-Regular.ttf",
+  "./pol/Boul.otf",
+  "./pol/PlayfairDisplaySC-Bold.ttf",
+  "./pol/Sobatyan-Regular.otf",
+  "./pol/Roboto-MediumItalic.ttf",
+  "./pol/MilestoneBrush.otf",
+  "./pol/Rostack.otf",
+  "./pol/Roboto-Black.ttf",
+  "./pol/Matemasie-Regular.ttf",
+  "./pol/NewAmsterdam-Regular.ttf",
+  "./pol/NerkoOne-Regular.ttf",
+  "./pol/Roboto-Bold.ttf",
+  "./pol/DMSerifText-Regular.ttf"
 
 ];
+
+console.log("✅ Service Worker chargé");
 
 // ============================================================
 // INSTALLATION
 // ============================================================
 
-self.addEventListener('install', (event) => {
+self.addEventListener("install", (event) => {
 
-event.waitUntil(
+  console.log("📦 Installation du Service Worker");
 
-```
-caches.open(CACHE_NAME)
+  event.waitUntil(
 
-  .then(async (cache) => {
+    (async () => {
 
-    // On essaie de mettre chaque fichier en cache
-    // individuellement afin qu'une ressource manquante
-    // n'empêche pas tout le Service Worker de fonctionner.
+      const cache = await caches.open(CACHE_NAME);
 
-    for (const url of urlsToCache) {
+      for (const url of urlsToCache) {
 
-      try {
+        try {
 
-        const response = await fetch(url);
+          const response = await fetch(url, {
+            cache: "no-cache"
+          });
 
-        if (response.ok) {
+          if (response && response.ok) {
 
-          await cache.put(url, response);
+            await cache.put(url, response.clone());
 
-          console.log(
-            '✅ Ressource mise en cache :',
-            url
-          );
+            console.log("✅ Mis en cache :", url);
 
-        } else {
+          } else {
 
-          console.warn(
-            '⚠️ Ressource introuvable :',
-            url
-          );
+            console.warn("⚠️ Ressource non disponible :", url);
+
+          }
+
+        } catch (error) {
+
+          console.warn("⚠️ Impossible de mettre en cache :", url, error);
 
         }
 
-      } catch (error) {
-
-        console.warn(
-          '⚠️ Impossible de mettre en cache :',
-          url
-        );
-
       }
 
-    }
+      console.log("✅ Installation terminée");
 
-  })
+      await self.skipWaiting();
 
-  .then(() => {
+    })()
 
-    return self.skipWaiting();
-
-  })
-```
-
-);
+  );
 
 });
 
@@ -133,218 +107,164 @@ caches.open(CACHE_NAME)
 // ACTIVATION
 // ============================================================
 
-self.addEventListener('activate', (event) => {
+self.addEventListener("activate", (event) => {
 
-event.waitUntil(
+  console.log("🚀 Activation du Service Worker");
 
-```
-caches.keys()
+  event.waitUntil(
 
-  .then((cacheNames) => {
+    (async () => {
 
-    return Promise.all(
+      const cacheNames = await caches.keys();
 
-      cacheNames.map((cacheName) => {
+      await Promise.all(
 
-        if (cacheName !== CACHE_NAME) {
+        cacheNames.map((cacheName) => {
 
-          console.log(
-            '🗑️ Suppression ancien cache :',
-            cacheName
-          );
+          if (cacheName !== CACHE_NAME) {
 
-          return caches.delete(cacheName);
+            console.log("🗑️ Suppression ancien cache :", cacheName);
 
-        }
-
-      })
-
-    );
-
-  })
-
-  .then(() => {
-
-    return self.clients.claim();
-
-  })
-```
-
-);
-
-});
-
-// ============================================================
-// FETCH
-// ============================================================
-
-self.addEventListener('fetch', (event) => {
-
-const request = event.request;
-
-// ============================================================
-// UNIQUEMENT LES REQUÊTES GET
-// ============================================================
-
-if (request.method !== 'GET') {
-
-```
-return;
-```
-
-}
-
-// ============================================================
-// UNIQUEMENT LES RESSOURCES DU SITE
-// ============================================================
-
-const requestURL = new URL(request.url);
-
-const isSameOrigin =
-requestURL.origin === self.location.origin;
-
-if (!isSameOrigin) {
-
-```
-return;
-```
-
-}
-
-// ============================================================
-// CACHE FIRST + MISE À JOUR EN ARRIÈRE-PLAN
-// ============================================================
-
-event.respondWith(
-
-```
-caches.match(request)
-
-  .then((cachedResponse) => {
-
-
-    // ========================================================
-    // CAS 1 : LA RESSOURCE EXISTE DANS LE CACHE
-    // ========================================================
-
-    if (cachedResponse) {
-
-
-      // ------------------------------------------------------
-      // MISE À JOUR SILENCIEUSE
-      // ------------------------------------------------------
-
-      fetch(request)
-
-        .then((networkResponse) => {
-
-          if (
-
-            networkResponse &&
-
-            networkResponse.ok
-
-          ) {
-
-            caches.open(CACHE_NAME)
-
-              .then((cache) => {
-
-                cache.put(
-
-                  request,
-
-                  networkResponse.clone()
-
-                );
-
-              });
+            return caches.delete(cacheName);
 
           }
 
         })
 
-        .catch(() => {
+      );
 
-          // Pas de connexion :
-          // la version locale reste disponible.
+      await self.clients.claim();
 
-        });
+      console.log("✅ Service Worker actif");
 
+    })()
 
-      // ------------------------------------------------------
-      // AFFICHAGE IMMÉDIAT
-      // ------------------------------------------------------
+  );
 
-      return cachedResponse;
+});
 
-    }
+// ============================================================
+// INTERCEPTION DES REQUÊTES
+// ============================================================
 
+self.addEventListener("fetch", (event) => {
 
-    // ========================================================
-    // CAS 2 : LA RESSOURCE N'EST PAS ENCORE DANS LE CACHE
-    // ========================================================
+  const request = event.request;
 
-    return fetch(request)
+  // ------------------------------------------------------------
+  // Uniquement les requêtes GET
+  // ------------------------------------------------------------
 
-      .then((networkResponse) => {
+  if (request.method !== "GET") return;
 
+  const url = new URL(request.url);
 
-        if (
+  // ------------------------------------------------------------
+  // Uniquement les ressources du même domaine
+  // ------------------------------------------------------------
 
-          !networkResponse ||
+  if (url.origin !== self.location.origin) return;
 
-          !networkResponse.ok
+  event.respondWith(
 
-        ) {
+    (async () => {
 
-          return networkResponse;
+      const cache = await caches.open(CACHE_NAME);
+
+      const cachedResponse = await cache.match(request);
+
+      // ========================================================
+      // CAS 1 : RESSOURCE DÉJÀ EN CACHE
+      // ========================================================
+
+      if (cachedResponse) {
+
+        // Mise à jour en arrière-plan
+        event.waitUntil(
+
+          fetch(request)
+
+            .then(async (networkResponse) => {
+
+              if (networkResponse && networkResponse.ok) {
+
+                await cache.put(
+                  request,
+                  networkResponse.clone()
+                );
+
+                console.log("🔄 Cache mis à jour :", request.url);
+
+              }
+
+            })
+
+            .catch(() => {
+
+              // Pas de connexion : on garde le cache
+
+            })
+
+        );
+
+        // Affichage immédiat
+        return cachedResponse;
+
+      }
+
+      // ========================================================
+      // CAS 2 : RESSOURCE NON EN CACHE
+      // ========================================================
+
+      try {
+
+        const networkResponse = await fetch(request);
+
+        if (networkResponse && networkResponse.ok) {
+
+          await cache.put(
+            request,
+            networkResponse.clone()
+          );
+
+          console.log("💾 Ajout automatique au cache :", request.url);
 
         }
 
-
-        // ----------------------------------------------------
-        // ENREGISTREMENT AUTOMATIQUE
-        // ----------------------------------------------------
-
-        const responseToCache =
-          networkResponse.clone();
-
-
-        caches.open(CACHE_NAME)
-
-          .then((cache) => {
-
-            cache.put(
-
-              request,
-
-              responseToCache
-
-            );
-
-          });
-
-
         return networkResponse;
 
-      })
+      }
 
+      // ========================================================
+      // CAS 3 : HORS CONNEXION
+      // ========================================================
 
-      .catch(() => {
+      catch (error) {
 
+        console.warn("📴 Hors connexion :", request.url);
 
-        // ====================================================
-        // FALLBACK HORS CONNEXION
-        // ====================================================
+        const offlinePage = await cache.match("./index.html");
 
-        return caches.match('./index.html');
+        if (offlinePage) {
 
-      });
+          return offlinePage;
 
-  })
-```
+        }
 
-);
+        return new Response(
+          "Aucune connexion Internet.",
+          {
+            status: 503,
+            headers: {
+              "Content-Type": "text/plain"
+            }
+          }
+        );
+
+      }
+
+    })()
+
+  );
 
 });
