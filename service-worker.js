@@ -1,36 +1,30 @@
-const CACHE_NAME = "lumesys-cache-v6";
+const CACHE_NAME = "lumesys-cache-v7";
 
 // ============================================================
 // RESSOURCES À PRÉCHARGER
 // ============================================================
 
 const urlsToCache = [
-
-  // Pages
   "./",
   "./index.html",
   "./index_en.html",
   "./messagerie.html",
   "./page5.html",
 
-  // Styles
   "./style4.css",
   "./messagerie.css",
   "./policescu.css",
 
-  // Scripts
   "./scripts.js",
   "./scripts2.js",
   "./messagerie.js",
 
-  // Images
   "./images/icon-192x192.png",
   "./images/icon-512x512.png",
   "./images/lumesys.png",
   "./images/lumesys.jpg",
   "./logo/ls.png",
 
-  // Polices
   "./pol/INGAME.ttf",
   "./pol/Robot-Rebels.ttf",
   "./pol/Roboto-Regular.ttf",
@@ -46,7 +40,6 @@ const urlsToCache = [
   "./pol/NerkoOne-Regular.ttf",
   "./pol/Roboto-Bold.ttf",
   "./pol/DMSerifText-Regular.ttf"
-
 ];
 
 console.log("✅ Service Worker chargé");
@@ -55,49 +48,56 @@ console.log("✅ Service Worker chargé");
 // INSTALLATION
 // ============================================================
 
-self.addEventListener("install", (event) => {
+self.addEventListener("install", function (event) {
 
   console.log("📦 Installation du Service Worker");
 
   event.waitUntil(
 
-    (async () => {
+    caches.open(CACHE_NAME).then(function (cache) {
 
-      const cache = await caches.open(CACHE_NAME);
+      return Promise.all(
 
-      for (const url of urlsToCache) {
+        urlsToCache.map(function (url) {
 
-        try {
-
-          const response = await fetch(url, {
+          return fetch(url, {
             cache: "no-cache"
+          })
+
+          .then(function (response) {
+
+            if (!response.ok) {
+              console.warn("⚠️ Ressource non disponible :", url);
+              return;
+            }
+
+            return cache.put(url, response);
+
+          })
+
+          .catch(function (error) {
+
+            console.warn(
+              "⚠️ Impossible de mettre en cache :",
+              url,
+              error
+            );
+
           });
 
-          if (response && response.ok) {
+        })
 
-            await cache.put(url, response.clone());
+      );
 
-            console.log("✅ Mis en cache :", url);
+    })
 
-          } else {
-
-            console.warn("⚠️ Ressource non disponible :", url);
-
-          }
-
-        } catch (error) {
-
-          console.warn("⚠️ Impossible de mettre en cache :", url, error);
-
-        }
-
-      }
+    .then(function () {
 
       console.log("✅ Installation terminée");
 
-      await self.skipWaiting();
+      return self.skipWaiting();
 
-    })()
+    })
 
   );
 
@@ -107,23 +107,24 @@ self.addEventListener("install", (event) => {
 // ACTIVATION
 // ============================================================
 
-self.addEventListener("activate", (event) => {
+self.addEventListener("activate", function (event) {
 
   console.log("🚀 Activation du Service Worker");
 
   event.waitUntil(
 
-    (async () => {
+    caches.keys().then(function (cacheNames) {
 
-      const cacheNames = await caches.keys();
+      return Promise.all(
 
-      await Promise.all(
-
-        cacheNames.map((cacheName) => {
+        cacheNames.map(function (cacheName) {
 
           if (cacheName !== CACHE_NAME) {
 
-            console.log("🗑️ Suppression ancien cache :", cacheName);
+            console.log(
+              "🗑️ Suppression ancien cache :",
+              cacheName
+            );
 
             return caches.delete(cacheName);
 
@@ -133,11 +134,19 @@ self.addEventListener("activate", (event) => {
 
       );
 
-      await self.clients.claim();
+    })
+
+    .then(function () {
+
+      return self.clients.claim();
+
+    })
+
+    .then(function () {
 
       console.log("✅ Service Worker actif");
 
-    })()
+    })
 
   );
 
@@ -147,123 +156,114 @@ self.addEventListener("activate", (event) => {
 // INTERCEPTION DES REQUÊTES
 // ============================================================
 
-self.addEventListener("fetch", (event) => {
+self.addEventListener("fetch", function (event) {
 
   const request = event.request;
 
-  // ------------------------------------------------------------
-  // Uniquement les requêtes GET
-  // ------------------------------------------------------------
+  if (request.method !== "GET") {
+    return;
+  }
 
-  if (request.method !== "GET") return;
+  const requestURL = new URL(request.url);
 
-  const url = new URL(request.url);
-
-  // ------------------------------------------------------------
-  // Uniquement les ressources du même domaine
-  // ------------------------------------------------------------
-
-  if (url.origin !== self.location.origin) return;
+  if (requestURL.origin !== self.location.origin) {
+    return;
+  }
 
   event.respondWith(
 
-    (async () => {
-
-      const cache = await caches.open(CACHE_NAME);
-
-      const cachedResponse = await cache.match(request);
+    caches.match(request).then(function (cachedResponse) {
 
       // ========================================================
-      // CAS 1 : RESSOURCE DÉJÀ EN CACHE
+      // CAS 1 : RESSOURCE PRÉSENTE DANS LE CACHE
       // ========================================================
 
       if (cachedResponse) {
 
-        // Mise à jour en arrière-plan
         event.waitUntil(
 
           fetch(request)
 
-            .then(async (networkResponse) => {
+            .then(function (networkResponse) {
 
-              if (networkResponse && networkResponse.ok) {
+              if (
+                networkResponse &&
+                networkResponse.ok
+              ) {
 
-                await cache.put(
-                  request,
-                  networkResponse.clone()
-                );
+                return caches.open(CACHE_NAME)
 
-                console.log("🔄 Cache mis à jour :", request.url);
+                  .then(function (cache) {
+
+                    return cache.put(
+                      request,
+                      networkResponse
+                    );
+
+                  });
 
               }
 
             })
 
-            .catch(() => {
+            .catch(function () {
 
-              // Pas de connexion : on garde le cache
+              console.log(
+                "📴 Mise à jour impossible hors connexion"
+              );
 
             })
 
         );
 
-        // Affichage immédiat
         return cachedResponse;
 
       }
 
       // ========================================================
-      // CAS 2 : RESSOURCE NON EN CACHE
+      // CAS 2 : RESSOURCE ABSENTE DU CACHE
       // ========================================================
 
-      try {
+      return fetch(request)
 
-        const networkResponse = await fetch(request);
+        .then(function (networkResponse) {
 
-        if (networkResponse && networkResponse.ok) {
+          if (
+            networkResponse &&
+            networkResponse.ok
+          ) {
 
-          await cache.put(
-            request,
-            networkResponse.clone()
-          );
+            const responseClone =
+              networkResponse.clone();
 
-          console.log("💾 Ajout automatique au cache :", request.url);
+            caches.open(CACHE_NAME)
 
-        }
+              .then(function (cache) {
 
-        return networkResponse;
+                cache.put(
+                  request,
+                  responseClone
+                );
 
-      }
+              });
 
-      // ========================================================
-      // CAS 3 : HORS CONNEXION
-      // ========================================================
-
-      catch (error) {
-
-        console.warn("📴 Hors connexion :", request.url);
-
-        const offlinePage = await cache.match("./index.html");
-
-        if (offlinePage) {
-
-          return offlinePage;
-
-        }
-
-        return new Response(
-          "Aucune connexion Internet.",
-          {
-            status: 503,
-            headers: {
-              "Content-Type": "text/plain"
-            }
           }
-        );
 
-      }
+          return networkResponse;
 
-    })()
+        })
+
+        .catch(function () {
+
+          // ====================================================
+          // CAS 3 : HORS CONNEXION
+          // ====================================================
+
+          return caches.match("./index.html");
+
+        });
+
+    })
 
   );
 
