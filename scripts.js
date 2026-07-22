@@ -1,6 +1,39 @@
 console.log("✅ JavaScript chargé avec succès");
 
 /* =======================================================
+   SERVICE WORKER - MODE HORS CONNEXION
+   ======================================================= */
+
+if ('serviceWorker' in navigator) {
+
+  window.addEventListener('load', () => {
+
+    navigator.serviceWorker
+      .register('/service-worker.js')
+
+      .then((registration) => {
+
+        console.log(
+          '✅ Service Worker enregistré avec succès :',
+          registration.scope
+        );
+
+      })
+
+      .catch((error) => {
+
+        console.error(
+          '❌ Erreur lors de l’enregistrement du Service Worker :',
+          error
+        );
+
+      });
+
+  });
+
+}
+
+/* =======================================================
    1. GESTION DU CHAMP DE RECHERCHE ET DES SUGGESTIONS
    (inchangé, on garde ton code existant)
    ======================================================= */
