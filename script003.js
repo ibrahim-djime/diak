@@ -21,40 +21,137 @@ function normaliserMatricule(texte) {
 
 
 // ========================================
-// CHARGEMENT DU JSON
+// CHARGEMENT DES JSON
 // ========================================
 
 async function chargerDocuments() {
 
     loading.style.display = "block";
 
+    documents = [];
+
+    let numero = 1;
+
+
     try {
 
-        const reponse = await fetch("index.json");
+        while (true) {
 
-        if (!reponse.ok) {
-            throw new Error(
-                "Impossible de charger index.json : " +
-                reponse.status
+            const chemin = `tapc/index${numero}.json`;
+
+            console.log(
+                `📥 Chargement de ${chemin}...`
             );
+
+
+            const reponse = await fetch(chemin);
+
+
+            // ------------------------------------------------
+            // Si le fichier n'existe pas, on arrête.
+            // Exemple : index1, index2, index3 existent,
+            // mais index4 n'existe pas.
+            // ------------------------------------------------
+
+            if (!reponse.ok) {
+
+                if (reponse.status === 404) {
+
+                    console.log(
+                        `ℹ️ ${chemin} n'existe pas. Fin du chargement.`
+                    );
+
+                    break;
+
+                }
+
+
+                throw new Error(
+                    `Erreur ${reponse.status} lors du chargement de ${chemin}`
+                );
+
+            }
+
+
+            const partie = await reponse.json();
+
+
+            // ------------------------------------------------
+            // Vérifier que le fichier contient bien un tableau
+            // ------------------------------------------------
+
+            if (!Array.isArray(partie)) {
+
+                throw new Error(
+                    `${chemin} ne contient pas un tableau JSON valide.`
+                );
+
+            }
+
+
+            // ------------------------------------------------
+            // Ajouter les documents de cette partie
+            // ------------------------------------------------
+
+            documents.push(...partie);
+
+
+            console.log(
+
+                `✅ ${chemin} chargé :`,
+
+                partie.length,
+
+                "document(s)"
+
+            );
+
+
+            numero++;
+
         }
 
-        documents = await reponse.json();
+
+        // ================================================
+        // VÉRIFICATION FINALE
+        // ================================================
 
         console.log(
-            "✅ index.json chargé :",
-            documents.length,
-            "document(s)"
+            "========================================"
         );
+
+        console.log(
+            "✅ CHARGEMENT TERMINÉ"
+        );
+
+        console.log(
+            "Nombre de fichiers JSON chargés :",
+            numero - 1
+        );
+
+        console.log(
+            "Nombre total de documents :",
+            documents.length
+        );
+
+        console.log(
+            "========================================"
+        );
+
 
     } catch (e) {
 
         resultats.innerHTML =
-            "<div class='aucun'>Impossible de charger index.json</div>";
+            "<div class='aucun'>Impossible de charger les fichiers de documents.</div>";
 
-        console.error("❌ Erreur :", e);
+
+        console.error(
+            "❌ Erreur :",
+            e
+        );
 
     }
+
 
     loading.style.display = "none";
 
@@ -71,23 +168,32 @@ chargerDocuments();
 
 function rechercher() {
 
-    const valeur = normaliserMatricule(input.value);
+    const valeur = normaliserMatricule(
+        input.value
+    );
+
 
     resultats.innerHTML = "";
 
+
     // Champ vide
     if (valeur === "") {
+
         return;
+
     }
 
-    // Vérifier que le JSON est bien chargé
+
+    // Vérifier que les JSON sont bien chargés
     if (!documents.length) {
 
         resultats.innerHTML =
             "<div class='aucun'>Les documents sont encore en cours de chargement.</div>";
 
         return;
+
     }
+
 
     const trouves = [];
 
@@ -98,10 +204,14 @@ function rechercher() {
 
     documents.forEach(doc => {
 
-        // Le nouveau JSON utilise "pages"
+
+        // Le JSON utilise "pages"
         if (!doc.pages) {
+
             return;
+
         }
+
 
         const pagesTrouvees = [];
 
@@ -113,20 +223,31 @@ function rechercher() {
         Object.entries(doc.pages).forEach(
             ([numeroPage, contenuPage]) => {
 
+
                 if (!contenuPage) {
+
                     return;
+
                 }
 
 
-                // Normaliser également le contenu de la page
+                // Normaliser le contenu
                 const contenuNormalise =
-                    normaliserMatricule(contenuPage);
+                    normaliserMatricule(
+                        contenuPage
+                    );
 
 
                 // Vérifier si le matricule est présent
-                if (contenuNormalise.includes(valeur)) {
+                if (
+                    contenuNormalise.includes(
+                        valeur
+                    )
+                ) {
 
-                    pagesTrouvees.push(numeroPage);
+                    pagesTrouvees.push(
+                        numeroPage
+                    );
 
                 }
 
@@ -138,13 +259,16 @@ function rechercher() {
         // DOCUMENT TROUVÉ
         // ========================================
 
-        if (pagesTrouvees.length > 0) {
+        if (
+            pagesTrouvees.length > 0
+        ) {
 
             trouves.push({
 
                 ...doc,
 
-                pagesTrouvees: pagesTrouvees
+                pagesTrouvees:
+                    pagesTrouvees
 
             });
 
@@ -157,7 +281,9 @@ function rechercher() {
     // AUCUN RÉSULTAT
     // ========================================
 
-    if (trouves.length === 0) {
+    if (
+        trouves.length === 0
+    ) {
 
         resultats.innerHTML =
             "<div class='aucun'>Aucun document trouvé.</div>";
@@ -173,15 +299,22 @@ function rechercher() {
 
     trouves.forEach(doc => {
 
-        const carte = document.createElement("div");
 
-        carte.className = "resultat";
+        const carte =
+            document.createElement("div");
+
+
+        carte.className =
+            "resultat";
 
 
         // Liste des pages
-        const pages = doc.pagesTrouvees
-            .map(page => `Page ${page}`)
-            .join(" • ");
+        const pages =
+            doc.pagesTrouvees
+                .map(
+                    page => `Page ${page}`
+                )
+                .join(" • ");
 
 
         carte.innerHTML = `
@@ -203,18 +336,26 @@ function rechercher() {
         // OUVRIR LE DOCUMENT
         // ========================================
 
-        carte.addEventListener("click", () => {
+        carte.addEventListener(
+            "click",
+            () => {
 
-            if (doc.lien) {
+                if (doc.lien) {
 
-                window.open(doc.lien, "_blank");
+                    window.open(
+                        doc.lien,
+                        "_blank"
+                    );
+
+                }
 
             }
+        );
 
-        });
 
-
-        resultats.appendChild(carte);
+        resultats.appendChild(
+            carte
+        );
 
     });
 
@@ -225,14 +366,21 @@ function rechercher() {
 // RECHERCHE AUTOMATIQUE
 // ========================================
 
-input.addEventListener("input", () => {
+input.addEventListener(
+    "input",
+    () => {
 
-    clearTimeout(timer);
+        clearTimeout(timer);
 
-    timer = setTimeout(() => {
 
-        rechercher();
+        timer = setTimeout(
+            () => {
 
-    }, 250);
+                rechercher();
 
-});
+            },
+            250
+        );
+
+    }
+);
