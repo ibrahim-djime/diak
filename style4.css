@@ -2080,3 +2080,380 @@ border-radius: 10px;
     }
 
 }
+
+
+
+
+
+
+
+
+
+/* ============================================================
+   NOUVEAU CARROUSEL AUTOMATIQUE
+   ============================================================ */
+
+
+/* ============================================================
+   ZONE PRINCIPALE
+   ============================================================ */
+
+.nouveau-carrousel-zone {
+
+    position: relative;
+
+    width: 100%;
+
+    height: 600px;
+
+    overflow: hidden;
+
+    isolation: isolate;
+
+}
+
+
+/* ============================================================
+   FOND
+   ============================================================ */
+
+.nouveau-carrousel-fond {
+
+    position: absolute;
+
+    inset: 0;
+
+    width: 100%;
+
+    height: 100%;
+
+    overflow: hidden;
+
+    z-index: 1;
+
+}
+
+
+/* ============================================================
+   PISTE
+   ============================================================ */
+
+.nouveau-carrousel-piste {
+
+    display: flex;
+
+    width: 100%;
+
+    height: 100%;
+
+    transform: translate3d(0, 0, 0);
+
+    transition:
+        transform 800ms ease-in-out;
+
+    will-change: transform;
+
+}
+
+
+.nouvelle-slide {
+    position: relative;
+    flex: 0 0 100%;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+
+/* IMAGE ARRIÈRE */
+.nouvelle-slide::before {
+
+    content: "";
+
+    position: absolute;
+
+    inset: -8%;
+
+    background-image: var(--image-fond);
+
+    background-size: cover;
+
+    background-position: center;
+
+    background-repeat: no-repeat;
+
+    filter: blur(12px);
+
+    transform: scale(1.08);
+
+    opacity: 0.75;
+
+    z-index: 1;
+}
+
+
+/* ASSOMBRISSEMENT DE L'ARRIÈRE-PLAN */
+.nouvelle-slide::after {
+
+    content: "";
+
+    position: absolute;
+
+    inset: 0;
+
+    background: rgba(0, 0, 0, 0.20);
+
+    z-index: 2;
+
+    pointer-events: none;
+}
+
+
+/* IMAGE AVANT */
+.nouvelle-slide > a {
+
+    position: relative;
+
+    z-index: 10;
+
+    width: 100%;
+
+    height: 100%;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+}
+
+
+/* PRODUIT ENTIER */
+.nouvelle-slide > a > img {
+
+    position: relative;
+
+    z-index: 10;
+
+    width: 100%;
+
+    height: 100%;
+
+    object-fit: contain;
+
+    object-position: center;
+
+    display: block;
+
+    filter: none;
+
+}
+
+/* ============================================================
+   VOILE LÉGER POUR QUE LE TEXTE RESTE LISIBLE
+   ============================================================ */
+
+.nouveau-carrousel-fond::after {
+
+    content: "";
+
+    position: absolute;
+
+    inset: 0;
+
+    background:
+        rgba(0, 0, 0, 0.18);
+
+    pointer-events: none;
+
+    z-index: 5;
+
+}
+
+
+/* ============================================================
+   TES ANCIENS ÉLÉMENTS
+   ============================================================ */
+
+/*
+   IMPORTANT :
+
+   Ces noms sont tes anciens noms.
+
+   On ne les renomme pas.
+*/
+
+.nouveau-carrousel-zone > #languageSelector {
+
+    position: relative;
+
+    z-index: 20;
+
+}
+
+
+.nouveau-carrousel-zone > #liaisons {
+
+    position: relative;
+
+    z-index: 20;
+
+}
+
+
+.nouveau-carrousel-zone > .search-container {
+
+    position: relative;
+
+    z-index: 20;
+
+}
+
+
+/* ============================================================
+   INDICATEURS
+   ============================================================ */
+
+.nouveaux-indicateurs {
+
+    position: absolute;
+
+    left: 50%;
+
+    bottom: 20px;
+
+    transform: translateX(-50%);
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    gap: 7px;
+
+    z-index: 40;
+
+}
+
+
+/* ============================================================
+   INDICATEUR
+   ============================================================ */
+
+.nouvel-indicateur {
+
+    width: 9px;
+
+    height: 9px;
+
+    padding: 0;
+
+    margin: 0;
+
+    border: none;
+
+    border-radius: 50%;
+
+    background:
+        rgba(255, 255, 255, 0.55);
+
+    cursor: pointer;
+
+    transition:
+        transform 200ms ease,
+        background 200ms ease;
+
+}
+
+
+/* ============================================================
+   INDICATEUR ACTIF
+   ============================================================ */
+
+.nouvel-indicateur.actif {
+
+    background: white;
+
+    transform: scale(1.35);
+
+}
+
+
+/* ============================================================
+   ÉTAT DE CHARGEMENT
+   ============================================================ */
+
+.nouveau-carrousel-zone.chargement
+.nouveau-carrousel-fond {
+
+    background:
+        #111;
+
+}
+
+
+/* ============================================================
+   MOBILE
+   ============================================================ */
+
+@media (max-width: 768px) {
+
+    .nouveau-carrousel-zone {
+
+        height: 500px;
+
+    }
+
+    .nouveaux-indicateurs {
+
+        bottom: 15px;
+
+        gap: 6px;
+
+    }
+
+    .nouvel-indicateur {
+
+        width: 7px;
+
+        height: 7px;
+
+    }
+
+}
+
+
+/* ============================================================
+   PETITS ÉCRANS
+   ============================================================ */
+
+@media (max-width: 480px) {
+
+    .nouveau-carrousel-zone {
+
+        height: 450px;
+
+    }
+
+}
+
+
+/* ============================================================
+   ACCESSIBILITÉ
+   ============================================================ */
+
+@media (prefers-reduced-motion: reduce) {
+
+    .nouveau-carrousel-piste {
+
+        transition: none;
+
+    }
+
+}
