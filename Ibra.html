@@ -429,41 +429,41 @@ document.addEventListener("DOMContentLoaded", function () {
     const conteneur =
         document.getElementById("download-sections");
 
+
     /*
      * Nombre maximum de groupes possibles.
      *
-     * Actuellement tu as :
+     * Exemple :
      *
      * Ibra1_...
      * Ibra2_...
      * Ibra3_...
      * Ibra4_...
-     *
-     * Cette valeur permet de prévoir d'autres groupes
-     * dans le futur :
-     *
-     * Ibra5_1.html
-     * Ibra6_1.html
-     * etc.
      */
     const NOMBRE_MAX_GROUPES = 100;
 
 
     /*
-     * Distance avant le bas de la page à laquelle
-     * le prochain fichier sera chargé.
-     *
-     * 1500 px = chargement avant que le visiteur
-     * arrive réellement à la fin.
+     * Distance avant le BAS de la page
+     * à laquelle le prochain fichier est chargé.
      */
     const DISTANCE_CHARGEMENT = 1500;
 
 
     /*
-     * Nombre de fichiers à précharger discrètement.
+     * Distance avant le HAUT de la page
+     * à laquelle le fichier précédent est chargé.
      *
-     * 0 = aucun préchargement
-     * 1 = le fichier suivant est préparé
+     * IMPORTANT :
+     *
+     * Le fichier précédent est chargé
+     * UNIQUEMENT lorsque le visiteur MONTE.
+     */
+    const DISTANCE_CHARGEMENT_HAUT = 1500;
+
+
+    /*
+     * Nombre de fichiers à précharger discrètement.
      */
     const PREFETCH_A_L_AVANCE = 1;
 
@@ -483,11 +483,11 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
     // ============================================================
-    // POSITION DU CHARGEMENT NORMAL
+    // POSITION DU CHARGEMENT VERS LE BAS
     // ============================================================
 
     /*
-     * Le prochain groupe à charger.
+     * Prochain fichier à charger vers le bas.
      *
      * Départ :
      *
@@ -495,37 +495,58 @@ document.addEventListener("DOMContentLoaded", function () {
      */
     let groupeActuel = 1;
 
+    let partieActuelle = 1;
+
+
+    // ============================================================
+    // POSITION DU CHARGEMENT VERS LE HAUT
+    // ============================================================
 
     /*
-     * La prochaine partie à charger.
+     * Prochain fichier à charger lorsque
+     * le visiteur monte.
      *
-     * Départ :
+     * Exemple :
      *
-     * Ibra1_1.html
+     * recherche → Ibra2_3
+     *
+     * groupePrecedent = 2
+     * partiePrecedente = 2
+     *
+     * donc :
+     *
+     * Ibra2_2.html
      */
-    let partieActuelle = 1;
+    let groupePrecedent = null;
+
+    let partiePrecedente = null;
+
+
+    /*
+     * Indique que nous sommes arrivés
+     * au tout début des fichiers.
+     */
+    let debutDesFichiers = false;
 
 
     // ============================================================
     // ÉTATS
     // ============================================================
 
-    /*
-     * Empêche deux chargements normaux simultanés.
-     */
     let chargementEnCours = false;
 
+    let chargementHautEnCours = false;
 
-    /*
-     * Empêche deux recherches d'ID simultanées.
-     */
     let rechercheEnCours = false;
 
+    let finDesFichiers = false;
+
 
     /*
-     * Indique que tous les fichiers ont été parcourus.
+     * Empêche un déplacement automatique du scroll
+     * d'être interprété comme un mouvement du visiteur.
      */
-    let finDesFichiers = false;
+    let correctionScrollEnCours = false;
 
 
     // ============================================================
@@ -533,27 +554,19 @@ document.addEventListener("DOMContentLoaded", function () {
     // ============================================================
 
     /*
-     * Contient les fichiers déjà téléchargés.
-     *
-     * Exemple :
-     *
-     * "Ibra2_15.html" → son contenu HTML
+     * Contenu HTML des fichiers déjà téléchargés.
      */
     const cacheFichiers = new Map();
 
 
     /*
-     * Contient les fichiers actuellement en cours
-     * de téléchargement.
-     *
-     * Cela évite de demander deux fois le même fichier
-     * en même temps.
+     * Fichiers actuellement en téléchargement.
      */
     const fichiersEnChargement = new Map();
 
 
     /*
-     * Contient les fichiers déjà insérés dans la page.
+     * Fichiers déjà affichés dans la page.
      */
     const fichiersAffiches = new Set();
 
@@ -613,7 +626,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
         // --------------------------------------------------------
-        // LE FICHIER EST DÉJÀ EN MÉMOIRE
+        // DÉJÀ EN CACHE
         // --------------------------------------------------------
 
         if (
@@ -629,7 +642,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
         // --------------------------------------------------------
-        // LE FICHIER EST DÉJÀ EN TRAIN D'ÊTRE CHARGÉ
+        // DÉJÀ EN COURS DE CHARGEMENT
         // --------------------------------------------------------
 
         if (
@@ -661,12 +674,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
                     /*
                      * Le fichier n'existe pas.
-                     *
-                     * Exemple :
-                     *
-                     * Ibra2_47.html
-                     *
-                     * avant que tu ne le crées.
                      */
                     if (!response.ok) {
 
@@ -686,8 +693,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
                     /*
-                     * Si le fichier existe,
-                     * on le conserve en mémoire.
+                     * Conserver le fichier
+                     * en mémoire s'il existe.
                      */
                     if (
                         html !== null
@@ -782,7 +789,86 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
     // ============================================================
-    // AFFICHER UN FICHIER
+    // DÉFINIR LE FICHIER PRÉCÉDENT
+    // ============================================================
+
+    function definirFichierPrecedent(
+        groupe,
+        partie
+    ) {
+
+        /*
+         * Exemple :
+         *
+         * Ibra2_3
+         *
+         * précédent :
+         *
+         * Ibra2_2
+         */
+        if (
+            partie > 1
+        ) {
+
+            groupePrecedent =
+                groupe;
+
+            partiePrecedente =
+                partie - 1;
+
+            debutDesFichiers =
+                false;
+
+            return;
+        }
+
+
+        /*
+         * Exemple :
+         *
+         * Ibra2_1
+         *
+         * précédent :
+         *
+         * dernier fichier de Ibra1
+         */
+        if (
+            groupe > 1
+        ) {
+
+            groupePrecedent =
+                groupe - 1;
+
+            partiePrecedente =
+                null;
+
+            debutDesFichiers =
+                false;
+
+            return;
+        }
+
+
+        /*
+         * Nous sommes à :
+         *
+         * Ibra1_1
+         *
+         * Rien avant.
+         */
+        groupePrecedent =
+            null;
+
+        partiePrecedente =
+            null;
+
+        debutDesFichiers =
+            true;
+    }
+
+
+    // ============================================================
+    // AFFICHER UN FICHIER VERS LE BAS
     // ============================================================
 
     function afficherFichier(
@@ -805,7 +891,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
         // --------------------------------------------------------
-        // NE PAS AJOUTER DEUX FOIS LE MÊME FICHIER
+        // DÉJÀ AFFICHÉ
         // --------------------------------------------------------
 
         if (
@@ -819,7 +905,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
         // --------------------------------------------------------
-        // ANALYSER LE FICHIER
+        // ANALYSER
         // --------------------------------------------------------
 
         const documentTemporaire =
@@ -846,13 +932,12 @@ document.addEventListener("DOMContentLoaded", function () {
                 `${nomFichier} ne contient aucune <section>.`
             );
 
-
             return false;
         }
 
 
         // --------------------------------------------------------
-        // INSÉRER LES SECTIONS DANS IBRA.HTML
+        // AJOUTER À LA FIN
         // --------------------------------------------------------
 
         sections.forEach(
@@ -873,11 +958,32 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
         // --------------------------------------------------------
-        // MÉMORISER LE FICHIER
+        // MÉMORISER
         // --------------------------------------------------------
 
         fichiersAffiches.add(
             nomFichier
+        );
+
+
+        /*
+         * IMPORTANT :
+         *
+         * Le fichier que nous venons d'afficher
+         * devient le nouveau point de départ
+         * pour remonter.
+         *
+         * Exemple :
+         *
+         * Ibra2_3 affiché
+         *
+         * prochain vers le haut :
+         *
+         * Ibra2_2
+         */
+        definirFichierPrecedent(
+            groupe,
+            partie
         );
 
 
@@ -891,15 +997,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
     function avancerPosition() {
 
-        /*
-         * Exemple :
-         *
-         * Ibra2_1
-         *
-         * devient :
-         *
-         * Ibra2_2
-         */
         partieActuelle++;
     }
 
@@ -910,17 +1007,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
     function avancerGroupe() {
 
-        /*
-         * Exemple :
-         *
-         * Ibra2_46
-         *
-         * Ibra2_47 n'existe pas
-         *
-         * devient :
-         *
-         * Ibra3_1
-         */
         groupeActuel++;
 
         partieActuelle = 1;
@@ -928,7 +1014,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
     // ============================================================
-    // CHARGER LE PROCHAIN FICHIER POUR L'AFFICHAGE
+    // CHARGER LE PROCHAIN FICHIER VERS LE BAS
     // ============================================================
 
     async function chargerProchainFichier() {
@@ -979,7 +1065,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
                 console.log(
-                    `Chargement : ${nomFichier}`
+                    `↓ Chargement : ${nomFichier}`
                 );
 
 
@@ -991,7 +1077,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
                 // ------------------------------------------------
-                // FICHIER TROUVÉ
+                // FICHIER EXISTANT
                 // ------------------------------------------------
 
                 if (
@@ -1006,7 +1092,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
                     /*
-                     * Préparer le fichier suivant.
+                     * Préparer le suivant.
                      */
                     avancerPosition();
 
@@ -1025,21 +1111,13 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
                 /*
-                 * On considère que le groupe est terminé.
-                 *
-                 * Exemple :
-                 *
-                 * Ibra2_46 existe
-                 * Ibra2_47 n'existe pas
-                 *
-                 * → on passe à Ibra3_1
+                 * Groupe suivant.
                  */
                 avancerGroupe();
             }
 
 
             finDesFichiers = true;
-
 
             return false;
 
@@ -1082,14 +1160,396 @@ document.addEventListener("DOMContentLoaded", function () {
         }
 
 
-        /*
-         * On télécharge le prochain fichier
-         * sans encore l'afficher.
-         */
         await chargerFichier(
             groupe,
             partie
         );
+    }
+
+
+    // ============================================================
+    // TROUVER LE DERNIER FICHIER D'UN GROUPE
+    // ============================================================
+
+    async function trouverDernierePartie(
+        groupe
+    ) {
+
+        let partie = 1;
+
+        let dernierePartie = 0;
+
+
+        while (
+            partie <= 10000
+        ) {
+
+            const html =
+                await chargerFichier(
+                    groupe,
+                    partie
+                );
+
+
+            if (
+                html === null
+            ) {
+
+                break;
+            }
+
+
+            dernierePartie =
+                partie;
+
+
+            partie++;
+        }
+
+
+        return dernierePartie;
+    }
+
+
+    // ============================================================
+    // CHARGER LE FICHIER PRÉCÉDENT VERS LE HAUT
+    // ============================================================
+
+    async function chargerFichierPrecedent() {
+
+        /*
+         * Nous sommes déjà au début.
+         */
+        if (
+            debutDesFichiers
+        ) {
+
+            console.log(
+                "↑ Déjà au début des fichiers."
+            );
+
+            return false;
+        }
+
+
+        /*
+         * Empêcher plusieurs chargements
+         * simultanés vers le haut.
+         */
+        if (
+            chargementHautEnCours
+        ) {
+
+            return false;
+        }
+
+
+        /*
+         * Aucun fichier précédent défini.
+         */
+        if (
+            groupePrecedent === null
+        ) {
+
+            return false;
+        }
+
+
+        chargementHautEnCours = true;
+
+
+        try {
+
+            let groupe =
+                groupePrecedent;
+
+
+            let partie =
+                partiePrecedente;
+
+
+            // ====================================================
+            // CHERCHER LE DERNIER FICHIER DU GROUPE PRÉCÉDENT
+            // ====================================================
+
+            if (
+                partie === null
+            ) {
+
+                console.log(
+                    `↑ Recherche du dernier fichier du groupe ${groupe}`
+                );
+
+
+                partie =
+                    await trouverDernierePartie(
+                        groupe
+                    );
+
+
+                /*
+                 * Aucun fichier dans ce groupe.
+                 *
+                 * Continuer vers le groupe précédent.
+                 */
+                if (
+                    partie === 0
+                ) {
+
+                    groupe--;
+
+
+                    if (
+                        groupe < 1
+                    ) {
+
+                        debutDesFichiers = true;
+
+                        return false;
+                    }
+
+
+                    groupePrecedent =
+                        groupe;
+
+                    partiePrecedente =
+                        null;
+
+
+                    return await chargerFichierPrecedent();
+                }
+            }
+
+
+            const nomFichier =
+                obtenirNomFichier(
+                    groupe,
+                    partie
+                );
+
+
+            console.log(
+                `↑ Chargement : ${nomFichier}`
+            );
+
+
+            // ====================================================
+            // DÉJÀ AFFICHÉ
+            // ====================================================
+
+            if (
+                fichiersAffiches.has(
+                    nomFichier
+                )
+            ) {
+
+                definirFichierPrecedent(
+                    groupe,
+                    partie
+                );
+
+                return false;
+            }
+
+
+            // ====================================================
+            // CHARGER
+            // ====================================================
+
+            const html =
+                await chargerFichier(
+                    groupe,
+                    partie
+                );
+
+
+            // ====================================================
+            // FICHIER ABSENT
+            // ====================================================
+
+            if (
+                html === null
+            ) {
+
+                console.log(
+                    `${nomFichier} n'existe pas.`
+                );
+
+
+                /*
+                 * Si le fichier 1 n'existe pas,
+                 * passer au groupe précédent.
+                 */
+                if (
+                    partie === 1 &&
+                    groupe > 1
+                ) {
+
+                    groupePrecedent =
+                        groupe - 1;
+
+                    partiePrecedente =
+                        null;
+
+
+                    return await chargerFichierPrecedent();
+                }
+
+
+                debutDesFichiers = true;
+
+                return false;
+            }
+
+
+            // ====================================================
+            // ANALYSER LE HTML
+            // ====================================================
+
+            const documentTemporaire =
+                analyserHTML(
+                    html
+                );
+
+
+            const sections =
+                documentTemporaire.querySelectorAll(
+                    "section"
+                );
+
+
+            if (
+                sections.length === 0
+            ) {
+
+                console.warn(
+                    `${nomFichier} ne contient aucune <section>.`
+                );
+
+                return false;
+            }
+
+
+            // ====================================================
+            // CONSERVER LA POSITION VISUELLE
+            // ====================================================
+
+            const hauteurAvant =
+                document.documentElement.scrollHeight;
+
+
+            const positionAvant =
+                window.scrollY;
+
+
+            // ====================================================
+            // CONSTRUIRE LE CONTENU
+            // ====================================================
+
+            const fragment =
+                document.createDocumentFragment();
+
+
+            sections.forEach(
+                function (section) {
+
+                    const copie =
+                        document.importNode(
+                            section,
+                            true
+                        );
+
+
+                    fragment.appendChild(
+                        copie
+                    );
+                }
+            );
+
+
+            // ====================================================
+            // AJOUTER AU-DESSUS
+            // ====================================================
+
+            conteneur.prepend(
+                fragment
+            );
+
+
+            // ====================================================
+            // MÉMORISER
+            // ====================================================
+
+            fichiersAffiches.add(
+                nomFichier
+            );
+
+
+            // ====================================================
+            // CORRIGER LE SCROLL
+            // ====================================================
+
+            const hauteurApres =
+                document.documentElement.scrollHeight;
+
+
+            const differenceHauteur =
+                hauteurApres -
+                hauteurAvant;
+
+
+            /*
+             * L'ajout du contenu au-dessus
+             * augmente la hauteur totale.
+             *
+             * On ajoute exactement cette hauteur
+             * à scrollY pour garder le visiteur
+             * au même endroit visuellement.
+             */
+            correctionScrollEnCours = true;
+
+
+            window.scrollTo(
+                0,
+                positionAvant +
+                differenceHauteur
+            );
+
+
+            /*
+             * Laisser le navigateur terminer
+             * la correction.
+             */
+            requestAnimationFrame(
+                function () {
+
+                    correctionScrollEnCours = false;
+                }
+            );
+
+
+            // ====================================================
+            // PRÉPARER LE FICHIER ENCORE AVANT
+            // ====================================================
+
+            definirFichierPrecedent(
+                groupe,
+                partie
+            );
+
+
+            console.log(
+                `↑ Fichier ajouté : ${nomFichier}`
+            );
+
+
+            return true;
+
+        }
+        finally {
+
+            chargementHautEnCours = false;
+        }
     }
 
 
@@ -1116,26 +1576,16 @@ document.addEventListener("DOMContentLoaded", function () {
                         `#${idRecherche} introuvable après chargement.`
                     );
 
-
                     return;
                 }
 
 
-                /*
-                 * Positionnement direct.
-                 */
                 element.scrollIntoView({
                     behavior: "auto",
                     block: "center"
                 });
 
 
-                /*
-                 * Deuxième positionnement après un court délai.
-                 *
-                 * Utile si certaines images modifient
-                 * légèrement la hauteur de la page.
-                 */
                 setTimeout(
                     function () {
 
@@ -1187,7 +1637,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
         console.log(
-            `========================================`
+            "========================================"
         );
 
 
@@ -1198,9 +1648,9 @@ document.addEventListener("DOMContentLoaded", function () {
 
         try {
 
-            // ----------------------------------------------------
-            // 1. VÉRIFIER SI L'ÉLÉMENT EST DÉJÀ PRÉSENT
-            // ----------------------------------------------------
+            // ====================================================
+            // ÉLÉMENT DÉJÀ PRÉSENT
+            // ====================================================
 
             const elementDejaPresent =
                 document.getElementById(
@@ -1216,14 +1666,13 @@ document.addEventListener("DOMContentLoaded", function () {
                     idRecherche
                 );
 
-
                 return;
             }
 
 
-            // ----------------------------------------------------
-            // 2. PARCOURIR LES GROUPES
-            // ----------------------------------------------------
+            // ====================================================
+            // PARCOURIR LES GROUPES
+            // ====================================================
 
             for (
                 let groupe = 1;
@@ -1235,10 +1684,6 @@ document.addEventListener("DOMContentLoaded", function () {
                     `Recherche dans le groupe ${groupe}`
                 );
 
-
-                // ------------------------------------------------
-                // PARTIE 1 DU GROUPE
-                // ------------------------------------------------
 
                 let partie = 1;
 
@@ -1264,9 +1709,9 @@ document.addEventListener("DOMContentLoaded", function () {
                         );
 
 
-                    // --------------------------------------------
+                    // ------------------------------------------------
                     // FICHIER ABSENT
-                    // --------------------------------------------
+                    // ------------------------------------------------
 
                     if (
                         html === null
@@ -1276,14 +1721,13 @@ document.addEventListener("DOMContentLoaded", function () {
                             `${nomFichier} absent → groupe suivant.`
                         );
 
-
                         break;
                     }
 
 
-                    // --------------------------------------------
+                    // ------------------------------------------------
                     // ID TROUVÉ
-                    // --------------------------------------------
+                    // ------------------------------------------------
 
                     if (
                         contientId(
@@ -1302,9 +1746,9 @@ document.addEventListener("DOMContentLoaded", function () {
                         );
 
 
-                        // ----------------------------------------
-                        // AFFICHER LE FICHIER
-                        // ----------------------------------------
+                        // ============================================
+                        // AFFICHER LE FICHIER TROUVÉ
+                        // ============================================
 
                         afficherFichier(
                             groupe,
@@ -1313,9 +1757,49 @@ document.addEventListener("DOMContentLoaded", function () {
                         );
 
 
-                        // ----------------------------------------
-                        // ALLER À LA CARTE
-                        // ----------------------------------------
+                        // ============================================
+                        // CONFIGURER LE CHARGEMENT VERS LE BAS
+                        // ============================================
+
+                        /*
+                         * Exemple :
+                         *
+                         * recherche → Ibra2_3
+                         *
+                         * descente :
+                         *
+                         * Ibra2_4
+                         */
+                        groupeActuel =
+                            groupe;
+
+
+                        partieActuelle =
+                            partie + 1;
+
+
+                        // ============================================
+                        // CONFIGURER LE CHARGEMENT VERS LE HAUT
+                        // ============================================
+
+                        /*
+                         * Exemple :
+                         *
+                         * recherche → Ibra2_3
+                         *
+                         * montée :
+                         *
+                         * Ibra2_2
+                         */
+                        definirFichierPrecedent(
+                            groupe,
+                            partie
+                        );
+
+
+                        // ============================================
+                        // ALLER AU RÉSULTAT
+                        // ============================================
 
                         allerVersElement(
                             idRecherche
@@ -1326,18 +1810,14 @@ document.addEventListener("DOMContentLoaded", function () {
                     }
 
 
-                    // --------------------------------------------
-                    // ID PAS TROUVÉ
-                    // --------------------------------------------
+                    // ------------------------------------------------
+                    // ID NON TROUVÉ
+                    // ------------------------------------------------
 
                     partie++;
                 }
             }
 
-
-            // ----------------------------------------------------
-            // ID INTROUVABLE
-            // ----------------------------------------------------
 
             console.warn(
                 `#${idRecherche} n'a été trouvé dans aucun fichier.`
@@ -1352,15 +1832,94 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
     // ============================================================
-    // CHARGEMENT LORS DU DÉFILEMENT
+    // GESTION DU DÉFILEMENT
     // ============================================================
 
     let timerDefilement = null;
 
 
+    /*
+     * Dernière position connue du visiteur.
+     */
+    let dernierePositionScroll =
+        window.scrollY;
+
+
+    /*
+     * Direction réellement détectée.
+     *
+     * Valeurs possibles :
+     *
+     * "haut"
+     * "bas"
+     * null
+     */
+    let directionDefilement = null;
+
+
     window.addEventListener(
         "scroll",
         function () {
+
+            /*
+             * Si le script est en train de corriger
+             * la position après un ajout en haut,
+             * ne rien faire.
+             */
+            if (
+                correctionScrollEnCours
+            ) {
+
+                dernierePositionScroll =
+                    window.scrollY;
+
+                return;
+            }
+
+
+            const nouvellePosition =
+                window.scrollY;
+
+
+            // ====================================================
+            // DÉTECTER LA DIRECTION
+            // ====================================================
+
+            if (
+                nouvellePosition <
+                dernierePositionScroll
+            ) {
+
+                /*
+                 * LE VISITEUR MONTE.
+                 */
+                directionDefilement =
+                    "haut";
+
+            }
+            else if (
+                nouvellePosition >
+                dernierePositionScroll
+            ) {
+
+                /*
+                 * LE VISITEUR DESCEND.
+                 */
+                directionDefilement =
+                    "bas";
+
+            }
+
+
+            /*
+             * IMPORTANT :
+             *
+             * On mémorise la position APRÈS
+             * avoir déterminé la direction.
+             */
+            dernierePositionScroll =
+                nouvellePosition;
+
 
             clearTimeout(
                 timerDefilement
@@ -1371,45 +1930,104 @@ document.addEventListener("DOMContentLoaded", function () {
                 setTimeout(
                     async function () {
 
-                        const positionActuelle =
-                            window.innerHeight +
-                            window.scrollY;
+                        // ====================================================
+                        // LE VISITEUR MONTE
+                        // ====================================================
 
-
-                        const hauteurPage =
-                            document.documentElement.scrollHeight;
-
-
-                        /*
-                         * Le visiteur approche du bas
-                         * de la page actuellement chargée.
-                         */
                         if (
-                            positionActuelle >=
-                            hauteurPage -
-                            DISTANCE_CHARGEMENT
+                            directionDefilement ===
+                            "haut"
                         ) {
 
-                            /*
-                             * Charger et afficher
-                             * la prochaine partie.
-                             */
-                            await chargerProchainFichier();
+                            console.log(
+                                "↑ Visiteur monte"
+                            );
 
 
                             /*
-                             * Préparer discrètement
-                             * la partie suivante.
+                             * Charger vers le haut uniquement
+                             * si nous sommes proches du haut.
                              */
-                            for (
-                                let i = 0;
-                                i < PREFETCH_A_L_AVANCE;
-                                i++
+                            if (
+                                window.scrollY <=
+                                DISTANCE_CHARGEMENT_HAUT
                             ) {
 
-                                await prechargerSuivant();
+                                await chargerFichierPrecedent();
                             }
+
+
+                            /*
+                             * TRÈS IMPORTANT :
+                             *
+                             * Aucun chargement vers le bas
+                             * pendant une montée.
+                             */
+                            return;
                         }
+
+
+                        // ====================================================
+                        // LE VISITEUR DESCEND
+                        // ====================================================
+
+                        if (
+                            directionDefilement ===
+                            "bas"
+                        ) {
+
+                            console.log(
+                                "↓ Visiteur descend"
+                            );
+
+
+                            const positionActuelle =
+                                window.innerHeight +
+                                window.scrollY;
+
+
+                            const hauteurPage =
+                                document.documentElement.scrollHeight;
+
+
+                            /*
+                             * Proche du bas :
+                             *
+                             * charger le fichier suivant.
+                             */
+                            if (
+                                positionActuelle >=
+                                hauteurPage -
+                                DISTANCE_CHARGEMENT
+                            ) {
+
+                                await chargerProchainFichier();
+
+
+                                /*
+                                 * Précharger discrètement
+                                 * le fichier suivant.
+                                 */
+                                for (
+                                    let i = 0;
+                                    i < PREFETCH_A_L_AVANCE;
+                                    i++
+                                ) {
+
+                                    await prechargerSuivant();
+                                }
+                            }
+
+
+                            return;
+                        }
+
+
+                        // ====================================================
+                        // AUCUNE DIRECTION
+                        // ====================================================
+
+                        return;
 
                     },
                     100
@@ -1451,7 +2069,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
         // ========================================================
-        // CAS 1 : LIEN AVEC #ID
+        // CAS 1 : RECHERCHE DIRECTE
         // ========================================================
 
         if (idInitial) {
@@ -1461,10 +2079,15 @@ document.addEventListener("DOMContentLoaded", function () {
              *
              * Ibra.html#philo_doute
              *
-             * Le script ne charge pas Ibra1_1
-             * inutilement.
+             * Si le résultat se trouve dans :
              *
-             * Il commence directement sa recherche.
+             * Ibra2_3.html
+             *
+             * alors :
+             *
+             * ↓ → Ibra2_4
+             *
+             * ↑ → Ibra2_2
              */
             await rechercherId(
                 idInitial
@@ -1480,7 +2103,7 @@ document.addEventListener("DOMContentLoaded", function () {
         // ========================================================
 
         /*
-         * Première partie affichée :
+         * Première partie :
          *
          * Ibra1_1.html
          */
@@ -1488,9 +2111,9 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
         /*
-         * Préchargement discret du fichier suivant.
+         * Préchargement discret :
          *
-         * Le visiteur voit déjà Ibra1_1.
+         * Ibra1_2.html
          */
         setTimeout(
             function () {
