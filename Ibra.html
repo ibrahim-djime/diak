@@ -497,6 +497,15 @@ document.addEventListener("DOMContentLoaded", function () {
 
     let partieActuelle = 1;
 
+    /*
+     * 0 = fichier principal
+     *
+     * 1 = IbraX_Y_1
+     * 2 = IbraX_Y_2
+     * etc.
+     */
+    let sousPartieActuelle = 0;
+
 
     // ============================================================
     // POSITION DU CHARGEMENT VERS LE HAUT
@@ -505,21 +514,12 @@ document.addEventListener("DOMContentLoaded", function () {
     /*
      * Prochain fichier à charger lorsque
      * le visiteur monte.
-     *
-     * Exemple :
-     *
-     * recherche → Ibra2_3
-     *
-     * groupePrecedent = 2
-     * partiePrecedente = 2
-     *
-     * donc :
-     *
-     * Ibra2_2.html
      */
     let groupePrecedent = null;
 
     let partiePrecedente = null;
+
+    let sousPartiePrecedente = null;
 
 
     /*
@@ -602,8 +602,14 @@ document.addEventListener("DOMContentLoaded", function () {
 
     function obtenirNomFichier(
         groupe,
-        partie
+        partie,
+        sousPartie = 0
     ) {
+
+        if (sousPartie > 0) {
+
+            return `Ibra${groupe}_${partie}_${sousPartie}.html`;
+        }
 
         return `Ibra${groupe}_${partie}.html`;
     }
@@ -615,13 +621,15 @@ document.addEventListener("DOMContentLoaded", function () {
 
     async function chargerFichier(
         groupe,
-        partie
+        partie,
+        sousPartie = 0
     ) {
 
         const nomFichier =
             obtenirNomFichier(
                 groupe,
-                partie
+                partie,
+                sousPartie
             );
 
 
@@ -792,19 +800,95 @@ document.addEventListener("DOMContentLoaded", function () {
     // DÉFINIR LE FICHIER PRÉCÉDENT
     // ============================================================
 
-    function definirFichierPrecedent(
+    async function definirFichierPrecedent(
         groupe,
-        partie
+        partie,
+        sousPartie = 0
     ) {
 
         /*
+         * --------------------------------------------------------
+         * CAS 1 :
+         *
+         * Nous sommes dans une sous-partie.
+         *
          * Exemple :
          *
-         * Ibra2_3
+         * Ibra2_1_2
          *
          * précédent :
          *
+         * Ibra2_1_1
+         * --------------------------------------------------------
+         */
+        if (
+            sousPartie > 1
+        ) {
+
+            groupePrecedent =
+                groupe;
+
+            partiePrecedente =
+                partie;
+
+            sousPartiePrecedente =
+                sousPartie - 1;
+
+            debutDesFichiers =
+                false;
+
+            return;
+        }
+
+
+        /*
+         * --------------------------------------------------------
+         * CAS 2 :
+         *
+         * Nous sommes dans Ibra2_1_1.
+         *
+         * Le précédent est le fichier principal :
+         *
+         * Ibra2_1
+         * --------------------------------------------------------
+         */
+        if (
+            sousPartie === 1
+        ) {
+
+            groupePrecedent =
+                groupe;
+
+            partiePrecedente =
+                partie;
+
+            sousPartiePrecedente =
+                0;
+
+            debutDesFichiers =
+                false;
+
+            return;
+        }
+
+
+        /*
+         * --------------------------------------------------------
+         * CAS 3 :
+         *
+         * Nous sommes dans un fichier principal
+         * et il faut aller au fichier principal précédent.
+         *
+         * Exemple :
+         *
          * Ibra2_2
+         *
+         * Il faut chercher :
+         *
+         * Ibra2_1_2
+         * puis Ibra2_1_1
+         * puis Ibra2_1
+         * --------------------------------------------------------
          */
         if (
             partie > 1
@@ -816,6 +900,9 @@ document.addEventListener("DOMContentLoaded", function () {
             partiePrecedente =
                 partie - 1;
 
+            sousPartiePrecedente =
+                null;
+
             debutDesFichiers =
                 false;
 
@@ -824,13 +911,17 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
         /*
-         * Exemple :
+         * --------------------------------------------------------
+         * CAS 4 :
+         *
+         * Nous sommes à :
          *
          * Ibra2_1
          *
          * précédent :
          *
-         * dernier fichier de Ibra1
+         * dernier fichier du groupe 1
+         * --------------------------------------------------------
          */
         if (
             groupe > 1
@@ -842,6 +933,9 @@ document.addEventListener("DOMContentLoaded", function () {
             partiePrecedente =
                 null;
 
+            sousPartiePrecedente =
+                null;
+
             debutDesFichiers =
                 false;
 
@@ -850,16 +944,23 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
         /*
+         * --------------------------------------------------------
+         * CAS 5 :
+         *
          * Nous sommes à :
          *
          * Ibra1_1
          *
          * Rien avant.
+         * --------------------------------------------------------
          */
         groupePrecedent =
             null;
 
         partiePrecedente =
+            null;
+
+        sousPartiePrecedente =
             null;
 
         debutDesFichiers =
@@ -871,9 +972,10 @@ document.addEventListener("DOMContentLoaded", function () {
     // AFFICHER UN FICHIER VERS LE BAS
     // ============================================================
 
-    function afficherFichier(
+    async function afficherFichier(
         groupe,
         partie,
+        sousPartie,
         html
     ) {
 
@@ -886,7 +988,8 @@ document.addEventListener("DOMContentLoaded", function () {
         const nomFichier =
             obtenirNomFichier(
                 groupe,
-                partie
+                partie,
+                sousPartie
             );
 
 
@@ -967,23 +1070,14 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
         /*
-         * IMPORTANT :
-         *
          * Le fichier que nous venons d'afficher
          * devient le nouveau point de départ
          * pour remonter.
-         *
-         * Exemple :
-         *
-         * Ibra2_3 affiché
-         *
-         * prochain vers le haut :
-         *
-         * Ibra2_2
          */
-        definirFichierPrecedent(
+        await definirFichierPrecedent(
             groupe,
-            partie
+            partie,
+            sousPartie
         );
 
 
@@ -997,7 +1091,43 @@ document.addEventListener("DOMContentLoaded", function () {
 
     function avancerPosition() {
 
-        partieActuelle++;
+        /*
+         * --------------------------------------------------------
+         * Nous sommes dans le fichier principal.
+         *
+         * Après :
+         *
+         * Ibra2_1
+         *
+         * on teste :
+         *
+         * Ibra2_1_1
+         * --------------------------------------------------------
+         */
+        if (
+            sousPartieActuelle === 0
+        ) {
+
+            sousPartieActuelle = 1;
+
+            return;
+        }
+
+
+        /*
+         * --------------------------------------------------------
+         * Nous sommes dans une sous-partie.
+         *
+         * Exemple :
+         *
+         * Ibra2_1_1
+         *
+         * prochain :
+         *
+         * Ibra2_1_2
+         * --------------------------------------------------------
+         */
+        sousPartieActuelle++;
     }
 
 
@@ -1010,6 +1140,20 @@ document.addEventListener("DOMContentLoaded", function () {
         groupeActuel++;
 
         partieActuelle = 1;
+
+        sousPartieActuelle = 0;
+    }
+
+
+    // ============================================================
+    // PASSER À LA PARTIE PRINCIPALE SUIVANTE
+    // ============================================================
+
+    function avancerPartie() {
+
+        partieActuelle++;
+
+        sousPartieActuelle = 0;
     }
 
 
@@ -1052,15 +1196,18 @@ document.addEventListener("DOMContentLoaded", function () {
                 const groupe =
                     groupeActuel;
 
-
                 const partie =
                     partieActuelle;
+
+                const sousPartie =
+                    sousPartieActuelle;
 
 
                 const nomFichier =
                     obtenirNomFichier(
                         groupe,
-                        partie
+                        partie,
+                        sousPartie
                     );
 
 
@@ -1072,7 +1219,8 @@ document.addEventListener("DOMContentLoaded", function () {
                 const html =
                     await chargerFichier(
                         groupe,
-                        partie
+                        partie,
+                        sousPartie
                     );
 
 
@@ -1084,9 +1232,10 @@ document.addEventListener("DOMContentLoaded", function () {
                     html !== null
                 ) {
 
-                    afficherFichier(
+                    await afficherFichier(
                         groupe,
                         partie,
+                        sousPartie,
                         html
                     );
 
@@ -1111,7 +1260,39 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
                 /*
-                 * Groupe suivant.
+                 * ------------------------------------------------
+                 * Si nous étions dans une sous-partie :
+                 *
+                 * Ibra2_1_1
+                 * Ibra2_1_2
+                 * Ibra2_1_3
+                 *
+                 * et que le prochain sous-fichier n'existe pas,
+                 * la série est terminée.
+                 *
+                 * On passe donc au fichier principal suivant :
+                 *
+                 * Ibra2_2
+                 * ------------------------------------------------
+                 */
+                if (
+                    sousPartie > 0
+                ) {
+
+                    avancerPartie();
+
+                    continue;
+                }
+
+
+                /*
+                 * ------------------------------------------------
+                 * Si le fichier principal n'existe pas :
+                 *
+                 * Ibra2_1 absent
+                 *
+                 * on passe au groupe suivant.
+                 * ------------------------------------------------
                  */
                 avancerGroupe();
             }
@@ -1143,12 +1324,14 @@ document.addEventListener("DOMContentLoaded", function () {
         }
 
 
-        const groupe =
+        let groupe =
             groupeActuel;
 
-
-        const partie =
+        let partie =
             partieActuelle;
+
+        let sousPartie =
+            sousPartieActuelle;
 
 
         if (
@@ -1162,7 +1345,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
         await chargerFichier(
             groupe,
-            partie
+            partie,
+            sousPartie
         );
     }
 
@@ -1187,7 +1371,8 @@ document.addEventListener("DOMContentLoaded", function () {
             const html =
                 await chargerFichier(
                     groupe,
-                    partie
+                    partie,
+                    0
                 );
 
 
@@ -1208,6 +1393,56 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
         return dernierePartie;
+    }
+
+
+    // ============================================================
+    // TROUVER LA DERNIÈRE SOUS-PARTIE
+    // ============================================================
+
+    async function trouverDerniereSousPartie(
+        groupe,
+        partie
+    ) {
+
+        let sousPartie = 1;
+
+        let derniereSousPartie = 0;
+
+
+        while (
+            sousPartie <= 10000
+        ) {
+
+            const html =
+                await chargerFichier(
+                    groupe,
+                    partie,
+                    sousPartie
+                );
+
+
+            /*
+             * Dès qu'une sous-partie n'existe pas,
+             * la série est terminée.
+             */
+            if (
+                html === null
+            ) {
+
+                break;
+            }
+
+
+            derniereSousPartie =
+                sousPartie;
+
+
+            sousPartie++;
+        }
+
+
+        return derniereSousPartie;
     }
 
 
@@ -1263,13 +1498,15 @@ document.addEventListener("DOMContentLoaded", function () {
             let groupe =
                 groupePrecedent;
 
-
             let partie =
                 partiePrecedente;
 
+            let sousPartie =
+                sousPartiePrecedente;
+
 
             // ====================================================
-            // CHERCHER LE DERNIER FICHIER DU GROUPE PRÉCÉDENT
+            // CAS 1 : LE PRÉCÉDENT EST UNE PARTIE PRINCIPALE
             // ====================================================
 
             if (
@@ -1298,7 +1535,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
                     groupe--;
 
-
                     if (
                         groupe < 1
                     ) {
@@ -1315,8 +1551,38 @@ document.addEventListener("DOMContentLoaded", function () {
                     partiePrecedente =
                         null;
 
+                    sousPartiePrecedente =
+                        null;
+
 
                     return await chargerFichierPrecedent();
+                }
+
+
+                /*
+                 * Le dernier fichier principal peut
+                 * posséder des sous-parties.
+                 *
+                 * On cherche la dernière sous-partie.
+                 */
+                const derniereSousPartie =
+                    await trouverDerniereSousPartie(
+                        groupe,
+                        partie
+                    );
+
+
+                if (
+                    derniereSousPartie > 0
+                ) {
+
+                    sousPartie =
+                        derniereSousPartie;
+
+                }
+                else {
+
+                    sousPartie = 0;
                 }
             }
 
@@ -1324,7 +1590,8 @@ document.addEventListener("DOMContentLoaded", function () {
             const nomFichier =
                 obtenirNomFichier(
                     groupe,
-                    partie
+                    partie,
+                    sousPartie
                 );
 
 
@@ -1343,9 +1610,15 @@ document.addEventListener("DOMContentLoaded", function () {
                 )
             ) {
 
-                definirFichierPrecedent(
+                /*
+                 * Le fichier est déjà affiché.
+                 *
+                 * Préparer son précédent.
+                 */
+                await definirFichierPrecedent(
                     groupe,
-                    partie
+                    partie,
+                    sousPartie
                 );
 
                 return false;
@@ -1359,7 +1632,8 @@ document.addEventListener("DOMContentLoaded", function () {
             const html =
                 await chargerFichier(
                     groupe,
-                    partie
+                    partie,
+                    sousPartie
                 );
 
 
@@ -1377,8 +1651,215 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
                 /*
-                 * Si le fichier 1 n'existe pas,
-                 * passer au groupe précédent.
+                 * ------------------------------------------------
+                 * Une sous-partie absente ne doit pas être
+                 * sautée vers une autre sous-partie.
+                 *
+                 * La série s'arrête et on revient au fichier
+                 * principal précédent.
+                 * ------------------------------------------------
+                 */
+                if (
+                    sousPartie > 0
+                ) {
+
+                    sousPartie = 0;
+
+
+                    /*
+                     * Le fichier principal lui-même sera traité
+                     * juste après.
+                     */
+                    const nomPrincipal =
+                        obtenirNomFichier(
+                            groupe,
+                            partie,
+                            0
+                        );
+
+
+                    if (
+                        fichiersAffiches.has(
+                            nomPrincipal
+                        )
+                    ) {
+
+                        await definirFichierPrecedent(
+                            groupe,
+                            partie,
+                            0
+                        );
+
+                        return false;
+                    }
+
+
+                    const htmlPrincipal =
+                        await chargerFichier(
+                            groupe,
+                            partie,
+                            0
+                        );
+
+
+                    if (
+                        htmlPrincipal === null
+                    ) {
+
+                        if (
+                            partie > 1
+                        ) {
+
+                            groupePrecedent =
+                                groupe;
+
+                            partiePrecedente =
+                                partie - 1;
+
+                            sousPartiePrecedente =
+                                null;
+
+                            return await chargerFichierPrecedent();
+                        }
+
+
+                        if (
+                            groupe > 1
+                        ) {
+
+                            groupePrecedent =
+                                groupe - 1;
+
+                            partiePrecedente =
+                                null;
+
+                            sousPartiePrecedente =
+                                null;
+
+                            return await chargerFichierPrecedent();
+                        }
+
+
+                        debutDesFichiers = true;
+
+                        return false;
+                    }
+
+
+                    const documentPrincipal =
+                        analyserHTML(
+                            htmlPrincipal
+                        );
+
+
+                    const sectionsPrincipal =
+                        documentPrincipal.querySelectorAll(
+                            "section"
+                        );
+
+
+                    if (
+                        sectionsPrincipal.length === 0
+                    ) {
+
+                        console.warn(
+                            `${nomPrincipal} ne contient aucune <section>.`
+                        );
+
+                        return false;
+                    }
+
+
+                    const hauteurAvantPrincipal =
+                        document.documentElement.scrollHeight;
+
+
+                    const positionAvantPrincipal =
+                        window.scrollY;
+
+
+                    const fragmentPrincipal =
+                        document.createDocumentFragment();
+
+
+                    sectionsPrincipal.forEach(
+                        function (section) {
+
+                            const copie =
+                                document.importNode(
+                                    section,
+                                    true
+                                );
+
+
+                            fragmentPrincipal.appendChild(
+                                copie
+                            );
+                        }
+                    );
+
+
+                    conteneur.prepend(
+                        fragmentPrincipal
+                    );
+
+
+                    fichiersAffiches.add(
+                        nomPrincipal
+                    );
+
+
+                    const hauteurApresPrincipal =
+                        document.documentElement.scrollHeight;
+
+
+                    const differenceHauteurPrincipal =
+                        hauteurApresPrincipal -
+                        hauteurAvantPrincipal;
+
+
+                    correctionScrollEnCours = true;
+
+
+                    window.scrollTo(
+                        0,
+                        positionAvantPrincipal +
+                        differenceHauteurPrincipal
+                    );
+
+
+                    requestAnimationFrame(
+                        function () {
+
+                            correctionScrollEnCours = false;
+                        }
+                    );
+
+
+                    await definirFichierPrecedent(
+                        groupe,
+                        partie,
+                        0
+                    );
+
+
+                    console.log(
+                        `↑ Fichier ajouté : ${nomPrincipal}`
+                    );
+
+
+                    return true;
+                }
+
+
+                /*
+                 * ------------------------------------------------
+                 * Si un fichier principal est absent :
+                 *
+                 * Ibra2_1 absent
+                 *
+                 * on passe au groupe précédent.
+                 * ------------------------------------------------
                  */
                 if (
                     partie === 1 &&
@@ -1389,6 +1870,31 @@ document.addEventListener("DOMContentLoaded", function () {
                         groupe - 1;
 
                     partiePrecedente =
+                        null;
+
+                    sousPartiePrecedente =
+                        null;
+
+
+                    return await chargerFichierPrecedent();
+                }
+
+
+                /*
+                 * Si nous étions sur une partie > 1,
+                 * le fichier précédent est la partie précédente.
+                 */
+                if (
+                    partie > 1
+                ) {
+
+                    groupePrecedent =
+                        groupe;
+
+                    partiePrecedente =
+                        partie - 1;
+
+                    sousPartiePrecedente =
                         null;
 
 
@@ -1532,9 +2038,10 @@ document.addEventListener("DOMContentLoaded", function () {
             // PRÉPARER LE FICHIER ENCORE AVANT
             // ====================================================
 
-            definirFichierPrecedent(
+            await definirFichierPrecedent(
                 groupe,
-                partie
+                partie,
+                sousPartie
             );
 
 
@@ -1690,35 +2197,41 @@ document.addEventListener("DOMContentLoaded", function () {
 
                 while (true) {
 
-                    const nomFichier =
+                    // ------------------------------------------------
+                    // FICHIER PRINCIPAL
+                    // ------------------------------------------------
+
+                    const nomFichierPrincipal =
                         obtenirNomFichier(
                             groupe,
-                            partie
+                            partie,
+                            0
                         );
 
 
                     console.log(
-                        `Recherche dans ${nomFichier}`
+                        `Recherche dans ${nomFichierPrincipal}`
                     );
 
 
-                    const html =
+                    const htmlPrincipal =
                         await chargerFichier(
                             groupe,
-                            partie
+                            partie,
+                            0
                         );
 
 
                     // ------------------------------------------------
-                    // FICHIER ABSENT
+                    // FICHIER PRINCIPAL ABSENT
                     // ------------------------------------------------
 
                     if (
-                        html === null
+                        htmlPrincipal === null
                     ) {
 
                         console.log(
-                            `${nomFichier} absent → groupe suivant.`
+                            `${nomFichierPrincipal} absent → groupe suivant.`
                         );
 
                         break;
@@ -1726,12 +2239,12 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
                     // ------------------------------------------------
-                    // ID TROUVÉ
+                    // ID TROUVÉ DANS LE FICHIER PRINCIPAL
                     // ------------------------------------------------
 
                     if (
                         contientId(
-                            html,
+                            htmlPrincipal,
                             idRecherche
                         )
                     ) {
@@ -1742,64 +2255,36 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
                         console.log(
-                            `Fichier : ${nomFichier}`
+                            `Fichier : ${nomFichierPrincipal}`
                         );
 
 
-                        // ============================================
-                        // AFFICHER LE FICHIER TROUVÉ
-                        // ============================================
-
-                        afficherFichier(
+                        await afficherFichier(
                             groupe,
                             partie,
-                            html
+                            0,
+                            htmlPrincipal
                         );
 
 
-                        // ============================================
-                        // CONFIGURER LE CHARGEMENT VERS LE BAS
-                        // ============================================
-
-                        /*
-                         * Exemple :
-                         *
-                         * recherche → Ibra2_3
-                         *
-                         * descente :
-                         *
-                         * Ibra2_4
-                         */
                         groupeActuel =
                             groupe;
 
 
                         partieActuelle =
-                            partie + 1;
+                            partie;
 
 
-                        // ============================================
-                        // CONFIGURER LE CHARGEMENT VERS LE HAUT
-                        // ============================================
+                        sousPartieActuelle =
+                            1;
 
-                        /*
-                         * Exemple :
-                         *
-                         * recherche → Ibra2_3
-                         *
-                         * montée :
-                         *
-                         * Ibra2_2
-                         */
-                        definirFichierPrecedent(
+
+                        await definirFichierPrecedent(
                             groupe,
-                            partie
+                            partie,
+                            0
                         );
 
-
-                        // ============================================
-                        // ALLER AU RÉSULTAT
-                        // ============================================
 
                         allerVersElement(
                             idRecherche
@@ -1811,9 +2296,114 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
                     // ------------------------------------------------
-                    // ID NON TROUVÉ
+                    // RECHERCHER LES SOUS-PARTIES
                     // ------------------------------------------------
 
+                    let sousPartie = 1;
+
+
+                    while (true) {
+
+                        const nomFichierSousPartie =
+                            obtenirNomFichier(
+                                groupe,
+                                partie,
+                                sousPartie
+                            );
+
+
+                        console.log(
+                            `Recherche dans ${nomFichierSousPartie}`
+                        );
+
+
+                        const htmlSousPartie =
+                            await chargerFichier(
+                                groupe,
+                                partie,
+                                sousPartie
+                            );
+
+
+                        /*
+                         * Dès qu'une sous-partie n'existe pas,
+                         * la série est terminée.
+                         *
+                         * On passe directement à la partie
+                         * principale suivante.
+                         */
+                        if (
+                            htmlSousPartie === null
+                        ) {
+
+                            break;
+                        }
+
+
+                        // ------------------------------------------------
+                        // ID TROUVÉ DANS UNE SOUS-PARTIE
+                        // ------------------------------------------------
+
+                        if (
+                            contientId(
+                                htmlSousPartie,
+                                idRecherche
+                            )
+                        ) {
+
+                            console.log(
+                                `TROUVÉ : #${idRecherche}`
+                            );
+
+
+                            console.log(
+                                `Fichier : ${nomFichierSousPartie}`
+                            );
+
+
+                            await afficherFichier(
+                                groupe,
+                                partie,
+                                sousPartie,
+                                htmlSousPartie
+                            );
+
+
+                            groupeActuel =
+                                groupe;
+
+
+                            partieActuelle =
+                                partie;
+
+
+                            sousPartieActuelle =
+                                sousPartie + 1;
+
+
+                            await definirFichierPrecedent(
+                                groupe,
+                                partie,
+                                sousPartie
+                            );
+
+
+                            allerVersElement(
+                                idRecherche
+                            );
+
+
+                            return;
+                        }
+
+
+                        sousPartie++;
+                    }
+
+
+                    /*
+                     * Partie principale suivante.
+                     */
                     partie++;
                 }
             }
@@ -1958,8 +2548,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
                             /*
-                             * TRÈS IMPORTANT :
-                             *
                              * Aucun chargement vers le bas
                              * pendant une montée.
                              */
@@ -2074,21 +2662,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
         if (idInitial) {
 
-            /*
-             * Exemple :
-             *
-             * Ibra.html#philo_doute
-             *
-             * Si le résultat se trouve dans :
-             *
-             * Ibra2_3.html
-             *
-             * alors :
-             *
-             * ↓ → Ibra2_4
-             *
-             * ↑ → Ibra2_2
-             */
             await rechercherId(
                 idInitial
             );
@@ -2113,7 +2686,9 @@ document.addEventListener("DOMContentLoaded", function () {
         /*
          * Préchargement discret :
          *
-         * Ibra1_2.html
+         * Ibra1_1_1.html
+         *
+         * si ce fichier existe.
          */
         setTimeout(
             function () {
