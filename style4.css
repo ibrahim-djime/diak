@@ -138,10 +138,6 @@ main::before {
     z-index: -1; /* derrière ton contenu */
 }
 
-.verificat01ion {
-  display: none;
-}
-
 /* Style pour le titre d'accueil */
 .verbaccueil {
   font-family: 'NerkoOne-Regula', cursive; /* Police fun et dynamique */
@@ -173,6 +169,59 @@ main::before {
   min-height: 80vh;        /* occupe presque toute la hauteur de l'écran */
   text-align: center;      /* centre le texte des paragraphes */
   padding: 20px;
+}
+
+#maccueil .accueil-bienvenue {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  min-height: 46px;
+  margin-bottom: 12px;
+  color: #23384d;
+  font-size: 1rem;
+  font-weight: 600;
+  text-align: left;
+}
+
+#maccueil .accueil-bienvenue-avatar,
+#maccueil .accueil-bienvenue-photo {
+  box-sizing: border-box;
+  flex: 0 0 44px;
+  width: 44px;
+  height: 44px;
+  overflow: hidden;
+  border: 2px solid rgba(0, 86, 178, 0.22);
+  border-radius: 50%;
+}
+
+#maccueil .accueil-bienvenue-avatar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: #e8f0fb;
+  color: #416484;
+}
+
+#maccueil .accueil-bienvenue-avatar[hidden],
+#maccueil .accueil-bienvenue-photo[hidden] {
+  display: none;
+}
+
+#maccueil .accueil-bienvenue-avatar svg {
+  display: block;
+  width: 23px;
+  height: 23px;
+  fill: currentColor;
+}
+
+#maccueil .accueil-bienvenue-photo {
+  display: block;
+  object-fit: cover;
+}
+
+#maccueil .accueil-bienvenue-message {
+  line-height: 1.25;
 }
 
 /* Liste verticale centrée */
