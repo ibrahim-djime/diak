@@ -83,6 +83,7 @@ referrerPolicy="no-referrer-when-downgrade"></a></div></noscript>
 
 <!-- Feuilles de styles -->
 <link rel="stylesheet" href="style4.css">
+<link rel="stylesheet" href="info.css">
 
 <link rel="alternate" hreflang="fr" href="index.html">
 <link rel="alternate" hreflang="en" href="index_en.html">
@@ -423,77 +424,153 @@ document.addEventListener("DOMContentLoaded", function () {
   // ============================================================
 
   import {
-    initializeApp
-  } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-app.js";
-
-  import {
-    getAuth,
-    GoogleAuthProvider,
+    linkWithPopup,
+    signInAnonymously,
+    signInWithCredential,
     signInWithPopup,
     signOut,
     onAuthStateChanged
   } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
 
   import {
-    getFirestore,
     doc,
+    collection,
     setDoc,
     getDoc,
+    runTransaction,
     serverTimestamp
   } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
 
+  import { app, auth, db, provider } from "./firebase-init.js";
+
   import {
-    getAnalytics
+    getAnalytics,
+    logEvent
   } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-analytics.js";
 
-
-  // ============================================================
-  // CONFIGURATION FIREBASE
-  // ============================================================
-
-  const firebaseConfig = {
-
-    apiKey: "AIzaSyAClwRQe3g4Cg9CAsn28l_sAihwlMQtGUI",
-
-    authDomain:
-      "lumina-analytics.firebaseapp.com",
-
-    projectId:
-      "lumina-analytics",
-
-    storageBucket:
-      "lumina-analytics.appspot.com",
-
-    messagingSenderId:
-      "239329398532",
-
-    appId:
-      "1:239329398532:web:2f68b196df0c4e6400ca51",
-
-    measurementId:
-      "G-J7LLPRXLJH"
-
-  };
-
-
-  // ============================================================
-  // INITIALISATION FIREBASE
-  // ============================================================
-
-  const app =
-    initializeApp(firebaseConfig);
 
   const analytics =
     getAnalytics(app);
 
-  const auth =
-    getAuth(app);
+  window.InfoFirebaseAnalytics = function (eventName, parameters) {
+    logEvent(analytics, eventName, parameters);
+  };
+  window.dispatchEvent(new Event("info:firebase-ready"));
 
-  const provider =
-    new GoogleAuthProvider();
 
-  const db =
-    getFirestore(app);
+  let infoProfileUser = null;
+  let resolveInfoProfileAuth;
+  const infoProfileAuthReady = new Promise(function (resolve) {
+    resolveInfoProfileAuth = resolve;
+  });
+  let infoProfileAuthResolved = false;
+  let anonymousSignInPending = false;
+  function finishInfoProfileAuth(user) {
+    infoProfileUser = user || null;
+    if (!infoProfileAuthResolved) {
+      infoProfileAuthResolved = true;
+      resolveInfoProfileAuth(infoProfileUser);
+    }
+  }
+  onAuthStateChanged(auth, function (user) {
+    if (user) {
+      finishInfoProfileAuth(user);
+      return;
+    }
+    if (anonymousSignInPending) return;
+    anonymousSignInPending = true;
+    signInAnonymously(auth).then(function (credential) {
+      finishInfoProfileAuth(credential.user);
+    }).catch(function (error) {
+      console.warn("Authentification anonyme Information indisponible; les préférences locales restent utilisables:", error.message);
+      finishInfoProfileAuth(null);
+    }).finally(function () {
+      anonymousSignInPending = false;
+    });
+  });
+  async function beginGoogleSignIn() {
+    const anonymousUser = auth.currentUser;
+    if (!anonymousUser || !anonymousUser.isAnonymous) {
+      return signInWithPopup(auth, provider);
+    }
+    try {
+      return await linkWithPopup(anonymousUser, provider);
+    } catch (error) {
+      if (error.code !== "auth/credential-already-in-use" || !error.credential) throw error;
+      const anonymousProfileRef = doc(db, "info_visitor_profiles", anonymousUser.uid);
+      let anonymousProfile = null;
+      try {
+        const anonymousSnapshot = await getDoc(anonymousProfileRef);
+        if (anonymousSnapshot.exists()) anonymousProfile = anonymousSnapshot.data();
+      } catch (readError) {
+        console.warn("Lecture du profil anonyme avant rapprochement impossible:", readError.message);
+      }
+      const result = await signInWithCredential(auth, error.credential);
+      if (anonymousProfile) {
+        const permanentProfileRef = doc(db, "info_visitor_profiles", result.user.uid);
+        await runTransaction(db, async function (transaction) {
+          const current = await transaction.get(permanentProfileRef);
+          const existing = current.exists() ? current.data() : {};
+          const merged = Object.assign({}, anonymousProfile, existing);
+          ["selectedTopics", "preferredCategories", "preferredLanguages", "favoriteSources"].forEach(function (field) {
+            merged[field] = Array.from(new Set([].concat(anonymousProfile[field] || [], existing[field] || [])));
+          });
+          ["visitCount", "articlesViewed", "articlesOpened", "articlesFavorited", "articlesShared", "totalActiveReadingTime", "showMoreCount", "searchCount"].forEach(function (field) {
+            merged[field] = Math.max(Number(anonymousProfile[field]) || 0, Number(existing[field]) || 0);
+          });
+          merged.onboardingCompleted = !!(anonymousProfile.onboardingCompleted || existing.onboardingCompleted);
+          merged.profileVersion = 1;
+          merged.profileUpdatedAt = serverTimestamp();
+          transaction.set(permanentProfileRef, merged, { merge: true });
+        });
+      }
+      return result;
+    }
+  }
+  window.InfoProfileStore = {
+    ready: infoProfileAuthReady,
+    getUser: async function () {
+      await infoProfileAuthReady;
+      return infoProfileUser;
+    },
+    load: async function () {
+      await infoProfileAuthReady;
+      if (!infoProfileUser) return null;
+      const snapshot = await getDoc(doc(db, "info_visitor_profiles", infoProfileUser.uid));
+      return snapshot.exists() ? snapshot.data() : null;
+    },
+    save: async function (profile) {
+      await infoProfileAuthReady;
+      if (!infoProfileUser) throw new Error("Aucune identité Firebase disponible.");
+      await setDoc(doc(db, "info_visitor_profiles", infoProfileUser.uid), {
+        ...profile,
+        visitorId: infoProfileUser.uid,
+        isAnonymous: infoProfileUser.isAnonymous,
+        profileUpdatedAt: serverTimestamp()
+      }, { merge: true });
+    },
+    saveSession: async function (sessionId, session) {
+      await infoProfileAuthReady;
+      if (!infoProfileUser) throw new Error("Aucune identité Firebase disponible.");
+      await setDoc(doc(db, "info_visitor_sessions", infoProfileUser.uid + "_" + sessionId), {
+        ...session,
+        sessionId: sessionId,
+        visitorId: infoProfileUser.uid
+      }, { merge: true });
+    },
+    logEvent: async function (event) {
+      await infoProfileAuthReady;
+      if (!infoProfileUser) throw new Error("Aucune identité Firebase disponible.");
+      const eventId = event.eventId || (crypto.randomUUID ? crypto.randomUUID() : Date.now().toString(36) + Math.random().toString(36).slice(2));
+      await setDoc(doc(collection(db, "info_visitor_events"), eventId), {
+        ...event,
+        eventId: eventId,
+        visitorId: infoProfileUser.uid
+      });
+    },
+    signIn: beginGoogleSignIn,
+    currentUser: function () { return infoProfileUser; }
+  };
 
 
   // ============================================================
@@ -1025,13 +1102,9 @@ document.addEventListener("DOMContentLoaded", function () {
 
         () => {
 
-          signInWithPopup(
-
-            auth,
-
-            provider
-
-          );
+          beginGoogleSignIn().catch(function (error) {
+            console.error("Connexion Google impossible:", error);
+          });
 
         }
 
@@ -1177,7 +1250,7 @@ document.addEventListener("DOMContentLoaded", function () {
               auth.currentUser;
 
 
-            if (user) {
+            if (user && !user.isAnonymous) {
 
 
               try {
@@ -1316,8 +1389,11 @@ document.addEventListener("DOMContentLoaded", function () {
 
     async user => {
 
+      if (typeof window.actualiserAccueilPersonnalise === "function") {
+        window.actualiserAccueilPersonnalise(user);
+      }
 
-      if (user) {
+      if (user && !user.isAnonymous) {
 
 
         loginBtn.style.display =
@@ -1334,15 +1410,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
         try {
-
-
-          // ============================================
-          // 1. RÉCUPÉRATION LOCALISATION
-          // ============================================
-
-          const loc =
-
-            await getUserLocation();
 
 
           // ============================================
@@ -1365,6 +1432,55 @@ document.addEventListener("DOMContentLoaded", function () {
           const snap =
 
             await getDoc(ref);
+
+          let profilAccueil = snap.exists() ? snap.data() : {};
+          if (typeof window.actualiserAccueilPersonnalise === "function") {
+            window.actualiserAccueilPersonnalise(user, profilAccueil);
+          }
+
+          const profilAccueilName = [
+            user.displayName,
+            profilAccueil.prenom,
+            profilAccueil.firstName,
+            profilAccueil.nom
+          ].some(function (value) {
+            return typeof value === "string" && value.trim() && !value.includes("@");
+          });
+          const profilAccueilPhoto =
+            user.photoURL ||
+            profilAccueil.photoURL ||
+            profilAccueil.photo;
+
+          if (user.email && (!profilAccueilName || !profilAccueilPhoto)) {
+            try {
+              const publicProfileSnapshot = await getDoc(
+                doc(db, "public_profiles", user.email)
+              );
+              if (publicProfileSnapshot.exists()) {
+                const publicProfile = publicProfileSnapshot.data();
+                profilAccueil = Object.assign(
+                  {},
+                  publicProfile,
+                  profilAccueil
+                );
+                ["prenom", "firstName", "nom", "photoURL", "photo"].forEach(function (field) {
+                  if (!profilAccueil[field] && publicProfile[field]) {
+                    profilAccueil[field] = publicProfile[field];
+                  }
+                });
+                if (typeof window.actualiserAccueilPersonnalise === "function") {
+                  window.actualiserAccueilPersonnalise(user, profilAccueil);
+                }
+              }
+            } catch (profileError) {
+              console.warn(
+                "Profil public indisponible pour l'accueil personnalisé:",
+                profileError.message
+              );
+            }
+          }
+
+          const loc = await getUserLocation();
 
 
           let nombreConnexions =
@@ -1801,22 +1917,9 @@ document.addEventListener("DOMContentLoaded", function () {
           "none";
 
 
-        if (
-
-          visites >
-
-          MAX_VISITES ||
-
-          downloads >=
-
-          MAX_DOWNLOADS
-
-        ) {
-
-
-          showOverlay();
-
-        }
+        window.InfoProfileStore.ready.then(function (profileUser) {
+          if (!profileUser && (visites > MAX_VISITES || downloads >= MAX_DOWNLOADS)) showOverlay();
+        });
 
       }
 
@@ -1907,15 +2010,9 @@ document.addEventListener("DOMContentLoaded", function () {
     "click",
 
     () => {
-
-      signInWithPopup(
-
-        auth,
-
-        provider
-
-      );
-
+      beginGoogleSignIn().catch(function (error) {
+        console.error("Connexion Google impossible:", error);
+      });
     }
 
   );
@@ -1984,11 +2081,16 @@ document.addEventListener("DOMContentLoaded", function () {
 
 <section id="#Accueil" class="container">
     <div class="section">
-           
-
-<div class="verificat01ion">Verification: 983e7a3b50a4c1c3</div>
-
                 <div id="maccueil">
+  <div id="accueil-bienvenue" class="accueil-bienvenue" aria-live="polite">
+    <span class="accueil-bienvenue-avatar" aria-hidden="true">
+      <svg viewBox="0 0 24 24" focusable="false">
+        <path d="M12 12a4.25 4.25 0 1 0 0-8.5 4.25 4.25 0 0 0 0 8.5Zm0 2c-4.1 0-7.5 2.1-7.5 4.75V21h15v-2.25C19.5 16.1 16.1 14 12 14Z"/>
+      </svg>
+    </span>
+    <img class="accueil-bienvenue-photo" alt="" hidden>
+    <span class="accueil-bienvenue-message">Bonjour</span>
+  </div>
   <h2 class="verbaccueil"><strong>Accueil</strong></h2>
 
   <!-- Texte fluide -->
@@ -2231,22 +2333,354 @@ document.addEventListener("DOMContentLoaded", function () {
             <div class="section">
                 <h2>Information</h2>
                 <p>Consultez les articles informatifs et analyses sur divers sujets d'actualité.</p>
-                <div class="lien-info">
-                       <a href="https://fr.africanews.com/" class="external-link" target="_blank">Africanews</a>
-                       <a href="https://www.bbc.com/afrique" class="external-link" target="_blank">BBC Afrique</a>
-                        <a href="https://www.dw.com/fr" class="external-link" target="_blank">DW Afrique</a>
-                        <a href="https://www.aljazeera.com/" class="external-link" target="_blank">Al Jazeera</a>
-                        <a href="https://www.jeuneafrique.com/" class="external-link" target="_blank">Jeune Afrique</a>
-                        <a href="https://www.theafricareport.com/" class="external-link" target="_blank">The Africa Report</a>
-                        <a href="https://www.reuters.com/" class="external-link" target="_blank">Reuters</a>
-                        <a href="https://apnews.com/" class="external-link" target="_blank">Associated Press (AP)</a>
-                        <a href="https://www.afp.com/fr/" class="external-link" target="_blank">Agence France-Presse (AFP)</a>
-                        <a href="https://www.jeuneafrique.com/" class="external-link" target="_blank">Jeune Afrique</a>
-                    </div>
 
+                <div class="info-news-grid">
+                    <article class="info-card" data-article-id="afrique-innovation-01" data-original-url="https://www.rfi.fr/fr/afrique/20260513-l-innovation-africaine-prend-de-l-ampleur-dans-le-numerique" data-title="L'innovation africaine prend de l'ampleur dans le numérique">
+                        <img src="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=900&q=80" alt="Innovation en Afrique" />
+                        <div class="info-card-body">
+                            <div class="info-card-header-row">
+                                <span class="info-card-source">Afrique</span>
+                                <div class="info-share-controls" aria-label="Partage d'article">
+                                    <button type="button" class="info-share-icon info-share-icon-whatsapp" data-platform="whatsapp" aria-label="Partager sur WhatsApp">
+                                        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17.6 14.2c-.3-.2-1.7-.8-1.9-.9-.2-.1-.4-.1-.6.1-.2.2-.7.9-.9 1.1-.1.2-.3.2-.6.1-.3-.1-1.2-.4-2.3-1.4-.9-.8-1.4-1.8-1.6-2.1-.1-.3 0-.5.1-.7.1-.2.2-.3.4-.5.1-.1.2-.3.3-.5.1-.1.1-.3.1-.4 0-.1 0-.3-.1-.4-.1-.1-.6-1.4-.8-2-.2-.5-.4-.4-.6-.4h-.5c-.2 0-.4.1-.6.3-.2.2-.8.8-.8 2s.8 2.3.9 2.4c.1.2 1.7 2.8 4.1 3.9.6.3 1 .4 1.4.5.6.2 1.2.2 1.6.1.5-.1 1.7-.7 1.9-1.3.2-.7.2-1.2.1-1.3-.1-.1-.3-.2-.6-.4Z"/></svg>
+                                    </button>
+                                    <button type="button" class="info-share-icon info-share-icon-facebook" data-platform="facebook" aria-label="Partager sur Facebook">
+                                        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M13.5 21v-8h2.7l.4-3h-3.1V7.2c0-.9.3-1.5 1.6-1.5H16V2.8c-.3 0-1.3-.1-2.5-.1-2.5 0-4.1 1.5-4.1 4.3V10H7v3h2.4v8h4.1Z"/></svg>
+                                    </button>
+                                    <button type="button" class="info-share-icon info-share-icon-tiktok" data-platform="tiktok" aria-label="Partager sur TikTok">
+                                        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15.5 3c.4 1.7 1.7 3 3.3 3.6v2.8c-1.3-.1-2.5-.5-3.6-1.4v6.3A5.6 5.6 0 1 1 9.8 8.8v2.8a2.8 2.8 0 1 0 2.5 2.8V3h.2Z"/></svg>
+                                    </button>
+                                    <button type="button" class="info-share-icon info-share-icon-copy_link" data-platform="copy" aria-label="Copier le lien">
+                                        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 17.5a2.5 2.5 0 0 1-2.5-2.5V9A2.5 2.5 0 0 1 9 6.5h4A2.5 2.5 0 0 1 15.5 9v1.5h-1.8V9a.7.7 0 0 0-.7-.7H9a.7.7 0 0 0-.7.7v6a.7.7 0 0 0 .7.7h4a.7.7 0 0 0 .7-.7v-1.4h1.8V15A2.5 2.5 0 0 1 13 17.5H9Zm8-8.3h-4.5A2.5 2.5 0 0 0 10 11.7v5.8a2.5 2.5 0 0 0 2.5 2.5h4.5A2.5 2.5 0 0 0 19.5 17.5v-5.8A2.5 2.5 0 0 0 17 9.2Zm-4.5 8.3a.7.7 0 0 1-.7-.7v-5.8a.7.7 0 0 1 .7-.7h4.5a.7.7 0 0 1 .7.7v5.8a.7.7 0 0 1-.7.7h-4.5Z"/></svg>
+                                    </button>
+                                </div>
+                            </div>
+                            <h3 class="info-card-title">L'innovation africaine prend de l'ampleur dans le numérique</h3>
+                            <p class="info-card-desc">Des startups, talents et projets locaux redéfinissent les usages du numérique sur le continent.</p>
+                            <div class="info-card-meta">
+                                <span>13 mai 2026</span>
+                                <a href="https://diak.vercel.app/?section=informations&article=afrique-innovation-01" class="info-card-link">Lire l'article →</a>
+                            </div>
+                        </div>
+                    </article>
 
+                    <article class="info-card" data-article-id="gestion-energie-02" data-original-url="https://www.lemonde.fr/afrique/article/20260509-les-solutions-energetiques-locales-accelerent-la-transition-verte_12345678_3212.html" data-title="Les solutions énergétiques locales accélèrent la transition verte">
+                        <img src="https://images.unsplash.com/photo-1473341304170-971dccb5ac1e?auto=format&fit=crop&w=900&q=80" alt="Énergie et transition verte" />
+                        <div class="info-card-body">
+                            <div class="info-card-header-row">
+                                <span class="info-card-source">Énergie</span>
+                                <div class="info-share-controls" aria-label="Partage d'article">
+                                    <button type="button" class="info-share-icon info-share-icon-whatsapp" data-platform="whatsapp" aria-label="Partager sur WhatsApp"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17.6 14.2c-.3-.2-1.7-.8-1.9-.9-.2-.1-.4-.1-.6.1-.2.2-.7.9-.9 1.1-.1.2-.3.2-.6.1-.3-.1-1.2-.4-2.3-1.4-.9-.8-1.4-1.8-1.6-2.1-.1-.3 0-.5.1-.7.1-.2.2-.3.4-.5.1-.1.2-.3.3-.5.1-.1.1-.3.1-.4 0-.1 0-.3-.1-.4-.1-.1-.6-1.4-.8-2-.2-.5-.4-.4-.6-.4h-.5c-.2 0-.4.1-.6.3-.2.2-.8.8-.8 2s.8 2.3.9 2.4c.1.2 1.7 2.8 4.1 3.9.6.3 1 .4 1.4.5.6.2 1.2.2 1.6.1.5-.1 1.7-.7 1.9-1.3.2-.7.2-1.2.1-1.3-.1-.1-.3-.2-.6-.4Z"/></svg></button>
+                                    <button type="button" class="info-share-icon info-share-icon-facebook" data-platform="facebook" aria-label="Partager sur Facebook"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M13.5 21v-8h2.7l.4-3h-3.1V7.2c0-.9.3-1.5 1.6-1.5H16V2.8c-.3 0-1.3-.1-2.5-.1-2.5 0-4.1 1.5-4.1 4.3V10H7v3h2.4v8h4.1Z"/></svg></button>
+                                    <button type="button" class="info-share-icon info-share-icon-tiktok" data-platform="tiktok" aria-label="Partager sur TikTok"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15.5 3c.4 1.7 1.7 3 3.3 3.6v2.8c-1.3-.1-2.5-.5-3.6-1.4v6.3A5.6 5.6 0 1 1 9.8 8.8v2.8a2.8 2.8 0 1 0 2.5 2.8V3h.2Z"/></svg></button>
+                                    <button type="button" class="info-share-icon info-share-icon-copy_link" data-platform="copy" aria-label="Copier le lien"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 17.5a2.5 2.5 0 0 1-2.5-2.5V9A2.5 2.5 0 0 1 9 6.5h4A2.5 2.5 0 0 1 15.5 9v1.5h-1.8V9a.7.7 0 0 0-.7-.7H9a.7.7 0 0 0-.7.7v6a.7.7 0 0 0 .7.7h4a.7.7 0 0 0 .7-.7v-1.4h1.8V15A2.5 2.5 0 0 1 13 17.5H9Zm8-8.3h-4.5A2.5 2.5 0 0 0 10 11.7v5.8a2.5 2.5 0 0 0 2.5 2.5h4.5A2.5 2.5 0 0 0 19.5 17.5v-5.8A2.5 2.5 0 0 0 17 9.2Zm-4.5 8.3a.7.7 0 0 1-.7-.7v-5.8a.7.7 0 0 1 .7-.7h4.5a.7.7 0 0 1 .7.7v5.8a.7.7 0 0 1-.7.7h-4.5Z"/></svg></button>
+                                </div>
+                            </div>
+                            <h3 class="info-card-title">Les solutions énergétiques locales accélèrent la transition verte</h3>
+                            <p class="info-card-desc">Des foyers et entreprises adoptent des modèles plus durables et plus résilients.</p>
+                            <div class="info-card-meta">
+                                <span>09 mai 2026</span>
+                                <a href="https://diak.vercel.app/?section=informations&article=gestion-energie-02" class="info-card-link">Lire l'article →</a>
+                            </div>
+                        </div>
+                    </article>
+
+                    <article class="info-card" data-article-id="education-emploi-03" data-original-url="https://www.jeuneafrique.com/20260503/economie/le-defi-de-l-emploi-des-jeunes-reste-central-pour-les-pays-africains/" data-title="Le défi de l'emploi des jeunes reste central pour les pays africains">
+                        <img src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=900&q=80" alt="Éducation et emploi" />
+                        <div class="info-card-body">
+                            <div class="info-card-header-row">
+                                <span class="info-card-source">Éducation</span>
+                                <div class="info-share-controls" aria-label="Partage d'article">
+                                    <button type="button" class="info-share-icon info-share-icon-whatsapp" data-platform="whatsapp" aria-label="Partager sur WhatsApp"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17.6 14.2c-.3-.2-1.7-.8-1.9-.9-.2-.1-.4-.1-.6.1-.2.2-.7.9-.9 1.1-.1.2-.3.2-.6.1-.3-.1-1.2-.4-2.3-1.4-.9-.8-1.4-1.8-1.6-2.1-.1-.3 0-.5.1-.7.1-.2.2-.3.4-.5.1-.1.2-.3.3-.5.1-.1.1-.3.1-.4 0-.1 0-.3-.1-.4-.1-.1-.6-1.4-.8-2-.2-.5-.4-.4-.6-.4h-.5c-.2 0-.4.1-.6.3-.2.2-.8.8-.8 2s.8 2.3.9 2.4c.1.2 1.7 2.8 4.1 3.9.6.3 1 .4 1.4.5.6.2 1.2.2 1.6.1.5-.1 1.7-.7 1.9-1.3.2-.7.2-1.2.1-1.3-.1-.1-.3-.2-.6-.4Z"/></svg></button>
+                                    <button type="button" class="info-share-icon info-share-icon-facebook" data-platform="facebook" aria-label="Partager sur Facebook"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M13.5 21v-8h2.7l.4-3h-3.1V7.2c0-.9.3-1.5 1.6-1.5H16V2.8c-.3 0-1.3-.1-2.5-.1-2.5 0-4.1 1.5-4.1 4.3V10H7v3h2.4v8h4.1Z"/></svg></button>
+                                    <button type="button" class="info-share-icon info-share-icon-tiktok" data-platform="tiktok" aria-label="Partager sur TikTok"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15.5 3c.4 1.7 1.7 3 3.3 3.6v2.8c-1.3-.1-2.5-.5-3.6-1.4v6.3A5.6 5.6 0 1 1 9.8 8.8v2.8a2.8 2.8 0 1 0 2.5 2.8V3h.2Z"/></svg></button>
+                                    <button type="button" class="info-share-icon info-share-icon-copy_link" data-platform="copy" aria-label="Copier le lien"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 17.5a2.5 2.5 0 0 1-2.5-2.5V9A2.5 2.5 0 0 1 9 6.5h4A2.5 2.5 0 0 1 15.5 9v1.5h-1.8V9a.7.7 0 0 0-.7-.7H9a.7.7 0 0 0-.7.7v6a.7.7 0 0 0 .7.7h4a.7.7 0 0 0 .7-.7v-1.4h1.8V15A2.5 2.5 0 0 1 13 17.5H9Zm8-8.3h-4.5A2.5 2.5 0 0 0 10 11.7v5.8a2.5 2.5 0 0 0 2.5 2.5h4.5A2.5 2.5 0 0 0 19.5 17.5v-5.8A2.5 2.5 0 0 0 17 9.2Zm-4.5 8.3a.7.7 0 0 1-.7-.7v-5.8a.7.7 0 0 1 .7-.7h4.5a.7.7 0 0 1 .7.7v5.8a.7.7 0 0 1-.7.7h-4.5Z"/></svg></button>
+                                </div>
+                            </div>
+                            <h3 class="info-card-title">Le défi de l'emploi des jeunes reste central pour les pays africains</h3>
+                            <p class="info-card-desc">Les formations, l'entrepreneuriat et les partenariats créent de nouvelles perspectives.</p>
+                            <div class="info-card-meta">
+                                <span>03 mai 2026</span>
+                                <a href="https://diak.vercel.app/?section=informations&article=education-emploi-03" class="info-card-link">Lire l'article →</a>
+                            </div>
+                        </div>
+                    </article>
+                </div>
             </div>
         </section>
+
+        <style>
+            #informations .info-news-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+                gap: 18px;
+                margin-top: 18px;
+            }
+            #informations .info-card {
+                background: #fff;
+                border: 1px solid #e6edf5;
+                border-radius: 14px;
+                overflow: hidden;
+                box-shadow: 0 10px 30px rgba(18, 42, 64, 0.06);
+                transition: transform 0.2s ease, box-shadow 0.2s ease;
+            }
+            #informations .info-card:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 16px 36px rgba(18, 42, 64, 0.12);
+            }
+            #informations .info-card-share-highlight {
+                animation: info-share-highlight 4s ease-out;
+            }
+            @keyframes info-share-highlight {
+                0% { box-shadow: 0 0 0 0 rgba(27, 117, 196, 0.35), 0 0 0 0 rgba(27,117,196,0.2); }
+                25% { box-shadow: 0 0 0 4px rgba(27, 117, 196, 0.22), 0 0 0 10px rgba(27,117,196,0.05); }
+                100% { box-shadow: 0 0 0 0 rgba(27,117,196,0), 0 0 0 0 rgba(27,117,196,0); }
+            }
+            #informations .info-card img {
+                width: 100%;
+                height: 180px;
+                object-fit: cover;
+                display: block;
+            }
+            #informations .info-card-body {
+                padding: 16px;
+            }
+            #informations .info-card-header-row {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                gap: 10px;
+                margin-bottom: 12px;
+            }
+            #informations .info-card-source {
+                font-size: 11px;
+                font-weight: 700;
+                text-transform: uppercase;
+                letter-spacing: 0.08em;
+                color: #1a5bb7;
+            }
+            #informations .info-share-controls {
+                display: flex;
+                align-items: center;
+                gap: 6px;
+                margin-left: auto;
+            }
+            #informations .info-share-icon {
+                width: 30px;
+                height: 30px;
+                border-radius: 50%;
+                border: 1px solid #dfeaf6;
+                background: #fff;
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                cursor: pointer;
+                color: #425466;
+                padding: 0;
+                transition: transform 0.15s ease, border-color 0.15s ease;
+            }
+            #informations .info-share-icon:hover,
+            #informations .info-share-icon:focus-visible {
+                transform: translateY(-1px);
+                outline: none;
+            }
+            #informations .info-share-icon svg {
+                width: 16px;
+                height: 16px;
+                fill: currentColor;
+            }
+            #informations .info-share-icon-whatsapp:hover { border-color: #25d366; background: #ebfff4; color: #0d8e49; }
+            #informations .info-share-icon-facebook:hover { border-color: #1877f2; background: #edf5ff; color: #1877f2; }
+            #informations .info-share-icon-tiktok:hover { border-color: #111; background: #f2f2f2; color: #111; }
+            #informations .info-share-icon-copy_link:hover { border-color: #0056b2; background: #edf5ff; color: #0056b2; }
+            #informations .info-share-feedback {
+                margin-top: 12px;
+                padding: 6px 10px;
+                border-radius: 999px;
+                background: #e8f7ee;
+                color: #1d7d4c;
+                font-size: 0.75rem;
+                line-height: 1.4;
+            }
+            #informations .info-share-feedback[hidden] {
+                display: none;
+            }
+            #informations .info-card-title {
+                margin: 0 0 10px;
+                font-size: 1.05rem;
+                line-height: 1.35;
+                color: #17212b;
+            }
+            #informations .info-card-desc {
+                margin: 0 0 14px;
+                color: #536273;
+                line-height: 1.5;
+                font-size: 0.92rem;
+            }
+            #informations .info-card-meta {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                gap: 12px;
+                font-size: 0.78rem;
+                color: #6b7280;
+            }
+            #informations .info-card-link {
+                color: #0d5bd8;
+                text-decoration: none;
+                font-weight: 600;
+            }
+            #informations .info-card-link:hover { text-decoration: underline; }
+            @media (max-width: 640px) {
+                #informations .info-card-header-row {
+                    align-items: flex-start;
+                    flex-direction: column;
+                }
+                #informations .info-share-controls {
+                    margin-left: 0;
+                }
+            }
+        </style>
+
+        <script>
+            (function () {
+                const LUMESYS_BASE = 'https://diak.vercel.app/';
+
+                function buildLumesysArticleUrl(articleId) {
+                    const params = new URLSearchParams({
+                        section: 'informations',
+                        article: articleId
+                    });
+                    return LUMESYS_BASE + '?' + params.toString();
+                }
+
+                function showFeedback(card, message) {
+                    let feedback = card.querySelector('.info-share-feedback');
+                    if (!feedback) {
+                        feedback = document.createElement('div');
+                        feedback.className = 'info-share-feedback';
+                        card.querySelector('.info-card-body').appendChild(feedback);
+                    }
+                    feedback.textContent = message;
+                    feedback.hidden = false;
+                    clearTimeout(feedback._hideTimer);
+                    feedback._hideTimer = setTimeout(function () {
+                        feedback.hidden = true;
+                    }, 2600);
+                }
+
+                function getRequestedArticleId() {
+                    const params = new URLSearchParams(window.location.search || '');
+                    const articleId = params.get('article');
+                    if (params.get('section') === 'informations' && articleId) {
+                        return articleId;
+                    }
+                    const hash = (window.location.hash || '').replace(/^#/, '');
+                    if (!hash) return null;
+                    const hashMatch = /(?:^|[?&])article=([^&]+)/.exec(hash);
+                    if (hashMatch && hashMatch[1]) {
+                        return decodeURIComponent(hashMatch[1]);
+                    }
+                    return null;
+                }
+
+                function bindShareButtons() {
+                    const cards = document.querySelectorAll('#informations .info-card');
+                    cards.forEach(function (card) {
+                        const articleId = card.dataset.articleId;
+                        const articleTitle = card.dataset.title || card.querySelector('.info-card-title')?.textContent || 'Article';
+                        const originalUrl = card.dataset.originalUrl || '';
+                        const lumeUrl = buildLumesysArticleUrl(articleId);
+                        const buttons = card.querySelectorAll('.info-share-icon');
+
+                        buttons.forEach(function (button) {
+                            const platform = button.dataset.platform;
+                            button.addEventListener('click', function (event) {
+                                event.preventDefault();
+                                event.stopPropagation();
+
+                                if (platform === 'whatsapp') {
+                                    const text = articleTitle + ' ' + lumeUrl;
+                                    const waUrl = 'https://wa.me/?text=' + encodeURIComponent(text);
+                                    window.open(waUrl, '_blank', 'noopener,noreferrer');
+                                    return;
+                                }
+
+                                if (platform === 'facebook') {
+                                    const shareUrl = 'https://www.facebook.com/sharer/sharer.php?u=' + encodeURIComponent(lumeUrl);
+                                    window.open(shareUrl, '_blank', 'noopener,noreferrer');
+                                    return;
+                                }
+
+                                if (platform === 'tiktok') {
+                                    const shareData = {
+                                        title: articleTitle,
+                                        text: 'Découvrez cet article sur Lumesys',
+                                        url: lumeUrl
+                                    };
+
+                                    if (navigator.share) {
+                                        navigator.share(shareData).catch(function () {
+                                            const fallback = 'https://www.tiktok.com/share?url=' + encodeURIComponent(lumeUrl);
+                                            window.open(fallback, '_blank', 'noopener,noreferrer');
+                                        });
+                                        return;
+                                    }
+
+                                    const fallbackUrl = 'https://www.tiktok.com/share?url=' + encodeURIComponent(lumeUrl);
+                                    window.open(fallbackUrl, '_blank', 'noopener,noreferrer');
+                                    return;
+                                }
+
+                                if (platform === 'copy') {
+                                    if (!originalUrl) {
+                                        showFeedback(card, 'Lien original non disponible');
+                                        return;
+                                    }
+
+                                    const copyPromise = navigator.clipboard && navigator.clipboard.writeText
+                                        ? navigator.clipboard.writeText(originalUrl)
+                                        : Promise.reject(new Error('Clipboard unavailable'));
+
+                                    copyPromise.then(function () {
+                                        showFeedback(card, 'Lien original copié !');
+                                    }).catch(function () {
+                                        const copied = window.prompt('Copiez ce lien original :', originalUrl);
+                                        if (copied !== null) {
+                                            showFeedback(card, 'Lien original copié !');
+                                        } else {
+                                            showFeedback(card, 'Lien original non disponible');
+                                        }
+                                    });
+                                }
+                            });
+                        });
+                    });
+                }
+
+                function highlightRequestedCard() {
+                    const requestedId = getRequestedArticleId();
+                    if (!requestedId) return;
+
+                    const cards = document.querySelectorAll('#informations .info-card');
+                    for (const card of cards) {
+                        if (card.dataset.articleId === requestedId) {
+                            card.classList.add('info-card-share-highlight');
+                            setTimeout(function () {
+                                card.classList.remove('info-card-share-highlight');
+                            }, 5000);
+                            card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                            return;
+                        }
+                    }
+                }
+
+                document.addEventListener('DOMContentLoaded', function () {
+                    bindShareButtons();
+                    highlightRequestedCard();
+                });
+            })();
+        </script>
 
         <div class="caroull">
   <!-- Génération des 10 cartes produits -->
@@ -3422,5 +3856,8 @@ initializeAllCookies();
     </footer>
     
 
+<script src="info-geo.js" defer></script>
+<script src="info-analytics.js" defer></script>
+<script src="info.js" defer></script>
 </body>
 </html>
