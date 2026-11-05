@@ -1,5 +1,98 @@
 console.log("✅ JavaScript chargé avec succès");
 
+/* =======================================================
+   ACCUEIL PERSONNALISÉ
+   ======================================================= */
+
+(function () {
+  let welcomeUser = null;
+  let welcomeProfile = null;
+
+  function shortName(value) {
+    const name = String(value || "").trim();
+    if (!name || name.includes("@")) return "";
+    return name.split(/\s+/)[0].replace(/[,.]+$/, "");
+  }
+
+  function safePhotoUrl(value) {
+    try {
+      const url = new URL(String(value || ""), document.baseURI);
+      return url.protocol === "https:" || url.protocol === "http:" ? url.href : "";
+    } catch (error) {
+      return "";
+    }
+  }
+
+  function renderWelcome() {
+    const welcome = document.getElementById("accueil-bienvenue");
+    if (!welcome) return;
+
+    const hour = new Date().getHours();
+    const greeting = hour >= 5 && hour < 18 ? "Bonjour" : "Bonsoir";
+    const user = welcomeUser && !welcomeUser.isAnonymous ? welcomeUser : null;
+    const profile = welcomeProfile || {};
+    const name = shortName(user && user.displayName)
+      || shortName(profile.prenom)
+      || shortName(profile.firstName)
+      || shortName(profile.nom);
+    const photoUrl = safePhotoUrl(profile.photo)
+      || safePhotoUrl(profile.photoURL)
+      || safePhotoUrl(user && user.photoURL);
+    const message = welcome.querySelector(".accueil-bienvenue-message");
+    const avatar = welcome.querySelector(".accueil-bienvenue-avatar");
+    const image = welcome.querySelector(".accueil-bienvenue-photo");
+
+    if (message) message.textContent = greeting + (name ? " " + name : "");
+    if (!avatar || !image) return;
+
+    if (!photoUrl) {
+      image.hidden = true;
+      image.removeAttribute("src");
+      image.dataset.photoUrl = "";
+      avatar.hidden = false;
+      return;
+    }
+
+    if (image.dataset.photoUrl === photoUrl) {
+      if (image.complete && image.naturalWidth > 0) {
+        image.hidden = false;
+        avatar.hidden = true;
+      }
+      return;
+    }
+
+    image.hidden = true;
+    avatar.hidden = false;
+    image.dataset.photoUrl = photoUrl;
+    image.onload = function () {
+      if (image.dataset.photoUrl !== photoUrl) return;
+      image.hidden = false;
+      avatar.hidden = true;
+    };
+    image.onerror = function () {
+      if (image.dataset.photoUrl !== photoUrl) return;
+      image.hidden = true;
+      image.removeAttribute("src");
+      image.dataset.photoUrl = "";
+      avatar.hidden = false;
+    };
+    image.src = photoUrl;
+  }
+
+  window.actualiserAccueilPersonnalise = function (user, profile) {
+    if (arguments.length) {
+      welcomeUser = user || null;
+      welcomeProfile = profile || null;
+    }
+    renderWelcome();
+  };
+
+  document.addEventListener("DOMContentLoaded", function () {
+    renderWelcome();
+    window.setInterval(renderWelcome, 60000);
+  }, { once: true });
+})();
+
 
 /* =======================================================
    SERVICE WORKER - MODE HORS CONNEXION
