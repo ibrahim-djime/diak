@@ -110,6 +110,7 @@ referrerPolicy="no-referrer-when-downgrade"></a></div></noscript>
         });
     })(window, document);
 </script>
+    <script type="module" src="info-firestore.mjs"></script>
     <script src="scripts.js"></script>
 
 </head>
@@ -248,11 +249,11 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         </ul>
       </li>
 
-      <!-- CONTACT -->
+      <!-- CHAT / MESSAGERIE -->
       <li class="nav-item">
-        <a href="#contacts" class="nav-button">
-          <img src="ico/phone.svg" alt="Contact" class="nav-icon">
-          <span>Contact</span>
+        <a href="message/messagerie.html" class="nav-button" aria-label="Messagerie Lumesys">
+          <img src="ico/message.svg" alt="Messagerie" class="nav-icon">
+          <span>Chat</span>
         </a>
       </li>
     </ul>
@@ -290,8 +291,8 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       <img src="ico/store.svg" class="nav-icon-hamb"> Marché
     </a>
 
-    <a href="#contact">
-      <img src="ico/phone.svg" class="nav-icon-hamb"> Contact
+    <a href="message/messagerie.html">
+      <img src="ico/message.svg" class="nav-icon-hamb"> Chat
     </a>
   </div>
 
@@ -333,9 +334,9 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     </li>
 
     <li class="nav-item">
-      <a href="#contact" class="nav-button">
-        <img src="ico/phone.svg" alt="Contact" class="nav-icon-mobile">
-        <span>Contact</span>
+      <a href="message/messagerie.html" class="nav-button" aria-label="Messagerie Lumesys">
+        <img src="ico/message.svg" alt="Messagerie" class="nav-icon-mobile">
+        <span>Chat</span>
       </a>
     </li>
   </ul>
@@ -425,7 +426,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
   import {
     linkWithPopup,
-    signInAnonymously,
     signInWithCredential,
     signInWithPopup,
     signOut,
@@ -464,7 +464,6 @@ document.addEventListener("DOMContentLoaded", function () {
     resolveInfoProfileAuth = resolve;
   });
   let infoProfileAuthResolved = false;
-  let anonymousSignInPending = false;
   function finishInfoProfileAuth(user) {
     infoProfileUser = user || null;
     if (!infoProfileAuthResolved) {
@@ -473,59 +472,10 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   }
   onAuthStateChanged(auth, function (user) {
-    if (user) {
-      finishInfoProfileAuth(user);
-      return;
-    }
-    if (anonymousSignInPending) return;
-    anonymousSignInPending = true;
-    signInAnonymously(auth).then(function (credential) {
-      finishInfoProfileAuth(credential.user);
-    }).catch(function (error) {
-      console.warn("Authentification anonyme Information indisponible; les préférences locales restent utilisables:", error.message);
-      finishInfoProfileAuth(null);
-    }).finally(function () {
-      anonymousSignInPending = false;
-    });
+    finishInfoProfileAuth(user || null);
   });
   async function beginGoogleSignIn() {
-    const anonymousUser = auth.currentUser;
-    if (!anonymousUser || !anonymousUser.isAnonymous) {
-      return signInWithPopup(auth, provider);
-    }
-    try {
-      return await linkWithPopup(anonymousUser, provider);
-    } catch (error) {
-      if (error.code !== "auth/credential-already-in-use" || !error.credential) throw error;
-      const anonymousProfileRef = doc(db, "info_visitor_profiles", anonymousUser.uid);
-      let anonymousProfile = null;
-      try {
-        const anonymousSnapshot = await getDoc(anonymousProfileRef);
-        if (anonymousSnapshot.exists()) anonymousProfile = anonymousSnapshot.data();
-      } catch (readError) {
-        console.warn("Lecture du profil anonyme avant rapprochement impossible:", readError.message);
-      }
-      const result = await signInWithCredential(auth, error.credential);
-      if (anonymousProfile) {
-        const permanentProfileRef = doc(db, "info_visitor_profiles", result.user.uid);
-        await runTransaction(db, async function (transaction) {
-          const current = await transaction.get(permanentProfileRef);
-          const existing = current.exists() ? current.data() : {};
-          const merged = Object.assign({}, anonymousProfile, existing);
-          ["selectedTopics", "preferredCategories", "preferredLanguages", "favoriteSources"].forEach(function (field) {
-            merged[field] = Array.from(new Set([].concat(anonymousProfile[field] || [], existing[field] || [])));
-          });
-          ["visitCount", "articlesViewed", "articlesOpened", "articlesFavorited", "articlesShared", "totalActiveReadingTime", "showMoreCount", "searchCount"].forEach(function (field) {
-            merged[field] = Math.max(Number(anonymousProfile[field]) || 0, Number(existing[field]) || 0);
-          });
-          merged.onboardingCompleted = !!(anonymousProfile.onboardingCompleted || existing.onboardingCompleted);
-          merged.profileVersion = 1;
-          merged.profileUpdatedAt = serverTimestamp();
-          transaction.set(permanentProfileRef, merged, { merge: true });
-        });
-      }
-      return result;
-    }
+    return signInWithPopup(auth, provider);
   }
   window.InfoProfileStore = {
     ready: infoProfileAuthReady,
@@ -2099,7 +2049,7 @@ document.addEventListener("DOMContentLoaded", function () {
     Parce qu’au fond, tout devient plus simple quand l’essentiel est réuni au même endroit et c’est souvent tout ce qu’il faut pour avancer sans effort.  
     Découvrez comment nous pouvons vous aider à atteindre vos objectifs.
   </p>
-  <a href="messagerie.html">message</a>
+  <a href="message/messagerie.html" aria-label="Ouvrir la messagerie Lumesys">Messagerie</a>
 
   <p class="intro-mobile">
     Vous méritez un espace simple pour accéder aux services et aux ressources qui comptent pour vous.  
@@ -2334,15 +2284,15 @@ document.addEventListener("DOMContentLoaded", function () {
                 <h2>Information</h2>
                 <p>Consultez les articles informatifs et analyses sur divers sujets d'actualité.</p>
 
-                <div class="info-news-grid">
+                <div class="info-news-grid" id="info-news-grid">
                     <article class="info-card" data-article-id="afrique-innovation-01" data-original-url="https://www.rfi.fr/fr/afrique/20260513-l-innovation-africaine-prend-de-l-ampleur-dans-le-numerique" data-title="L'innovation africaine prend de l'ampleur dans le numérique">
-                        <img src="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=900&q=80" alt="Innovation en Afrique" />
+                        <img src="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=900&q=80" alt="Innovation en Afrique" loading="lazy" decoding="async" />
                         <div class="info-card-body">
                             <div class="info-card-header-row">
                                 <span class="info-card-source">Afrique</span>
                                 <div class="info-share-controls" aria-label="Partage d'article">
                                     <button type="button" class="info-share-icon info-share-icon-whatsapp" data-platform="whatsapp" aria-label="Partager sur WhatsApp">
-                                        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17.6 14.2c-.3-.2-1.7-.8-1.9-.9-.2-.1-.4-.1-.6.1-.2.2-.7.9-.9 1.1-.1.2-.3.2-.6.1-.3-.1-1.2-.4-2.3-1.4-.9-.8-1.4-1.8-1.6-2.1-.1-.3 0-.5.1-.7.1-.2.2-.3.4-.5.1-.1.2-.3.3-.5.1-.1.1-.3.1-.4 0-.1 0-.3-.1-.4-.1-.1-.6-1.4-.8-2-.2-.5-.4-.4-.6-.4h-.5c-.2 0-.4.1-.6.3-.2.2-.8.8-.8 2s.8 2.3.9 2.4c.1.2 1.7 2.8 4.1 3.9.6.3 1 .4 1.4.5.6.2 1.2.2 1.6.1.5-.1 1.7-.7 1.9-1.3.2-.7.2-1.2.1-1.3-.1-.1-.3-.2-.6-.4Z"/></svg>
+                                        <svg viewBox="0 0 32 32" aria-hidden="true" role="img"><path fill="currentColor" d="M19.11 17.12c-.33-.17-1.93-.95-2.23-1.06-.3-.11-.51-.17-.72.17-.21.34-.82 1.06-1.01 1.28-.19.21-.37.24-.7.08-.34-.17-1.43-.52-2.72-1.67-.99-.88-1.67-1.97-1.87-2.31-.19-.34-.02-.52.15-.69.16-.16.34-.37.52-.56.17-.18.23-.31.34-.52.11-.21.06-.39-.03-.55-.09-.17-.72-1.73-.99-2.37-.26-.62-.52-.53-.72-.54l-.61-.01c-.21 0-.56.08-.86.39-.3.31-1.15 1.12-1.15 2.75s1.18 3.18 1.34 3.41c.16.22 2.31 3.53 5.59 4.96.78.34 1.39.54 1.87.69.79.25 1.51.21 2.08.13.64-.09 1.93-.79 2.2-1.55.27-.76.27-1.41.19-1.55-.08-.14-.3-.22-.63-.39Zm-4.93 9.98a14.8 14.8 0 0 1-7.08-1.93L5.5 25.5l1.44-5.2A13.1 13.1 0 0 1 5.1 15.7c0-7.26 5.92-13.18 13.21-13.18 3.53 0 6.84 1.38 9.33 3.88a13.17 13.17 0 0 1 3.87 9.3c0 7.27-5.92 13.18-13.2 13.18Zm0-24.1A10.96 10.96 0 0 0 7.15 15.7c0 2.15.63 4.22 1.82 6l-1.22 4.41 4.51-1.18a10.9 10.9 0 0 0 6.05 1.78h.01c6.06 0 10.98-4.9 10.98-10.95A10.97 10.97 0 0 0 14.18 2.99h.01Z"/></svg>
                                     </button>
                                     <button type="button" class="info-share-icon info-share-icon-facebook" data-platform="facebook" aria-label="Partager sur Facebook">
                                         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M13.5 21v-8h2.7l.4-3h-3.1V7.2c0-.9.3-1.5 1.6-1.5H16V2.8c-.3 0-1.3-.1-2.5-.1-2.5 0-4.1 1.5-4.1 4.3V10H7v3h2.4v8h4.1Z"/></svg>
@@ -2359,13 +2309,13 @@ document.addEventListener("DOMContentLoaded", function () {
                             <p class="info-card-desc">Des startups, talents et projets locaux redéfinissent les usages du numérique sur le continent.</p>
                             <div class="info-card-meta">
                                 <span>13 mai 2026</span>
-                                <a href="https://diak.vercel.app/?section=informations&article=afrique-innovation-01" class="info-card-link">Lire l'article →</a>
+                                <a href="https://ibrahim-djime.github.io/diak/?section=informations&article=afrique-innovation-01" class="info-card-link">Lire l'article →</a>
                             </div>
                         </div>
                     </article>
 
                     <article class="info-card" data-article-id="gestion-energie-02" data-original-url="https://www.lemonde.fr/afrique/article/20260509-les-solutions-energetiques-locales-accelerent-la-transition-verte_12345678_3212.html" data-title="Les solutions énergétiques locales accélèrent la transition verte">
-                        <img src="https://images.unsplash.com/photo-1473341304170-971dccb5ac1e?auto=format&fit=crop&w=900&q=80" alt="Énergie et transition verte" />
+                        <img src="https://images.unsplash.com/photo-1473341304170-971dccb5ac1e?auto=format&fit=crop&w=900&q=80" alt="Énergie et transition verte" loading="lazy" decoding="async" />
                         <div class="info-card-body">
                             <div class="info-card-header-row">
                                 <span class="info-card-source">Énergie</span>
@@ -2380,13 +2330,13 @@ document.addEventListener("DOMContentLoaded", function () {
                             <p class="info-card-desc">Des foyers et entreprises adoptent des modèles plus durables et plus résilients.</p>
                             <div class="info-card-meta">
                                 <span>09 mai 2026</span>
-                                <a href="https://diak.vercel.app/?section=informations&article=gestion-energie-02" class="info-card-link">Lire l'article →</a>
+                                <a href="https://ibrahim-djime.github.io/diak/?section=informations&article=gestion-energie-02" class="info-card-link">Lire l'article →</a>
                             </div>
                         </div>
                     </article>
 
                     <article class="info-card" data-article-id="education-emploi-03" data-original-url="https://www.jeuneafrique.com/20260503/economie/le-defi-de-l-emploi-des-jeunes-reste-central-pour-les-pays-africains/" data-title="Le défi de l'emploi des jeunes reste central pour les pays africains">
-                        <img src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=900&q=80" alt="Éducation et emploi" />
+                        <img src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=900&q=80" alt="Éducation et emploi" loading="lazy" decoding="async" />
                         <div class="info-card-body">
                             <div class="info-card-header-row">
                                 <span class="info-card-source">Éducation</span>
@@ -2401,7 +2351,7 @@ document.addEventListener("DOMContentLoaded", function () {
                             <p class="info-card-desc">Les formations, l'entrepreneuriat et les partenariats créent de nouvelles perspectives.</p>
                             <div class="info-card-meta">
                                 <span>03 mai 2026</span>
-                                <a href="https://diak.vercel.app/?section=informations&article=education-emploi-03" class="info-card-link">Lire l'article →</a>
+                                <a href="https://ibrahim-djime.github.io/diak/?section=informations&article=education-emploi-03" class="info-card-link">Lire l'article →</a>
                             </div>
                         </div>
                     </article>
@@ -2531,6 +2481,12 @@ document.addEventListener("DOMContentLoaded", function () {
                 font-weight: 600;
             }
             #informations .info-card-link:hover { text-decoration: underline; }
+            #informations .info-load-complete {
+                margin: 12px 0;
+                color: #6b7280;
+                text-align: center;
+                font-size: 0.85rem;
+            }
             @media (max-width: 640px) {
                 #informations .info-card-header-row {
                     align-items: flex-start;
@@ -2544,7 +2500,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
         <script>
             (function () {
-                const LUMESYS_BASE = 'https://diak.vercel.app/';
+                const LUMESYS_BASE = 'https://ibrahim-djime.github.io/diak/';
 
                 function buildLumesysArticleUrl(articleId) {
                     const params = new URLSearchParams({
@@ -2584,8 +2540,220 @@ document.addEventListener("DOMContentLoaded", function () {
                     return null;
                 }
 
-                function bindShareButtons() {
-                    const cards = document.querySelectorAll('#informations .info-card');
+                /* Static samples are disabled; Firestore is the only feed source.
+                const INFO_ARTICLES = [
+                    { id: 'article-001', source: 'Afrique', title: "L'innovation africaine prend de l'ampleur dans le numérique", description: 'Des startups, talents et projets locaux redéfinissent les usages du numérique sur le continent.', date: '13 mai 2026', image: 'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=900&q=80', alt: 'Innovation en Afrique', originalUrl: 'https://www.rfi.fr/fr/afrique/20260513-l-innovation-africaine-prend-de-l-ampleur-dans-le-numerique' },
+                    { id: 'article-002', source: 'Énergie', title: 'Les solutions énergétiques locales accélèrent la transition verte', description: 'Des foyers et entreprises adoptent des modèles plus durables et plus résilients.', date: '09 mai 2026', image: 'https://images.unsplash.com/photo-1473341304170-971dccb5ac1e?auto=format&fit=crop&w=900&q=80', alt: 'Énergie et transition verte', originalUrl: 'https://www.lemonde.fr/afrique/article/20260509-les-solutions-energetiques-locales-accelerent-la-transition-verte_12345678_3212.html' },
+                    { id: 'article-003', source: 'Éducation', title: "Le défi de l'emploi des jeunes reste central pour les pays africains", description: 'Les politiques de formation, d\'entrepreneuriat et d\'inclusion doivent s\'accélérer.', date: '03 mai 2026', image: 'https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=900&q=80', alt: 'Éducation et emploi', originalUrl: 'https://www.jeuneafrique.com/20260503/economie/le-defi-de-l-emploi-des-jeunes-reste-central-pour-les-pays-africains/' },
+                    { id: 'article-004', source: 'Santé', title: 'L’accès aux soins s’améliore grâce aux innovations numériques', description: 'Des applications et équipements plus simples font gagner du temps aux patients.', date: '28 avril 2026', image: 'https://images.unsplash.com/photo-1576091160550-2173dba999ef?auto=format&fit=crop&w=900&q=80', alt: 'Santé et innovation', originalUrl: 'https://www.africanews.com/2026/04/28/innovation-numerique-et-soins/' },
+                    { id: 'article-005', source: 'Technologie', title: 'L’intelligence artificielle gagne du terrain dans les services publics', description: 'Des administrations ciblent des usages plus rapides, plus lisibles et plus accessibles.', date: '21 avril 2026', image: 'https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=900&q=80', alt: 'Technologie et IA', originalUrl: 'https://www.bbc.com/news/technology/2026/04/21/ai-services-public' },
+                    { id: 'article-006', source: 'Agriculture', title: 'Les exploitants s’appuient sur des solutions locales pour mieux produire', description: 'Des outils pratiques permettent d’optimiser les récoltes et la gestion de l’eau.', date: '15 avril 2026', image: 'https://images.unsplash.com/photo-1501004318641-b39e6451bec6?auto=format&fit=crop&w=900&q=80', alt: 'Agriculture intelligente', originalUrl: 'https://www.aa.com.tr/fr/agriculture/solutions-locales' },
+                    { id: 'article-007', source: 'Finance', title: 'La finance mobile réduit encore les écarts d’accès', description: 'Les services numériques suivent les besoins des ménages et des PME.', date: '10 avril 2026', image: 'https://images.unsplash.com/photo-1559526324-4b87b5e36e44?auto=format&fit=crop&w=900&q=80', alt: 'Finance mobile', originalUrl: 'https://www.worldbank.org/en/news/feature/2026/04/10/finance-mobile' },
+                    { id: 'article-008', source: 'Culture', title: 'Le numérique redonne vie à la culture et aux savoirs locaux', description: 'Les contenus numériques renforcent la visibilité et la transmission des cultures.', date: '07 avril 2026', image: 'https://images.unsplash.com/photo-1516280440614-37939bbacd81?auto=format&fit=crop&w=900&q=80', alt: 'Culture et numérique', originalUrl: 'https://www.unesco.org/fr/culture-numerique' },
+                    { id: 'article-009', source: 'Mobilité', title: 'Les villes testent des modèles de mobilité plus doux', description: 'Des corridors plus sûrs et plus accessibles améliorent les déplacements quotidiens.', date: '02 avril 2026', image: 'https://images.unsplash.com/photo-1493246507139-91e8fad9978e?auto=format&fit=crop&w=900&q=80', alt: 'Mobilité urbaine', originalUrl: 'https://www.urbanmobility.org/2026/04/02/mobilite-douce' },
+                    { id: 'article-010', source: 'Numérique', title: 'Les usages concrets du numérique changent la vie quotidienne', description: 'De l’outil de travail au service public, les bénéfices sont désormais visibles.', date: '30 mars 2026', image: 'https://images.unsplash.com/photo-1515879218367-8466d910aaa4?auto=format&fit=crop&w=900&q=80', alt: 'Usage du numérique', originalUrl: 'https://www.france24.com/fr/tech-et-science/20260330-numerique-usage-quotidien' },
+                    { id: 'article-011', source: 'Sécurité', title: 'La cybersécurité devient un enjeu majeur pour les PME', description: 'Les organisations renforcent leurs protections avec des solutions plus simples.', date: '24 mars 2026', image: 'https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&w=900&q=80', alt: 'Cybersécurité', originalUrl: 'https://www.weforum.org/agenda/2026/03/cybersecurity-pme' },
+                    { id: 'article-012', source: 'Environnement', title: 'Le recyclage local prend une nouvelle dimension', description: 'Une meilleure collecte et une logique locale réduisent les déchets.', date: '18 mars 2026', image: 'https://images.unsplash.com/photo-1532996122724-e3c354a0b15b?auto=format&fit=crop&w=900&q=80', alt: 'Recyclage local', originalUrl: 'https://www.earthday.org/recyclage-local' },
+                    { id: 'article-013', source: 'Tourisme', title: 'Le tourisme durable attire les voyageurs soucieux de l’impact', description: 'Des destinations nouvelles privilégient l’expérience locale et la sobriété.', date: '12 mars 2026', image: 'https://images.unsplash.com/photo-1501785888041-af3ef285b470?auto=format&fit=crop&w=900&q=80', alt: 'Tourisme durable', originalUrl: 'https://www.tourism-review.com/tourisme-durable' },
+                    { id: 'article-014', source: 'Sport', title: 'Le sport scolaire gagne en accessibilité et en inclusion', description: 'Des initiatives locales rapprochent plus de jeunes de l’activité physique.', date: '05 mars 2026', image: 'https://images.unsplash.com/photo-1517649763962-0c623066013b?auto=format&fit=crop&w=900&q=80', alt: 'Sport scolaire', originalUrl: 'https://www.unicef.org/sport-inclusion' },
+                    { id: 'article-015', source: 'Bâtiment', title: 'La construction intelligente réduit la consommation d’énergie', description: 'Les nouvelles méthodes visent des espaces plus efficients et plus sûrs.', date: '28 février 2026', image: 'https://images.unsplash.com/photo-1504307651254-35680f356dfd?auto=format&fit=crop&w=900&q=80', alt: 'Construction intelligente', originalUrl: 'https://www.energiesmedia.com/construction-intelligente' },
+                    { id: 'article-016', source: 'Industrie', title: 'L’industrie locale cherche des modèles plus robustes', description: 'La transformation numérique aide à améliorer la qualité et la production.', date: '22 février 2026', image: 'https://images.unsplash.com/photo-1581092921461-eab62e97a780?auto=format&fit=crop&w=900&q=80', alt: 'Industrie locale', originalUrl: 'https://www.mining.com/industrie-locale' },
+                    { id: 'article-017', source: 'Entrepreneuriat', title: 'Les femmes entrepreneures renforcent les dynamiques locales', description: 'Des parcours de création et de financement inspirent de nouvelles initiatives.', date: '17 février 2026', image: 'https://images.unsplash.com/photo-1521737604893-d14cc237f11d?auto=format&fit=crop&w=900&q=80', alt: 'Entrepreneuriat féminin', originalUrl: 'https://www.g20.org/femmes-entrepreneures' },
+                    { id: 'article-018', source: 'Transport', title: 'Les corridors ferroviaires se modernisent pour davantage de fluidité', description: 'Des lignes plus efficaces améliorent le transport des populations et des marchandises.', date: '11 février 2026', image: 'https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?auto=format&fit=crop&w=900&q=80', alt: 'Transport ferroviaire', originalUrl: 'https://www.railwaygazette.com/transport-ferroviaire' },
+                    { id: 'article-019', source: 'Médias', title: 'Les contenus locaux prennent la parole sur les plateformes numériques', description: 'Une meilleure présence en ligne aide les publics à mieux suivre l’actualité.', date: '05 février 2026', image: 'https://images.unsplash.com/photo-1495020689067-958852a7765e?auto=format&fit=crop&w=900&q=80', alt: 'Médias locaux', originalUrl: 'https://www.mediaobservatory.com/contenus-locaux' },
+                    { id: 'article-020', source: 'Énergie', title: 'Le solaire devient un levier clé pour les communautés rurales', description: 'Des installations simples réduisent les coupures et améliorent la qualité de vie.', date: '30 janvier 2026', image: 'https://images.unsplash.com/photo-1509391366360-2e959784a276?auto=format&fit=crop&w=900&q=80', alt: 'Solaire rural', originalUrl: 'https://www.iea.org/solaire-rural' },
+                    { id: 'article-021', source: 'Climat', title: 'Les solutions d’adaptation gagnent en importance dans les villes', description: 'Les municipalités cherchent des réponses locales et concrètes face aux extrêmes.', date: '25 janvier 2026', image: 'https://images.unsplash.com/photo-1473448912268-2022ce9509d8?auto=format&fit=crop&w=900&q=80', alt: 'Adaptation climatique', originalUrl: 'https://www.ipcc.ch/adaptation-villes' },
+                    { id: 'article-022', source: 'Commerce', title: 'Le commerce digital ouvre de nouvelles opportunités pour les artisans', description: 'Des plateformes plus simples permettent de vendre et de mieux se connecter.', date: '18 janvier 2026', image: 'https://images.unsplash.com/photo-1556740749-887f6717d7e4?auto=format&fit=crop&w=900&q=80', alt: 'Commerce digital', originalUrl: 'https://www.ilo.org/commerce-digital' },
+                    { id: 'article-023', source: 'Science', title: 'L’éducation scientifique prend de l’ampleur dans les collèges', description: 'Les jeunes apprennent par la pratique et la découverte du terrain.', date: '12 janvier 2026', image: 'https://images.unsplash.com/photo-1532094349884-543bc11b234d?auto=format&fit=crop&w=900&q=80', alt: 'Science et éducation', originalUrl: 'https://www.unesco.org/fr/education-scientifique' },
+                    { id: 'article-024', source: 'Développement', title: 'Les modèles de développement durable gagnent en crédibilité', description: 'Les acteurs publics et privés privilégient des projets plus responsables.', date: '07 janvier 2026', image: 'https://images.unsplash.com/photo-1531482615713-2afd69097998?auto=format&fit=crop&w=900&q=80', alt: 'Développement durable', originalUrl: 'https://www.un.org/sustainabledevelopment/developpement-durable' },
+                    { id: 'article-025', source: 'Réseaux', title: 'Les réseaux sociaux deviennent un outil de mobilisation citoyenne', description: 'Les communautés s’organisent en ligne pour mieux agir ensemble.', date: '03 janvier 2026', image: 'https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=900&q=80', alt: 'Mobilisation citoyenne', originalUrl: 'https://www.dw.com/fr/reseaux-sociaux-mobilisation' },
+                    { id: 'article-026', source: 'Public', title: 'La transformation numérique des services publics accélère', description: 'Les administrations simplifient les démarches grâce à des outils plus lisibles.', date: '27 décembre 2025', image: 'https://images.unsplash.com/photo-1552664730-d307ca884978?auto=format&fit=crop&w=900&q=80', alt: 'Services publics', originalUrl: 'https://www.ec.europa.eu/services-publics' },
+                    { id: 'article-027', source: 'Leadership', title: 'Les femmes prennent plus de place dans les décisions locales', description: 'Leur leadership transforme les priorités dans plusieurs secteurs.', date: '20 décembre 2025', image: 'https://images.unsplash.com/photo-1556157382-97eda2d62296?auto=format&fit=crop&w=900&q=80', alt: 'Leadership féminin', originalUrl: 'https://www.unwomen.org/fr/leadership-femmes' },
+                    { id: 'article-028', source: 'Rural', title: 'La vie rurale s’appuie sur des services plus performants', description: 'Internet, santé et mobilité se renforcent grâce à des investissements ciblés.', date: '14 décembre 2025', image: 'https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=900&q=80', alt: 'Vie rurale', originalUrl: 'https://www.ifad.org/fr/vie-rurale' },
+                    { id: 'article-029', source: 'Start-up', title: 'Les jeunes entreprises favorisent l’innovation locale', description: 'Des modèles plus agiles créent des emplois et font émerger de nouvelles solutions.', date: '09 décembre 2025', image: 'https://images.unsplash.com/photo-1559136555-9303baea8ebd?auto=format&fit=crop&w=900&q=80', alt: 'Start-up locale', originalUrl: 'https://www.startupfrance.fr/startups-locales' },
+                    { id: 'article-030', source: 'Santé mentale', title: 'La santé mentale devient une priorité dans les campus et les villes', description: 'Des programmes de soutien renforcent l’écoute et la prévention.', date: '03 décembre 2025', image: 'https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=900&q=80', alt: 'Santé mentale', originalUrl: 'https://www.who.int/fr/health-topics/mental-health' }
+                ]; */
+
+                let infoCardsInitialized = false;
+                let isLoadingMoreInfo = false;
+
+                function escapeInfoHtml(value) {
+                    return String(value || '').replace(/[&<>"']/g, function (character) {
+                        return {
+                            '&': '&amp;',
+                            '<': '&lt;',
+                            '>': '&gt;',
+                            '"': '&quot;',
+                            "'": '&#39;'
+                        }[character];
+                    });
+                }
+
+                function safeInfoUrl(value) {
+                    try {
+                        const url = new URL(String(value || ''), window.location.href);
+                        return url.protocol === 'http:' || url.protocol === 'https:' ? url.href : '';
+                    } catch (error) {
+                        return '';
+                    }
+                }
+
+                function waitForInfoFirestore() {
+                    if (window.InfoFirestore) return Promise.resolve();
+                    return new Promise(function (resolve, reject) {
+                        function handleReady() {
+                            window.clearTimeout(timeout);
+                            if (window.InfoFirestore) {
+                                resolve();
+                            } else {
+                                reject(new Error('Le service Firestore Information est indisponible.'));
+                            }
+                        }
+                        const timeout = window.setTimeout(function () {
+                            window.removeEventListener('info:firebase-ready', handleReady);
+                            reject(new Error('Délai dépassé lors du chargement de Firestore Information.'));
+                        }, 10000);
+                        window.addEventListener('info:firebase-ready', handleReady, { once: true });
+                    });
+                }
+
+                async function renderInfoCards(loadMore) {
+                    if (isLoadingMoreInfo) return;
+                    const grid = document.getElementById('info-news-grid');
+                    if (!grid) return;
+
+                    isLoadingMoreInfo = true;
+                    if (!loadMore && !infoCardsInitialized) grid.replaceChildren();
+                    const parent = grid.parentElement;
+                    let loadMoreButton = parent && parent.querySelector('.info-load-more');
+                    if (!loadMoreButton && parent) {
+                        loadMoreButton = document.createElement('button');
+                        loadMoreButton.type = 'button';
+                        loadMoreButton.className = 'info-load-more';
+                        parent.appendChild(loadMoreButton);
+                    }
+                    let endMessage = parent && parent.querySelector('.info-load-complete');
+                    if (!endMessage && parent) {
+                        endMessage = document.createElement('p');
+                        endMessage.className = 'info-load-complete';
+                        endMessage.setAttribute('role', 'status');
+                        parent.appendChild(endMessage);
+                    }
+                    if (loadMoreButton) {
+                        loadMoreButton.textContent = 'Chargement...';
+                        loadMoreButton.disabled = true;
+                        loadMoreButton.style.display = 'flex';
+                        loadMoreButton.onclick = function () {
+                            renderInfoCards(infoCardsInitialized);
+                        };
+                    }
+                    if (endMessage) endMessage.hidden = true;
+
+                    try {
+                        await waitForInfoFirestore();
+                        if (!window.InfoFirestore) {
+                            throw new Error('Le service Firestore Information est indisponible.');
+                        }
+
+                        const displayedIds = Array.from(grid.querySelectorAll('.info-card'))
+                            .map(function (card) {
+                                return {
+                                    id: card.dataset.articleId,
+                                    originalUrl: card.dataset.originalUrl
+                                };
+                            })
+                            .filter(Boolean);
+                        const page = loadMore
+                            ? await window.InfoFirestore.loadMoreInfoArticles(displayedIds)
+                            : await window.InfoFirestore.beginFeedSession();
+                        if (!page || !Array.isArray(page.articles) || typeof page.hasMore !== 'boolean') {
+                            throw new Error('Réponse de pagination Firestore invalide.');
+                        }
+                        const nextArticles = page.articles;
+                    const articleMarkup = document.createElement('div');
+                    articleMarkup.innerHTML = nextArticles.map(function (article) {
+                        const title = escapeInfoHtml(article.title);
+                        const source = escapeInfoHtml(article.source);
+                        const description = escapeInfoHtml(article.description);
+                        const date = escapeInfoHtml(article.date);
+                        const image = escapeInfoHtml(safeInfoUrl(article.image));
+                        const alt = escapeInfoHtml(article.alt || article.title);
+                        const originalUrl = escapeInfoHtml(safeInfoUrl(article.originalUrl));
+                        const articleUrl = article.isStoredArticle
+                            ? originalUrl
+                            : escapeInfoHtml(buildLumesysArticleUrl(article.id));
+                        return `
+                            <article class="info-card" data-article-id="${escapeInfoHtml(article.id)}" data-original-url="${originalUrl}" data-title="${title}">
+                                <img src="${image}" alt="${alt}" loading="lazy" decoding="async" />
+                                <div class="info-card-body">
+                                    <div class="info-card-header-row">
+                                        <span class="info-card-source">${source}</span>
+                                        <div class="info-share-controls" aria-label="Partage d'article">
+                                            <button type="button" class="info-share-icon info-share-icon-whatsapp" data-platform="whatsapp" aria-label="Partager sur WhatsApp">
+                                                <svg viewBox="0 0 32 32" aria-hidden="true" role="img"><path fill="currentColor" d="M19.11 17.12c-.33-.17-1.93-.95-2.23-1.06-.3-.11-.51-.17-.72.17-.21.34-.82 1.06-1.01 1.28-.19.21-.37.24-.7.08-.34-.17-1.43-.52-2.72-1.67-.99-.88-1.67-1.97-1.87-2.31-.19-.34-.02-.52.15-.69.16-.16.34-.37.52-.56.17-.18.23-.31.34-.52.11-.21.06-.39-.03-.55-.09-.17-.72-1.73-.99-2.37-.26-.62-.52-.53-.72-.54l-.61-.01c-.21 0-.56.08-.86.39-.3.31-1.15 1.12-1.15 2.75s1.18 3.18 1.34 3.41c.16.22 2.31 3.53 5.59 4.96.78.34 1.39.54 1.87.69.79.25 1.51.21 2.08.13.64-.09 1.93-.79 2.2-1.55.27-.76.27-1.41.19-1.55-.08-.14-.3-.22-.63-.39Zm-4.93 9.98a14.8 14.8 0 0 1-7.08-1.93L5.5 25.5l1.44-5.2A13.1 13.1 0 0 1 5.1 15.7c0-7.26 5.92-13.18 13.21-13.18 3.53 0 6.84 1.38 9.33 3.88a13.17 13.17 0 0 1 3.87 9.3c0 7.27-5.92 13.18-13.2 13.18Zm0-24.1A10.96 10.96 0 0 0 7.15 15.7c0 2.15.63 4.22 1.82 6l-1.22 4.41 4.51-1.18a10.9 10.9 0 0 0 6.05 1.78h.01c6.06 0 10.98-4.9 10.98-10.95A10.97 10.97 0 0 0 14.18 2.99h.01Z"/></svg>
+                                            </button>
+                                            <button type="button" class="info-share-icon info-share-icon-facebook" data-platform="facebook" aria-label="Partager sur Facebook">
+                                                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M13.5 21v-8h2.7l.4-3h-3.1V7.2c0-.9.3-1.5 1.6-1.5H16V2.8c-.3 0-1.3-.1-2.5-.1-2.5 0-4.1 1.5-4.1 4.3V10H7v3h2.4v8h4.1Z"/></svg>
+                                            </button>
+                                            <button type="button" class="info-share-icon info-share-icon-tiktok" data-platform="tiktok" aria-label="Partager sur TikTok">
+                                                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15.5 3c.4 1.7 1.7 3 3.3 3.6v2.8c-1.3-.1-2.5-.5-3.6-1.4v6.3A5.6 5.6 0 1 1 9.8 8.8v2.8a2.8 2.8 0 1 0 2.5 2.8V3h.2Z"/></svg>
+                                            </button>
+                                            <button type="button" class="info-share-icon info-share-icon-copy_link" data-platform="copy" aria-label="Copier le lien">
+                                                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 17.5a2.5 2.5 0 0 1-2.5-2.5V9A2.5 2.5 0 0 1 9 6.5h4A2.5 2.5 0 0 1 15.5 9v1.5h-1.8V9a.7.7 0 0 0-.7-.7H9a.7.7 0 0 0-.7.7v6a.7.7 0 0 0 .7.7h4a.7.7 0 0 0 .7-.7v-1.4h1.8V15A2.5 2.5 0 0 1 13 17.5H9Zm8-8.3h-4.5A2.5 2.5 0 0 0 10 11.7v5.8a2.5 2.5 0 0 0 2.5 2.5h4.5A2.5 2.5 0 0 0 19.5 17.5v-5.8A2.5 2.5 0 0 0 17 9.2Zm-4.5 8.3a.7.7 0 0 1-.7-.7v-5.8a.7.7 0 0 1 .7-.7h4.5a.7.7 0 0 1 .7.7v5.8a.7.7 0 0 1-.7.7h-4.5Z"/></svg>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <h3 class="info-card-title">${title}</h3>
+                                    <p class="info-card-desc">${description}</p>
+                                    <div class="info-card-meta">
+                                        <span>${date}</span>
+                                        <a href="${articleUrl}" class="info-card-link" ${article.isStoredArticle ? 'target="_blank" rel="noopener noreferrer"' : ''}>Lire l'article →</a>
+                                    </div>
+                                </div>
+                            </article>
+                        `;
+                    }).join('');
+                    const newCards = Array.from(articleMarkup.querySelectorAll('.info-card'));
+                    if (!infoCardsInitialized) {
+                        grid.replaceChildren();
+                        infoCardsInitialized = true;
+                    }
+                    newCards.forEach(function (card) { grid.appendChild(card); });
+
+                    if (loadMoreButton) {
+                        loadMoreButton.textContent = 'Voir plus';
+                        loadMoreButton.disabled = false;
+                        loadMoreButton.style.display = page.hasMore ? 'flex' : 'none';
+                    }
+
+                    bindShareButtons(newCards);
+                    if (endMessage && !page.hasMore) {
+                        endMessage.textContent = 'Toutes les actualités disponibles ont été affichées.';
+                        endMessage.hidden = false;
+                    } else if (newCards.length === 0 && endMessage) {
+                        endMessage.textContent = loadMore
+                            ? 'Aucune nouvelle actualité disponible pour le moment.'
+                            : 'Aucune actualité n’est encore disponible dans le flux.';
+                        endMessage.hidden = false;
+                    }
+                    highlightRequestedCard();
+                    } catch (error) {
+                        console.error('Chargement du flux Information impossible:', error);
+                        if (endMessage) {
+                            endMessage.textContent = 'Impossible de charger les actualités depuis Firestore. Réessayez.';
+                            endMessage.hidden = false;
+                        }
+                    } finally {
+                        isLoadingMoreInfo = false;
+                        if (loadMoreButton) {
+                            loadMoreButton.disabled = false;
+                            loadMoreButton.textContent = 'Voir plus';
+                        }
+                    }
+                }
+
+                function bindShareButtons(cards) {
+                    cards = cards || document.querySelectorAll('#informations .info-card');
                     cards.forEach(function (card) {
                         const articleId = card.dataset.articleId;
                         const articleTitle = card.dataset.title || card.querySelector('.info-card-title')?.textContent || 'Article';
@@ -2607,28 +2775,39 @@ document.addEventListener("DOMContentLoaded", function () {
                                 }
 
                                 if (platform === 'facebook') {
-                                    const shareUrl = 'https://www.facebook.com/sharer/sharer.php?u=' + encodeURIComponent(lumeUrl);
-                                    window.open(shareUrl, '_blank', 'noopener,noreferrer');
+                                    const facebookShareUrl = 'https://www.facebook.com/sharer/sharer.php?u=' + encodeURIComponent(lumeUrl);
+                                    const facebookAppUrl = 'fb://facewebmodal/f?href=' + encodeURIComponent(lumeUrl);
+                                    const isAndroid = /Android/i.test(navigator.userAgent || '');
+
+                                    if (isAndroid) {
+                                        const appWindow = window.open(facebookAppUrl, '_blank', 'noopener,noreferrer');
+                                        setTimeout(function () {
+                                            if (!appWindow || appWindow.closed) {
+                                                window.open(facebookShareUrl, '_blank', 'noopener,noreferrer');
+                                            }
+                                        }, 900);
+                                        return;
+                                    }
+
+                                    window.open(facebookShareUrl, '_blank', 'noopener,noreferrer');
                                     return;
                                 }
 
                                 if (platform === 'tiktok') {
-                                    const shareData = {
-                                        title: articleTitle,
-                                        text: 'Découvrez cet article sur Lumesys',
-                                        url: lumeUrl
-                                    };
-
                                     if (navigator.share) {
-                                        navigator.share(shareData).catch(function () {
-                                            const fallback = 'https://www.tiktok.com/share?url=' + encodeURIComponent(lumeUrl);
+                                        navigator.share({
+                                            title: articleTitle,
+                                            text: 'Découvrez cet article sur Lumesys',
+                                            url: lumeUrl
+                                        }).catch(function () {
+                                            const fallback = 'https://www.tiktok.com/share?url=' + encodeURIComponent(lumeUrl) + '&title=' + encodeURIComponent(articleTitle);
                                             window.open(fallback, '_blank', 'noopener,noreferrer');
                                         });
                                         return;
                                     }
 
-                                    const fallbackUrl = 'https://www.tiktok.com/share?url=' + encodeURIComponent(lumeUrl);
-                                    window.open(fallbackUrl, '_blank', 'noopener,noreferrer');
+                                    const fallback = 'https://www.tiktok.com/share?url=' + encodeURIComponent(lumeUrl) + '&title=' + encodeURIComponent(articleTitle);
+                                    window.open(fallback, '_blank', 'noopener,noreferrer');
                                     return;
                                 }
 
@@ -2676,7 +2855,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 }
 
                 document.addEventListener('DOMContentLoaded', function () {
-                    bindShareButtons();
+                    renderInfoCards();
                     highlightRequestedCard();
                 });
             })();
@@ -3858,6 +4037,5 @@ initializeAllCookies();
 
 <script src="info-geo.js" defer></script>
 <script src="info-analytics.js" defer></script>
-<script src="info.js" defer></script>
 </body>
 </html>
