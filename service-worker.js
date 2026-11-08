@@ -1,4 +1,4 @@
-const CACHE_NAME = "lumesys-cache-v7";
+const CACHE_NAME = "lumesys-cache-v8";
 
 // ============================================================
 // RESSOURCES À PRÉCHARGER
