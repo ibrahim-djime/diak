@@ -1,3 +1,4 @@
+
 console.log("✅ JavaScript chargé avec succès");
 
 /* =======================================================
@@ -31,18 +32,24 @@ console.log("✅ JavaScript chargé avec succès");
     const greeting = hour >= 5 && hour < 18 ? "Bonjour" : "Bonsoir";
     const user = welcomeUser && !welcomeUser.isAnonymous ? welcomeUser : null;
     const profile = welcomeProfile || {};
+
     const name = shortName(user && user.displayName)
       || shortName(profile.prenom)
       || shortName(profile.firstName)
       || shortName(profile.nom);
+
     const photoUrl = safePhotoUrl(profile.photo)
       || safePhotoUrl(profile.photoURL)
       || safePhotoUrl(user && user.photoURL);
+
     const message = welcome.querySelector(".accueil-bienvenue-message");
     const avatar = welcome.querySelector(".accueil-bienvenue-avatar");
     const image = welcome.querySelector(".accueil-bienvenue-photo");
 
-    if (message) message.textContent = greeting + (name ? " " + name : "");
+    if (message) {
+      message.textContent = greeting + (name ? " " + name : "");
+    }
+
     if (!avatar || !image) return;
 
     if (!photoUrl) {
@@ -64,11 +71,13 @@ console.log("✅ JavaScript chargé avec succès");
     image.hidden = true;
     avatar.hidden = false;
     image.dataset.photoUrl = photoUrl;
+
     image.onload = function () {
       if (image.dataset.photoUrl !== photoUrl) return;
       image.hidden = false;
       avatar.hidden = true;
     };
+
     image.onerror = function () {
       if (image.dataset.photoUrl !== photoUrl) return;
       image.hidden = true;
@@ -76,6 +85,7 @@ console.log("✅ JavaScript chargé avec succès");
       image.dataset.photoUrl = "";
       avatar.hidden = false;
     };
+
     image.src = photoUrl;
   }
 
@@ -84,6 +94,7 @@ console.log("✅ JavaScript chargé avec succès");
       welcomeUser = user || null;
       welcomeProfile = profile || null;
     }
+
     renderWelcome();
   };
 
@@ -91,6 +102,7 @@ console.log("✅ JavaScript chargé avec succès");
     renderWelcome();
     window.setInterval(renderWelcome, 60000);
   }, { once: true });
+
 })();
 
 
@@ -98,17 +110,17 @@ console.log("✅ JavaScript chargé avec succès");
    SERVICE WORKER - MODE HORS CONNEXION
    ======================================================= */
 
-if ('serviceWorker' in navigator) {
+if ("serviceWorker" in navigator) {
 
-  window.addEventListener('load', () => {
+  window.addEventListener("load", () => {
 
     navigator.serviceWorker
-      .register('service-worker.js')
+      .register("service-worker.js")
 
       .then((registration) => {
 
         console.log(
-          '✅ Service Worker enregistré avec succès :',
+          "✅ Service Worker enregistré avec succès :",
           registration.scope
         );
 
@@ -117,7 +129,7 @@ if ('serviceWorker' in navigator) {
       .catch((error) => {
 
         console.error(
-          '❌ Erreur lors de l’enregistrement du Service Worker :',
+          "❌ Erreur lors de l’enregistrement du Service Worker :",
           error
         );
 
@@ -185,6 +197,91 @@ document.addEventListener("DOMContentLoaded", async function () {
 
 
   /* =====================================================
+     PARAMÈTRES DU CHARGEMENT
+     ===================================================== */
+
+  const MAX_FILES = 100;
+
+  const MAX_CONSECUTIVE_NO_NEW = 5;
+
+  const REQUEST_TIMEOUT_MS = 15000;
+
+
+  /* =====================================================
+     NORMALISATION DES SUGGESTIONS
+     ===================================================== */
+
+  function normalizeSuggestionText(value) {
+
+    return String(value || "")
+      .trim()
+      .replace(/\s+/g, " ")
+      .toLocaleLowerCase("fr");
+
+  }
+
+
+  /* =====================================================
+     IDENTIFICATION DES SUGGESTIONS UNIQUES
+     ===================================================== */
+
+  function getSuggestionKey(href, text) {
+
+    try {
+
+      const destination = new URL(
+        href,
+        document.baseURI
+      );
+
+      // Retirer le fragment pour éviter de compter
+      // deux fois la même destination.
+      destination.hash = "";
+
+      return (
+        destination.href +
+        "\u0000" +
+        normalizeSuggestionText(text)
+      );
+
+    }
+
+    catch (error) {
+
+      return null;
+
+    }
+
+  }
+
+
+  /* =====================================================
+     EMPREINTE DU CONTENU D'UN FICHIER
+     PERMET DE REPÉRER LES RÉPONSES RÉPÉTÉES
+     ===================================================== */
+
+  function getContentFingerprint(content) {
+
+    let hash = 2166136261;
+
+    for (let i = 0; i < content.length; i++) {
+
+      hash ^= content.charCodeAt(i);
+
+      hash = Math.imul(hash, 16777619);
+
+    }
+
+    return (
+      content.length +
+      "-" +
+      (hash >>> 0).toString(16)
+    );
+
+  }
+
+
+  /* =====================================================
      CHARGEMENT AUTOMATIQUE DES FICHIERS
 
      Le script cherche :
@@ -195,18 +292,38 @@ document.addEventListener("DOMContentLoaded", async function () {
      suggestions4.html
      ...
 
-     Il s'arrête dès qu'il ne trouve plus
-     le numéro suivant.
+     Il conserve toutes les suggestions uniques,
+     même lorsque leur nombre dépasse 1 000.
      ===================================================== */
 
   async function loadSuggestions() {
 
     let numero = 1;
 
+    let consecutiveNoNew = 0;
+
+    let totalFiles = 0;
+
+    let totalDuplicates = 0;
+
+    let totalInvalides = 0;
+
+    let lastFingerprint = "";
+
+    let consecutiveIdentical = 0;
+
+    let stopReason = "";
+
     const loadedSuggestions = [];
 
+    const seenSuggestionKeys = new Set();
 
-    while (true) {
+
+    /* ===================================================
+       BOUCLE DE CHARGEMENT
+       =================================================== */
+
+    while (numero <= MAX_FILES) {
 
       const file =
         "suggestions" + numero + ".html";
@@ -214,9 +331,20 @@ document.addEventListener("DOMContentLoaded", async function () {
 
       try {
 
-        console.log(
-          "🔎 Recherche de : " + file
-        );
+        /* ==============================================
+           AFFICHAGE DU PROGRÈS
+           ============================================== */
+
+        if (
+          numero <= 10 ||
+          numero % 25 === 0
+        ) {
+
+          console.log(
+            "🔎 Recherche de : " + file
+          );
+
+        }
 
 
         /* ==============================================
@@ -227,37 +355,73 @@ document.addEventListener("DOMContentLoaded", async function () {
           new URL(
             file,
             document.baseURI
-          ).href;
-
-
-        /* ==============================================
-           CHARGER LE FICHIER
-           ============================================== */
-
-        const response =
-          await fetch(
-            fileURL,
-            {
-              cache: "default"
-            }
           );
 
 
         /* ==============================================
-           LE FICHIER N'EXISTE PAS
+           PROTECTION CONTRE LES REQUÊTES BLOQUÉES
+           ============================================== */
+
+        const controller = new AbortController();
+
+        const timeoutId = window.setTimeout(
+          () => controller.abort(),
+          REQUEST_TIMEOUT_MS
+        );
+
+        let response;
+        let html;
+
+        try {
+
+          response = await fetch(
+            fileURL.href,
+            {
+              cache: "no-store",
+              credentials: "same-origin",
+              signal: controller.signal
+            }
+          );
+
+          html = await response.text();
+
+        }
+
+        finally {
+
+          window.clearTimeout(timeoutId);
+
+        }
+
+
+        /* ==============================================
+           VÉRIFIER LA RÉPONSE HTTP
            ============================================== */
 
         if (!response.ok) {
 
-          console.log(
-            "🛑 " +
-            file +
-            " introuvable."
-          );
+          if (response.status === 404) {
 
-          console.log(
-            "ℹ️ Fin du chargement automatique."
-          );
+            console.log(
+              "🛑 " + file + " introuvable."
+            );
+
+            stopReason = "Premier fichier absent";
+
+          }
+
+          else {
+
+            console.error(
+              "❌ Erreur HTTP " +
+              response.status +
+              " pour " +
+              file
+            );
+
+            stopReason = "Erreur HTTP " + response.status;
+
+          }
 
           break;
 
@@ -265,23 +429,108 @@ document.addEventListener("DOMContentLoaded", async function () {
 
 
         /* ==============================================
-           RÉCUPÉRER LE CONTENU
+           VÉRIFIER LES REDIRECTIONS
            ============================================== */
 
-        const html =
-          await response.text();
+        if (response.redirected) {
+
+          const finalURL = new URL(response.url);
+
+          if (
+            finalURL.origin !== fileURL.origin ||
+            finalURL.pathname !== fileURL.pathname
+          ) {
+
+            console.warn(
+              "⚠️ Redirection inattendue pour " + file
+            );
+
+            stopReason = "Redirection inattendue";
+
+            break;
+
+          }
+
+        }
 
 
         /* ==============================================
-           CONTENEUR TEMPORAIRE
+           VÉRIFIER LE CONTENU
            ============================================== */
 
-        const temporaryContainer =
-          document.createElement("div");
+        if (
+          !html ||
+          !html.trim()
+        ) {
+
+          console.warn(
+            "⚠️ Fichier vide : " + file
+          );
+
+          stopReason = "Fichier vide";
+
+          break;
+
+        }
 
 
-        temporaryContainer.innerHTML =
-          html;
+        /* ==============================================
+           DÉTECTER LES FICHIERS QUI RENVOIENT
+           EXACTEMENT LE MÊME CONTENU
+           ============================================== */
+
+        const fingerprint =
+          getContentFingerprint(html);
+
+
+        if (
+          fingerprint === lastFingerprint
+        ) {
+
+          consecutiveIdentical++;
+
+        }
+
+        else {
+
+          consecutiveIdentical = 0;
+
+        }
+
+
+        lastFingerprint = fingerprint;
+
+
+        if (
+          consecutiveIdentical >= 2
+        ) {
+
+          console.warn(
+            "🛑 Plusieurs fichiers successifs renvoient " +
+            "exactement le même contenu."
+          );
+
+          console.warn(
+            "⚠️ Arrêt pour éviter le chargement répété " +
+            "d'une page de remplacement."
+          );
+
+          stopReason = "Contenu HTML répétitif";
+
+          break;
+
+        }
+
+
+        /* ==============================================
+           ANALYSER LE HTML
+           ============================================== */
+
+        const parsedDocument =
+          new DOMParser().parseFromString(
+            html,
+            "text/html"
+          );
 
 
         /* ==============================================
@@ -289,24 +538,22 @@ document.addEventListener("DOMContentLoaded", async function () {
            ============================================== */
 
         const links =
-          temporaryContainer.querySelectorAll("a");
+          parsedDocument.querySelectorAll("a[href]");
 
 
         /* ==============================================
-           FICHIER EXISTANT MAIS VIDE
+           FICHIER EXISTANT MAIS SANS LIENS
            ============================================== */
 
         if (links.length === 0) {
 
-          console.log(
+          console.warn(
             "⚠️ " +
             file +
-            " existe mais ne contient aucune balise <a>."
+            " ne contient aucune balise <a>."
           );
 
-          console.log(
-            "ℹ️ Fin du chargement automatique."
-          );
+          stopReason = "Aucun lien dans le fichier";
 
           break;
 
@@ -314,19 +561,25 @@ document.addEventListener("DOMContentLoaded", async function () {
 
 
         /* ==============================================
-           AJOUTER LES SUGGESTIONS
+           AJOUTER LES SUGGESTIONS UNIQUES
            ============================================== */
 
         let nombreAjoutees = 0;
+
+        let nombreDoublons = 0;
+
+        let nombreInvalides = 0;
 
 
         links.forEach((link) => {
 
           const href =
-            link.getAttribute("href");
+            (link.getAttribute("href") || "").trim();
 
           const text =
-            link.textContent.trim();
+            (link.textContent || "")
+              .trim()
+              .replace(/\s+/g, " ");
 
 
           /* ============================================
@@ -338,10 +591,75 @@ document.addEventListener("DOMContentLoaded", async function () {
             !text
           ) {
 
+            nombreInvalides++;
+
             return;
 
           }
 
+
+          /* ============================================
+             VALIDER LA DESTINATION
+             ============================================ */
+
+          const key =
+            getSuggestionKey(href, text);
+
+          if (!key) {
+
+            nombreInvalides++;
+
+            return;
+
+          }
+
+
+          const destination =
+            new URL(href, document.baseURI);
+
+
+          const allowedProtocols = [
+            "http:",
+            "https:",
+            "mailto:",
+            "tel:"
+          ];
+
+
+          if (
+            !allowedProtocols.includes(
+              destination.protocol
+            )
+          ) {
+
+            nombreInvalides++;
+
+            return;
+
+          }
+
+
+          /* ============================================
+             ÉVITER LES DOUBLONS
+             ============================================ */
+
+          if (
+            seenSuggestionKeys.has(key)
+          ) {
+
+            nombreDoublons++;
+
+            return;
+
+          }
+
+
+          seenSuggestionKeys.add(key);
+
+
+          /* ============================================
+             ENREGISTRER LA SUGGESTION
+             ============================================ */
 
           loadedSuggestions.push({
 
@@ -358,34 +676,87 @@ document.addEventListener("DOMContentLoaded", async function () {
 
 
         /* ==============================================
-           AFFICHER LE RÉSULTAT
+           METTRE À JOUR LES COMPTEURS
            ============================================== */
 
-        console.log(
-          "✅ " +
-          file +
-          " chargé : " +
-          nombreAjoutees +
-          " suggestion(s)"
-        );
+        totalFiles++;
+
+        totalDuplicates += nombreDoublons;
+
+        totalInvalides += nombreInvalides;
 
 
         /* ==============================================
-           SI AUCUNE SUGGESTION VALIDE
+           AFFICHER LE RÉSULTAT
            ============================================== */
 
         if (
-          nombreAjoutees === 0
+          numero <= 10 ||
+          numero % 25 === 0
         ) {
 
           console.log(
-            "⚠️ Aucune suggestion valide dans " +
-            file
+            "✅ " +
+            file +
+            " chargé : " +
+            nombreAjoutees +
+            " nouvelle(s) suggestion(s), " +
+            nombreDoublons +
+            " doublon(s)"
           );
 
-          console.log(
-            "ℹ️ Fin du chargement automatique."
+        }
+
+
+        /* ==============================================
+           AUCUNE SUGGESTION VALIDE
+           ============================================== */
+
+        if (
+          nombreAjoutees === 0 &&
+          nombreDoublons === 0
+        ) {
+
+          console.warn(
+            "⚠️ Aucune suggestion valide dans " + file
           );
+
+          stopReason = "Aucune suggestion valide";
+
+          break;
+
+        }
+
+
+        /* ==============================================
+           DÉTECTER LES FICHIERS SANS NOUVELLES
+           SUGGESTIONS
+           ============================================== */
+
+        if (nombreAjoutees === 0) {
+
+          consecutiveNoNew++;
+
+        }
+
+        else {
+
+          consecutiveNoNew = 0;
+
+        }
+
+
+        if (
+          consecutiveNoNew >= MAX_CONSECUTIVE_NO_NEW
+        ) {
+
+          console.warn(
+            "🛑 Arrêt : " +
+            MAX_CONSECUTIVE_NO_NEW +
+            " fichiers successifs sans nouvelle suggestion."
+          );
+
+          stopReason = "Fichiers sans nouvelles suggestions";
 
           break;
 
@@ -403,16 +774,51 @@ document.addEventListener("DOMContentLoaded", async function () {
 
       catch (error) {
 
-        console.error(
-          "❌ Erreur lors du chargement de " +
-          file +
-          " :",
-          error
-        );
+        if (error.name === "AbortError") {
+
+          console.error(
+            "⏱️ Délai dépassé pendant le chargement de " +
+            file
+          );
+
+          stopReason = "Délai de chargement dépassé";
+
+        }
+
+        else {
+
+          console.error(
+            "❌ Erreur lors du chargement de " +
+            file +
+            " :",
+            error
+          );
+
+          stopReason = "Erreur de chargement";
+
+        }
 
         break;
 
       }
+
+    }
+
+
+    /* ===================================================
+       LIMITE DE SÉCURITÉ ATTEINTE
+       =================================================== */
+
+    if (numero > MAX_FILES) {
+
+      stopReason =
+        "Limite de sécurité des fichiers atteinte";
+
+      console.warn(
+        "⚠️ Limite de " +
+        MAX_FILES +
+        " fichiers examinés."
+      );
 
     }
 
@@ -424,20 +830,45 @@ document.addEventListener("DOMContentLoaded", async function () {
     suggestionLinks =
       loadedSuggestions;
 
-
     suggestionsLoaded = true;
 
+
+    /* ===================================================
+       RAPPORT FINAL
+       =================================================== */
 
     console.log(
       "=========================================="
     );
 
+    console.log(
+      "✅ CHARGEMENT DES SUGGESTIONS TERMINÉ"
+    );
 
     console.log(
-      "🔎 Nombre total de suggestions chargées : " +
+      "📁 Fichiers examinés : " +
+      totalFiles
+    );
+
+    console.log(
+      "✅ Suggestions uniques : " +
       suggestionLinks.length
     );
 
+    console.log(
+      "♻️ Doublons ignorés : " +
+      totalDuplicates
+    );
+
+    console.log(
+      "⚠️ Liens invalides ignorés : " +
+      totalInvalides
+    );
+
+    console.log(
+      "🛑 Motif d'arrêt : " +
+      (stopReason || "Fin du chargement")
+    );
 
     console.log(
       "=========================================="
@@ -448,9 +879,6 @@ document.addEventListener("DOMContentLoaded", async function () {
 
   /* =====================================================
      CHARGEMENT INITIAL
-
-     On attend que tous les fichiers soient chargés
-     avant d'activer la recherche.
      ===================================================== */
 
   await loadSuggestions();
@@ -502,10 +930,7 @@ document.addEventListener("DOMContentLoaded", async function () {
         suggestionsContainer.style.display =
           "none";
 
-
-        selectedSuggestionIndex =
-          -1;
-
+        selectedSuggestionIndex = -1;
 
         return;
 
@@ -534,18 +959,14 @@ document.addEventListener("DOMContentLoaded", async function () {
          ================================================ */
 
       const suggestions =
-        getSuggestions(
-          query
-        );
+        getSuggestions(query);
 
 
       /* ================================================
          AFFICHER
          ================================================ */
 
-      displaySuggestions(
-        suggestions
-      );
+      displaySuggestions(suggestions);
 
     }
   );
@@ -560,10 +981,9 @@ document.addEventListener("DOMContentLoaded", async function () {
     function (event) {
 
       const suggestions =
-        suggestionsContainer
-          .getElementsByClassName(
-            "suggestion-item"
-          );
+        suggestionsContainer.getElementsByClassName(
+          "suggestion-item"
+        );
 
 
       /* ================================================
@@ -589,17 +1009,12 @@ document.addEventListener("DOMContentLoaded", async function () {
 
         event.preventDefault();
 
-
         selectedSuggestionIndex =
           (
             selectedSuggestionIndex + 1
-          ) %
-          suggestions.length;
+          ) % suggestions.length;
 
-
-        updateSuggestionHighlight(
-          suggestions
-        );
+        updateSuggestionHighlight(suggestions);
 
       }
 
@@ -614,19 +1029,14 @@ document.addEventListener("DOMContentLoaded", async function () {
 
         event.preventDefault();
 
-
         selectedSuggestionIndex =
           (
             selectedSuggestionIndex -
             1 +
             suggestions.length
-          ) %
-          suggestions.length;
+          ) % suggestions.length;
 
-
-        updateSuggestionHighlight(
-          suggestions
-        );
+        updateSuggestionHighlight(suggestions);
 
       }
 
@@ -642,22 +1052,16 @@ document.addEventListener("DOMContentLoaded", async function () {
 
         event.preventDefault();
 
-
         const selectedLink =
-          suggestions[
-            selectedSuggestionIndex
-          ];
+          suggestions[selectedSuggestionIndex];
 
 
-        if (
-          selectedLink
-        ) {
+        if (selectedLink) {
 
           window.open(
             selectedLink.href,
             "_blank"
           );
-
 
           suggestionsContainer.style.display =
             "none";
@@ -681,14 +1085,10 @@ document.addEventListener("DOMContentLoaded", async function () {
       const query =
         searchInput.value.trim();
 
-
-      if (
-        query
-      ) {
+      if (query) {
 
         console.log(
-          "🔎 Recherche pour : " +
-          query
+          "🔎 Recherche pour : " + query
         );
 
       }
@@ -701,100 +1101,94 @@ document.addEventListener("DOMContentLoaded", async function () {
      AFFICHAGE DES SUGGESTIONS
      ===================================================== */
 
-  function displaySuggestions(
-    suggestions
-  ) {
+  function displaySuggestions(suggestions) {
 
-    suggestionsContainer.innerHTML =
-      "";
+    suggestionsContainer.innerHTML = "";
 
 
     /* ================================================
        CRÉATION DES LIENS
        ================================================ */
 
-    suggestions.forEach(
-      (suggestion) => {
+    suggestions.forEach((suggestion) => {
 
-        const suggestionLink =
-          document.createElement("a");
-
-
-        /* ==============================================
-           DESTINATION
-           ============================================== */
-
-        suggestionLink.href =
-          suggestion.href;
+      const suggestionLink =
+        document.createElement("a");
 
 
-        /* ==============================================
-           TEXTE
-           ============================================== */
+      /* ==============================================
+         DESTINATION
+         ============================================== */
 
-        suggestionLink.textContent =
-          suggestion.text;
-
-
-        /* ==============================================
-           CLASSE CSS
-           ============================================== */
-
-        suggestionLink.classList.add(
-          "suggestion-item"
-        );
+      suggestionLink.href =
+        suggestion.href;
 
 
-        /* ==============================================
-           OUVERTURE DANS UN NOUVEL ONGLET
-           ============================================== */
+      /* ==============================================
+         TEXTE
+         ============================================== */
 
-        suggestionLink.target =
-          "_blank";
-
-
-        /* ==============================================
-           CLIC SUR UNE SUGGESTION
-           ============================================== */
-
-        suggestionLink.addEventListener(
-          "click",
-          function (e) {
-
-            e.preventDefault();
+      suggestionLink.textContent =
+        suggestion.text;
 
 
-            window.open(
-              suggestionLink.href,
-              "_blank"
-            );
+      /* ==============================================
+         CLASSE CSS
+         ============================================== */
+
+      suggestionLink.classList.add(
+        "suggestion-item"
+      );
 
 
-            suggestionsContainer.style.display =
-              "none";
+      /* ==============================================
+         OUVERTURE DANS UN NOUVEL ONGLET
+         ============================================== */
 
-          }
-        );
+      suggestionLink.target = "_blank";
+
+      suggestionLink.rel = "noopener noreferrer";
 
 
-        /* ==============================================
-           AJOUTER AU CONTENEUR
-           ============================================== */
+      /* ==============================================
+         CLIC SUR UNE SUGGESTION
+         ============================================== */
 
-        suggestionsContainer.appendChild(
-          suggestionLink
-        );
+      suggestionLink.addEventListener(
+        "click",
+        function (e) {
 
-      }
-    );
+          e.preventDefault();
+
+          window.open(
+            suggestionLink.href,
+            "_blank",
+            "noopener"
+          );
+
+          suggestionsContainer.style.display =
+            "none";
+
+        }
+      );
+
+
+      /* ==============================================
+         AJOUTER AU CONTENEUR
+         ============================================== */
+
+      suggestionsContainer.appendChild(
+        suggestionLink
+      );
+
+    });
 
 
     /* ===================================================
        RÉINITIALISER LA SÉLECTION
        =================================================== */
 
-    selectedSuggestionIndex =
-      -1;
+    selectedSuggestionIndex = -1;
 
 
     /* ===================================================
@@ -813,22 +1207,15 @@ document.addEventListener("DOMContentLoaded", async function () {
      RECHERCHE DANS LES SUGGESTIONS
      ===================================================== */
 
-  function getSuggestions(
-    query
-  ) {
+  function getSuggestions(query) {
 
-    return suggestionLinks.filter(
-      (suggestion) => {
+    return suggestionLinks.filter((suggestion) => {
 
-        return removeAccents(
-          suggestion.text
-            .toLowerCase()
-        ).includes(
-          query
-        );
+      return removeAccents(
+        suggestion.text.toLowerCase()
+      ).includes(query);
 
-      }
-    );
+    });
 
   }
 
@@ -837,9 +1224,7 @@ document.addEventListener("DOMContentLoaded", async function () {
      SUPPRESSION DES ACCENTS
      ===================================================== */
 
-  function removeAccents(
-    str
-  ) {
+  function removeAccents(str) {
 
     return str
       .normalize("NFD")
@@ -855,9 +1240,7 @@ document.addEventListener("DOMContentLoaded", async function () {
      MISE EN ÉVIDENCE DE LA SUGGESTION
      ===================================================== */
 
-  function updateSuggestionHighlight(
-    suggestions
-  ) {
+  function updateSuggestionHighlight(suggestions) {
 
     /* ================================================
        SUPPRIMER L'ANCIENNE SÉLECTION
@@ -865,15 +1248,11 @@ document.addEventListener("DOMContentLoaded", async function () {
 
     [
       ...suggestions
-    ].forEach(
-      (element) => {
+    ].forEach((element) => {
 
-        element.classList.remove(
-          "highlighted"
-        );
+      element.classList.remove("highlighted");
 
-      }
-    );
+    });
 
 
     /* ================================================
@@ -882,15 +1261,12 @@ document.addEventListener("DOMContentLoaded", async function () {
 
     if (
       selectedSuggestionIndex >= 0 &&
-      selectedSuggestionIndex <
-      suggestions.length
+      selectedSuggestionIndex < suggestions.length
     ) {
 
       suggestions[
         selectedSuggestionIndex
-      ].classList.add(
-        "highlighted"
-      );
+      ].classList.add("highlighted");
 
     }
 
@@ -906,9 +1282,7 @@ document.addEventListener("DOMContentLoaded", async function () {
     function (e) {
 
       if (
-        !suggestionsContainer.contains(
-          e.target
-        ) &&
+        !suggestionsContainer.contains(e.target) &&
         e.target !== searchInput
       ) {
 
@@ -938,9 +1312,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 function toggleHamburgerMenu() {
 
   const menu =
-    document.getElementById(
-      "hamburgerDropdown"
-    );
+    document.getElementById("hamburgerDropdown");
 
 
   if (
@@ -951,18 +1323,14 @@ function toggleHamburgerMenu() {
        OUVRIR LE MENU
        ============================================== */
 
-    menu.style.display =
-      "flex";
-
+    menu.style.display = "flex";
 
     setTimeout(
       () => menu.classList.add("active"),
       20
     );
 
-
-    document.body.style.overflow =
-      "hidden";
+    document.body.style.overflow = "hidden";
 
 
     /* ==============================================
@@ -979,9 +1347,7 @@ function toggleHamburgerMenu() {
 
   else {
 
-    closeHamburgerMenu(
-      menu
-    );
+    closeHamburgerMenu(menu);
 
   }
 
@@ -992,18 +1358,11 @@ function toggleHamburgerMenu() {
    FERMER LE MENU
    ===================================================== */
 
-function closeHamburgerMenu(
-  menu
-) {
+function closeHamburgerMenu(menu) {
 
-  menu.classList.remove(
-    "active"
-  );
+  menu.classList.remove("active");
 
-
-  document.body.style.overflow =
-    "";
-
+  document.body.style.overflow = "";
 
   setTimeout(
     () => menu.style.display = "none",
@@ -1022,12 +1381,11 @@ document.addEventListener(
   function(e) {
 
     const menu =
-      document.getElementById(
-        "hamburgerDropdown"
-      );
+      document.getElementById("hamburgerDropdown");
 
 
     if (
+      !menu ||
       !menu.classList.contains("active")
     ) {
 
@@ -1039,15 +1397,11 @@ document.addEventListener(
     const rect =
       menu.getBoundingClientRect();
 
-
     const x =
-      e.clientX -
-      rect.left;
-
+      e.clientX - rect.left;
 
     const y =
-      e.clientY -
-      rect.top;
+      e.clientY - rect.top;
 
 
     if (
@@ -1057,9 +1411,7 @@ document.addEventListener(
       y <= 50
     ) {
 
-      closeHamburgerMenu(
-        menu
-      );
+      closeHamburgerMenu(menu);
 
 
       /* ============================================
@@ -1090,18 +1442,14 @@ document.addEventListener(
   function(e) {
 
     const menu =
-      document.getElementById(
-        "hamburgerDropdown"
-      );
-
+      document.getElementById("hamburgerDropdown");
 
     const hamburger =
-      document.querySelector(
-        ".hamburger"
-      );
+      document.querySelector(".hamburger");
 
 
     if (
+      !menu ||
       !menu.classList.contains("active")
     ) {
 
@@ -1112,12 +1460,10 @@ document.addEventListener(
 
     if (
       !menu.contains(e.target) &&
-      e.target !== hamburger
+      !hamburger?.contains(e.target)
     ) {
 
-      closeHamburgerMenu(
-        menu
-      );
+      closeHamburgerMenu(menu);
 
 
       if (
@@ -1144,18 +1490,15 @@ window.addEventListener(
   function(event) {
 
     const menu =
-      document.getElementById(
-        "hamburgerDropdown"
-      );
+      document.getElementById("hamburgerDropdown");
 
 
     if (
+      menu &&
       menu.classList.contains("active")
     ) {
 
-      closeHamburgerMenu(
-        menu
-      );
+      closeHamburgerMenu(menu);
 
     }
 
