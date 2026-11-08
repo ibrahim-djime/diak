@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#8ecae6">
+        <title>Lumesys | Messagerie</title>
+    <link rel="icon" href="../logo/Lumesys.png" type="image/png">
+    <link rel="stylesheet" href="messagerie.css">
+</head>
+<body>
+    <!-- Fond atmosphérique -->
+    <div class="sky-background" aria-hidden="true">
+        <div class="sun-glow"></div>
+        <div class="cloud cloud-one"></div>
+        <div class="cloud cloud-two"></div>
+        <div class="cloud cloud-three"></div>
+    </div>
+
+    <main class="lumina-messenger" aria-label="Messagerie Lumesys">
+        <!-- Barre latérale -->
+        <aside class="sidebar" aria-label="Contacts et conversations">
+            <div class="brand-header">
+                <a class="brand-logo" href="../index.html" aria-label="Retour à Lumesys">
+                    <img src="../logo/Lumesys1.png" alt="Lumesys">
+                </a>
+                <div>
+                    <h1>Lumesys</h1>
+                    <span>Messages privés</span>
+                </div>
+            </div>
+
+            <div class="current-user-card" aria-label="Profil connecté">
+                <div class="current-user-avatar" id="currentUserAvatar" aria-hidden="true">?</div>
+                <div class="current-user-info">
+                    <strong id="currentUserName">Chargement…</strong>
+                    <small id="currentUserEmail">Connexion…</small>
+                </div>
+            </div>
+
+            <nav class="messenger-navigation" aria-label="Affichage des conversations">
+                <button type="button" class="navigation-button active" id="showAllUsers" aria-pressed="true">
+                    <span aria-hidden="true">✦</span> Tous les utilisateurs
+                </button>
+                <button type="button" class="navigation-button" id="showRecentChats" aria-pressed="false">
+                    <span aria-hidden="true">◌</span> Conversations récentes
+                </button>
+            </nav>
+
+            <div class="search-box">
+                <label class="sr-only" for="searchInput">Rechercher une personne</label>
+                <span class="search-icon" aria-hidden="true">⌕</span>
+                <input type="search" id="searchInput" placeholder="Rechercher par nom, prénom ou e-mail…" autocomplete="off">
+            </div>
+
+            <div class="contacts-list" id="contactsList" aria-live="polite">
+                <div class="loading-state">
+                    <div class="loader" aria-hidden="true"></div>
+                    <p>Chargement des utilisateurs…</p>
+                </div>
+            </div>
+
+            <div class="sidebar-footer">
+                <span aria-hidden="true">✦</span>
+                <span>Lumesys • Messagerie sécurisée</span>
+            </div>
+        </aside>
+
+        <!-- Zone de conversation -->
+        <section class="chat-section" aria-label="Conversation">
+            <div class="empty-conversation" id="emptyConversation">
+                <div class="empty-illustration" aria-hidden="true">
+                    <div class="floating-bubble bubble-one">✦</div>
+                    <div class="floating-bubble bubble-two">☁</div>
+                    <div class="chat-orbit">
+                        <div class="orbit-dot"></div>
+                        <div class="orbit-dot"></div>
+                        <div class="orbit-dot"></div>
+                        <div class="center-chat-icon">◌</div>
+                    </div>
+                </div>
+                <h2>Une conversation commence<br>toujours par un message.</h2>
+                <p>Choisissez une personne dans votre réseau pour commencer à échanger.</p>
+            </div>
+
+            <div class="active-chat" id="activeChat">
+                <header class="chat-header">
+                    <button type="button" class="mobile-back-button" id="mobileBackButton" aria-label="Retour à la liste">←</button>
+                    <div class="chat-user-avatar" id="chatUserAvatar" aria-hidden="true">?</div>
+                    <div class="chat-user-details">
+                        <h2 id="chatUserName">Utilisateur</h2>
+                        <span id="chatUserLocation">Conversation privée Lumesys</span>
+                    </div>
+                </header>
+
+                <div class="messages-area" id="messagesArea" aria-live="polite" aria-label="Messages"></div>
+
+                <p class="composer-status" id="composerStatus" role="status" aria-live="polite"></p>
+
+                <form class="message-composer" id="messageForm" autocomplete="off">
+                    <label class="sr-only" for="messageInput">Écrire un message</label>
+                    <textarea id="messageInput" placeholder="Écrire un message…" rows="1" maxlength="5000" disabled></textarea>
+                    <button type="submit" class="send-button" id="sendButton" title="Envoyer" aria-label="Envoyer le message" disabled>
+                        <span aria-hidden="true">➤</span>
+                    </button>
+                </form>
+            </div>
+        </section>
+    </main>
+
+    <script type="module" src="messagerie.js"></script>
+</body>
+</html>
