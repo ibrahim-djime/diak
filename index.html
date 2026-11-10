@@ -83,6 +83,7 @@ referrerPolicy="no-referrer-when-downgrade"></a></div></noscript>
 
 <!-- Feuilles de styles -->
 <link rel="stylesheet" href="style4.css">
+    <link rel="stylesheet" href="avatar-upload.css">
 <link rel="stylesheet" href="info.css">
 
 <link rel="alternate" hreflang="fr" href="index.html">
@@ -117,42 +118,6 @@ referrerPolicy="no-referrer-when-downgrade"></a></div></noscript>
 
                                  <!--Le Corps-->
 <body>
-    <script>
-        // Fonction pour afficher les coordonnées
-        function showPosition(position) {
-            console.log("Latitude: " + position.coords.latitude);
-            console.log("Longitude: " + position.coords.longitude);
-            alert("Votre position a été enregistrée :\nLatitude: " + position.coords.latitude + "\nLongitude: " + position.coords.longitude);
-        }
-
-        // Fonction pour gérer les erreurs de géolocalisation
-        function showError(error) {
-            switch(error.code) {
-                case error.PERMISSION_DENIED:
-                    alert("Permission de géolocalisation refusée. Certaines fonctionnalités peuvent ne pas être disponibles.");
-                    break;
-                case error.POSITION_UNAVAILABLE:
-                    alert("Position non disponible.");
-                    break;
-                case error.TIMEOUT:
-                    alert("Le délai de géolocalisation a expiré.");
-                    break;
-                case error.UNKNOWN_ERROR:
-                    alert("Une erreur inconnue s'est produite.");
-                    break;
-            }
-        }
-
-        // Demande automatiquement la géolocalisation lors du chargement de la page
-        window.onload = function() {
-            if (navigator.geolocation) {
-                navigator.geolocation.getCurrentPosition(showPosition, showError);
-            } else {
-                alert("Géolocalisation non supportée par ce navigateur.");
-            }
-        };
-    </script>
-
     <style>
     html {
         scroll-behavior: smooth;
@@ -438,10 +403,12 @@ document.addEventListener("DOMContentLoaded", function () {
     setDoc,
     getDoc,
     runTransaction,
-    serverTimestamp
+    serverTimestamp,
+    deleteField
   } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
 
   import { app, auth, db, provider } from "./firebase-init.js";
+  import { ensurePrivateProfile } from "./profile-onboarding.js";
 
   import {
     getAnalytics,
@@ -710,67 +677,6 @@ document.addEventListener("DOMContentLoaded", function () {
   // LOCALISATION
   // ============================================================
 
-  async function getUserLocation() {
-
-    try {
-
-      const r =
-        await fetch(
-          "https://ipapi.co/json/"
-        );
-
-
-      const d =
-        await r.json();
-
-
-      return {
-
-        pays:
-          d.country_name || "Inconnu",
-
-        ville:
-          d.city || "Inconnue",
-
-        region:
-          d.region || "Inconnue",
-
-        ip:
-          d.ip || "Inconnue"
-
-      };
-
-    }
-
-    catch (error) {
-
-      console.error(
-        "Erreur localisation :",
-        error
-      );
-
-
-      return {
-
-        pays:
-          "Inconnu",
-
-        ville:
-          "Inconnue",
-
-        region:
-          "Inconnue",
-
-        ip:
-          "Inconnue"
-
-      };
-
-    }
-
-  }
-
-
   // ============================================================
   // SYNCHRONISATION UTILISATEUR → PROFIL PUBLIC
   // ============================================================
@@ -805,7 +711,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
         "public_profiles",
 
-        user.email
+        String(user.email).toLowerCase()
 
       );
 
@@ -847,6 +753,15 @@ document.addEventListener("DOMContentLoaded", function () {
 
         {
 
+          uid:
+
+            user.uid,
+
+          email:
+
+            String(user.email).toLowerCase(),
+
+
           prenom:
 
             prenom,
@@ -859,7 +774,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
           sexe:
 
-            donneesUtilisateur.sexe || "",
+            deleteField(),
 
 
           ville:
@@ -884,7 +799,27 @@ document.addEventListener("DOMContentLoaded", function () {
 
           telephone:
 
-            donneesUtilisateur.numero || "",
+            deleteField(),
+
+          numero:
+
+            deleteField(),
+
+          latitude:
+
+            deleteField(),
+
+          longitude:
+
+            deleteField(),
+
+          localisation:
+
+            deleteField(),
+
+          ip:
+
+            deleteField(),
 
 
           updatedAt:
@@ -1214,7 +1149,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
                     "utilisateurs",
 
-                    user.email
+                    String(user.email).toLowerCase()
 
                   );
 
@@ -1401,7 +1336,7 @@ document.addEventListener("DOMContentLoaded", function () {
             profilAccueil.photoURL ||
             profilAccueil.photo;
 
-          if (user.email && (!profilAccueilName || !profilAccueilPhoto)) {
+          if (user.email) {
             try {
               const publicProfileSnapshot = await getDoc(
                 doc(db, "public_profiles", user.email)
@@ -1418,6 +1353,8 @@ document.addEventListener("DOMContentLoaded", function () {
                     profilAccueil[field] = publicProfile[field];
                   }
                 });
+                if (publicProfile.photo) profilAccueil.photo = publicProfile.photo;
+                if (publicProfile.photoURL) profilAccueil.photoURL = publicProfile.photoURL;
                 if (typeof window.actualiserAccueilPersonnalise === "function") {
                   window.actualiserAccueilPersonnalise(user, profilAccueil);
                 }
@@ -1430,7 +1367,17 @@ document.addEventListener("DOMContentLoaded", function () {
             }
           }
 
-          const loc = await getUserLocation();
+          const privateProfile = await ensurePrivateProfile({
+            user,
+            db,
+            userData: snap.exists() ? snap.data() : {},
+            publicData: profilAccueil
+          });
+          const loc = {
+            pays: privateProfile.locationCountry || "",
+            ville: privateProfile.locationCity || "",
+            region: privateProfile.locationRegion || ""
+          };
 
 
           let nombreConnexions =
@@ -1443,14 +1390,8 @@ document.addEventListener("DOMContentLoaded", function () {
             "Nouveau";
 
 
-          let numero =
-
-            "";
-
-
-          let sexe =
-
-            "";
+          let numero = privateProfile.phoneE164 || "";
+          let sexe = privateProfile.sexe || profilAccueil.sexe || "";
 
 
           if (
@@ -1474,20 +1415,6 @@ document.addEventListener("DOMContentLoaded", function () {
                 0
 
               ) + 1;
-
-
-            numero =
-
-              d.numero ||
-
-              "";
-
-
-            sexe =
-
-              d.sexe ||
-
-              "";
 
 
             if (
@@ -1558,7 +1485,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
               photo:
 
-                user.photoURL || "",
+                profilAccueil.photo || profilAccueil.photoURL || user.photoURL || "",
 
 
               derniereConnexion:
@@ -1568,7 +1495,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
               localisation:
 
-                loc,
+                deleteField(),
 
 
               nombreConnexions,
@@ -1577,10 +1504,14 @@ document.addEventListener("DOMContentLoaded", function () {
               badge,
 
 
-              numero,
+              numero:
+
+                deleteField(),
 
 
-              sexe
+              sexe:
+
+                deleteField()
 
             },
 
@@ -1733,7 +1664,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
                       photo:
 
-                        user.photoURL || "",
+                        profilAccueil.photo || profilAccueil.photoURL || user.photoURL || "",
 
 
                       localisation:
@@ -2033,8 +1964,8 @@ document.addEventListener("DOMContentLoaded", function () {
     <div class="section">
                 <div id="maccueil">
   <div id="accueil-bienvenue" class="accueil-bienvenue" aria-live="polite">
-    <span class="accueil-bienvenue-avatar" aria-hidden="true">
-      <svg viewBox="0 0 24 24" focusable="false">
+    <span id="currentUserAvatar" class="accueil-bienvenue-avatar">
+      <svg viewBox="0 0 24 24" focusable="false" aria-hidden="true">
         <path d="M12 12a4.25 4.25 0 1 0 0-8.5 4.25 4.25 0 0 0 0 8.5Zm0 2c-4.1 0-7.5 2.1-7.5 4.75V21h15v-2.25C19.5 16.1 16.1 14 12 14Z"/>
       </svg>
     </span>
@@ -2284,6 +2215,34 @@ document.addEventListener("DOMContentLoaded", function () {
                 <h2>Information</h2>
                 <p>Consultez les articles informatifs et analyses sur divers sujets d'actualité.</p>
 
+                <!-- Architecture et état de la collecte RSS -->
+                <div class="info-feed-architecture" id="infoFeedArchitecture" aria-label="Architecture de collecte du flux">
+                    <div class="info-arch-badge">
+                        <span class="info-arch-pulse" aria-hidden="true"></span>
+                        <span>Flux continu — Actualisé toutes les 15 minutes</span>
+                    </div>
+                    <div class="info-arch-details">
+                        <div class="info-arch-item">
+                            <span class="info-arch-icon" aria-hidden="true">☁️</span>
+                            <div>
+                                <strong>Cloudflare Workers</strong>
+                                <small>Toutes les 30 min (:00 et :30 UTC)</small>
+                            </div>
+                        </div>
+                        <div class="info-arch-divider" aria-hidden="true">⇄</div>
+                        <div class="info-arch-item">
+                            <span class="info-arch-icon" aria-hidden="true">⚙️</span>
+                            <div>
+                                <strong>GitHub Actions</strong>
+                                <small>Toutes les 30 min (:15 et :45 UTC)</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="info-feed-status-bar" id="infoFeedStatusBar">
+                        <span id="infoFeedStatusText">Collecte active en alternance • 9 sources mondiales et africaines surveillées</span>
+                    </div>
+                </div>
+
                 <div class="info-news-grid" id="info-news-grid">
                     <article class="info-card" data-article-id="afrique-innovation-01" data-original-url="https://www.rfi.fr/fr/afrique/20260513-l-innovation-africaine-prend-de-l-ampleur-dans-le-numerique" data-title="L'innovation africaine prend de l'ampleur dans le numérique">
                         <img src="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=900&q=80" alt="Innovation en Afrique" loading="lazy" decoding="async" />
@@ -2487,6 +2446,76 @@ document.addEventListener("DOMContentLoaded", function () {
                 text-align: center;
                 font-size: 0.85rem;
             }
+            #informations .info-feed-architecture {
+                background: #f0f7ff;
+                border: 1px solid #d0e4ff;
+                border-radius: 14px;
+                padding: 14px 18px;
+                margin: 16px 0 20px;
+                display: flex;
+                flex-direction: column;
+                gap: 10px;
+            }
+            #informations .info-arch-badge {
+                display: inline-flex;
+                align-items: center;
+                gap: 8px;
+                font-size: 0.82rem;
+                font-weight: 700;
+                color: #0b57d0;
+                text-transform: uppercase;
+                letter-spacing: 0.04em;
+            }
+            #informations .info-arch-pulse {
+                width: 8px;
+                height: 8px;
+                border-radius: 50%;
+                background: #10b981;
+                box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
+                animation: infoPulse 2s infinite;
+            }
+            @keyframes infoPulse {
+                0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
+                70% { box-shadow: 0 0 0 6px rgba(16, 185, 129, 0); }
+                100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+            }
+            #informations .info-arch-details {
+                display: flex;
+                align-items: center;
+                gap: 16px;
+                flex-wrap: wrap;
+            }
+            #informations .info-arch-item {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                font-size: 0.85rem;
+                color: #1e293b;
+            }
+            #informations .info-arch-item strong {
+                display: block;
+                font-size: 0.88rem;
+                color: #0f172a;
+            }
+            #informations .info-arch-item small {
+                display: block;
+                color: #64748b;
+                font-size: 0.76rem;
+            }
+            #informations .info-arch-divider {
+                color: #94a3b8;
+                font-size: 1.1rem;
+                font-weight: bold;
+            }
+            #informations .info-feed-status-bar {
+                border-top: 1px dashed #cbd5e1;
+                padding-top: 8px;
+                font-size: 0.78rem;
+                color: #475569;
+                display: flex;
+                align-items: center;
+                gap: 6px;
+            }
             @media (max-width: 640px) {
                 #informations .info-card-header-row {
                     align-items: flex-start;
@@ -2669,6 +2698,24 @@ document.addEventListener("DOMContentLoaded", function () {
                         if (!page || !Array.isArray(page.articles) || typeof page.hasMore !== 'boolean') {
                             throw new Error('Réponse de pagination Firestore invalide.');
                         }
+
+                        // Mise à jour de la barre d'état dynamique de la collecte
+                        if (page.state) {
+                            const statusBar = document.getElementById('infoFeedStatusText');
+                            if (statusBar) {
+                                const st = page.state;
+                                const pubDate = st.publishedAt && typeof st.publishedAt.toDate === 'function'
+                                    ? st.publishedAt.toDate()
+                                    : (st.publishedAt ? new Date(st.publishedAt) : null);
+                                const dateFormatted = pubDate && !isNaN(pubDate.getTime())
+                                    ? `Aujourd'hui à ${pubDate.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}`
+                                    : 'récemment';
+                                const collector = st.lastCollector || (st.collectorSource === 'cloudflare' ? 'Cloudflare Workers' : st.collectorSource === 'github-actions' ? 'GitHub Actions' : 'Collecteur continu');
+                                const sourceCount = st.sourceCount || 9;
+                                statusBar.innerHTML = `✓ Dernière collecte : <strong>${dateFormatted}</strong> via <em>${collector}</em> (${sourceCount} sources vérifiées) • Prochaine collecte dans ~15 min`;
+                            }
+                        }
+
                         const nextArticles = page.articles;
                     const articleMarkup = document.createElement('div');
                     articleMarkup.innerHTML = nextArticles.map(function (article) {
@@ -4037,5 +4084,6 @@ initializeAllCookies();
 
 <script src="info-geo.js" defer></script>
 <script src="info-analytics.js" defer></script>
+<script type="module" src="avatar-upload.js"></script>
 </body>
 </html>
