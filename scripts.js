@@ -1313,6 +1313,8 @@ function toggleHamburgerMenu() {
 
   const menu =
     document.getElementById("hamburgerDropdown");
+  const trigger =
+    document.querySelector(".hamburger");
 
 
   if (
@@ -1324,6 +1326,10 @@ function toggleHamburgerMenu() {
        ============================================== */
 
     menu.style.display = "flex";
+    menu.inert = false;
+    menu.setAttribute("aria-hidden", "false");
+    trigger.setAttribute("aria-expanded", "true");
+    trigger.setAttribute("aria-label", "Fermer le menu mobile");
 
     setTimeout(
       () => menu.classList.add("active"),
@@ -1347,7 +1353,7 @@ function toggleHamburgerMenu() {
 
   else {
 
-    closeHamburgerMenu(menu);
+    closeHamburgerMenu(menu, true, true);
 
   }
 
@@ -1358,9 +1364,19 @@ function toggleHamburgerMenu() {
    FERMER LE MENU
    ===================================================== */
 
-function closeHamburgerMenu(menu) {
+function closeHamburgerMenu(menu, returnHistory, restoreFocus) {
 
   menu.classList.remove("active");
+  menu.inert = true;
+  menu.setAttribute("aria-hidden", "true");
+
+  const trigger =
+    document.querySelector(".hamburger");
+
+  if (trigger) {
+    trigger.setAttribute("aria-expanded", "false");
+    trigger.setAttribute("aria-label", "Ouvrir le menu mobile");
+  }
 
   document.body.style.overflow = "";
 
@@ -1369,68 +1385,15 @@ function closeHamburgerMenu(menu) {
     400
   );
 
-}
-
-
-/* =====================================================
-   FERMER LE MENU QUAND ON CLIQUE SUR LE X
-   ===================================================== */
-
-document.addEventListener(
-  "click",
-  function(e) {
-
-    const menu =
-      document.getElementById("hamburgerDropdown");
-
-
-    if (
-      !menu ||
-      !menu.classList.contains("active")
-    ) {
-
-      return;
-
-    }
-
-
-    const rect =
-      menu.getBoundingClientRect();
-
-    const x =
-      e.clientX - rect.left;
-
-    const y =
-      e.clientY - rect.top;
-
-
-    if (
-      x >= rect.width - 50 &&
-      x <= rect.width &&
-      y >= 0 &&
-      y <= 50
-    ) {
-
-      closeHamburgerMenu(menu);
-
-
-      /* ============================================
-         RETIRER L'ÉTAT HISTORIQUE
-         ============================================ */
-
-      if (
-        history.state &&
-        history.state.menuOpen
-      ) {
-
-        history.back();
-
-      }
-
-    }
-
+  if (returnHistory && history.state && history.state.menuOpen) {
+    history.back();
   }
-);
+
+  if (restoreFocus && trigger) {
+    trigger.focus();
+  }
+
+}
 
 
 /* =====================================================
@@ -1463,17 +1426,7 @@ document.addEventListener(
       !hamburger?.contains(e.target)
     ) {
 
-      closeHamburgerMenu(menu);
-
-
-      if (
-        history.state &&
-        history.state.menuOpen
-      ) {
-
-        history.back();
-
-      }
+      closeHamburgerMenu(menu, true, false);
 
     }
 
@@ -1504,3 +1457,10 @@ window.addEventListener(
 
   }
 );
+
+document.addEventListener("keydown", function(event) {
+  const menu = document.getElementById("hamburgerDropdown");
+  if (event.key === "Escape" && menu && menu.classList.contains("active")) {
+    closeHamburgerMenu(menu, true, true);
+  }
+});
