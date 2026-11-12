@@ -1,0 +1,225 @@
+/* =========================================================
+   LUMESYS — PHOTO DE PROFIL (overlay, progression, toast)
+   Feuille autonome, alignée sur la palette de messagerie.css.
+   À charger après le CSS de la page.
+========================================================= */
+
+:root {
+    --avatar-deep-sky: #277da1;
+    --avatar-sky: #8ecae6;
+    --avatar-green: #74c69d;
+    --avatar-error: #b42318;
+    --avatar-success: #1d6b45;
+}
+
+/* Le conteneur de l'avatar devient le repère de positionnement */
+[data-avatar-upload="ready"] {
+    position: relative;
+    overflow: visible; /* l'icône "+" dépasse volontairement du cercle */
+}
+
+.avatar-upload {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+    z-index: 3;
+}
+
+/* ---- Bouton "+" ---- */
+.avatar-upload-btn {
+    --avatar-progress: 0%;
+    position: absolute;
+    right: -4px;
+    bottom: -4px;
+    width: 22px;
+    height: 22px;
+    padding: 0;
+    border: 2px solid #ffffff;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--avatar-deep-sky), var(--avatar-sky));
+    color: #ffffff;
+    font-size: 14px;
+    font-weight: 700;
+    line-height: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    pointer-events: auto;
+    box-shadow: 0 2px 8px rgba(39, 125, 161, 0.35);
+    transition: transform 0.18s ease, box-shadow 0.18s ease, background 0.18s ease;
+}
+
+.avatar-upload-plus {
+    display: block;
+    transform: translateY(-0.5px);
+    transition: opacity 0.18s ease, transform 0.18s ease;
+}
+
+.avatar-upload-btn:hover,
+.avatar-upload-btn:focus-visible {
+    transform: scale(1.12);
+    box-shadow: 0 4px 14px rgba(39, 125, 161, 0.5);
+    outline: none;
+}
+
+.avatar-upload-btn:focus-visible {
+    box-shadow: 0 0 0 3px rgba(142, 202, 230, 0.65);
+}
+
+.avatar-upload-btn:active {
+    transform: scale(0.96);
+}
+
+.avatar-upload-btn.drag-over {
+    background: linear-gradient(135deg, var(--avatar-green), var(--avatar-sky));
+    transform: scale(1.2);
+}
+
+/* ---- Anneau de progression ---- */
+.avatar-upload-ring {
+    position: absolute;
+    inset: -2px;
+    border-radius: 50%;
+    opacity: 0;
+    background: conic-gradient(
+        #ffffff var(--avatar-progress),
+        rgba(255, 255, 255, 0.25) 0
+    );
+    transition: opacity 0.2s ease;
+}
+
+.avatar-upload-progress {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 8px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+}
+
+/* ---- État pendant l'envoi ---- */
+.avatar-upload-btn.uploading {
+    cursor: progress;
+    animation: avatar-pulse 1.4s ease-in-out infinite;
+}
+
+.avatar-upload-btn.uploading .avatar-upload-plus {
+    opacity: 0;
+    transform: scale(0.4);
+}
+
+.avatar-upload-btn.uploading .avatar-upload-ring,
+.avatar-upload-btn.uploading .avatar-upload-progress {
+    opacity: 1;
+}
+
+.avatar-upload-btn.uploading:hover {
+    transform: none;
+}
+
+@keyframes avatar-pulse {
+    0%, 100% { box-shadow: 0 2px 8px rgba(39, 125, 161, 0.35); }
+    50%      { box-shadow: 0 2px 18px rgba(39, 125, 161, 0.65); }
+}
+
+/* Voile sombre au survol de l'avatar (indice de cliquabilité) */
+[data-avatar-upload="ready"]::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: rgba(36, 55, 70, 0);
+    transition: background 0.2s ease;
+    pointer-events: none;
+    z-index: 2;
+}
+
+[data-avatar-upload="ready"]:hover::after,
+[data-avatar-upload="ready"]:focus-within::after {
+    background: rgba(36, 55, 70, 0.22);
+}
+
+/* Avatar gelé : utilisateur déconnecté */
+[data-avatar-upload="ready"][data-avatar-locked="true"] .avatar-upload-btn {
+    display: none;
+}
+
+/* ---- Toast ---- */
+.avatar-toast {
+    position: fixed;
+    left: 50%;
+    bottom: 24px;
+    transform: translateX(-50%);
+    z-index: 1200;
+    max-width: min(92vw, 420px);
+    padding: 11px 18px;
+    border-radius: 14px;
+    border: 1px solid rgba(255, 255, 255, 0.7);
+    background: rgba(255, 255, 255, 0.95);
+    color: #243746;
+    font-family: "Inter", "Segoe UI", Arial, sans-serif;
+    font-size: 13px;
+    line-height: 1.4;
+    text-align: center;
+    box-shadow: 0 12px 30px rgba(49, 91, 116, 0.22);
+    backdrop-filter: blur(8px);
+    animation: avatar-toast-in 0.22s ease-out;
+}
+
+.avatar-toast[hidden] {
+    display: none;
+}
+
+.avatar-toast.success {
+    color: var(--avatar-success);
+    border-color: rgba(116, 198, 157, 0.6);
+    background: rgba(240, 252, 246, 0.97);
+}
+
+.avatar-toast.error {
+    color: var(--avatar-error);
+    border-color: rgba(180, 35, 24, 0.35);
+    background: rgba(255, 245, 244, 0.97);
+}
+
+@keyframes avatar-toast-in {
+    from { opacity: 0; transform: translate(-50%, 10px); }
+    to   { opacity: 1; transform: translate(-50%, 0); }
+}
+
+/* ---- Accessibilité / mobile ---- */
+@media (max-width: 850px) {
+    .avatar-upload-btn {
+        width: 20px;
+        height: 20px;
+        font-size: 13px;
+    }
+    .avatar-toast {
+        bottom: 14px;
+        font-size: 12.5px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .avatar-upload-btn,
+    .avatar-upload-plus,
+    .avatar-upload-ring,
+    .avatar-upload-progress,
+    [data-avatar-upload="ready"]::after {
+        transition: none;
+    }
+    .avatar-upload-btn.uploading {
+        animation: none;
+    }
+    .avatar-toast {
+        animation: none;
+    }
+}
