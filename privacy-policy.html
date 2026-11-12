@@ -1,378 +1,2329 @@
 <!DOCTYPE html>
 <html lang="fr">
+
 <head>
-        <!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-1Y80YWCNCP"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
 
-  gtag('config', 'G-1Y80YWCNCP');
-</script>
-    <!-- Google Tag Manager -->
-<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-})(window,document,'script','dataLayer','GTM-MN9542FK');</script>
-<!-- End Google Tag Manager -->
-<!-- Default Statcounter code for Lumesys https://ibrahim-djime.github.io/diak/
--->
-<script type="text/javascript">
-var sc_project=13046048; 
-var sc_invisible=0; 
-var sc_security="ff489f98"; 
-var scJsHost = "https://";
-document.write("<sc"+"ript type='text/javascript' src='" + scJsHost+
-"statcounter.com/counter/counter.js'></"+"script>");
-</script>
-<noscript><div class="statcounter"><a title="site stats"
-href="https://statcounter.com/" target="_blank"><img class="statcounter"
-src="https://c.statcounter.com/13046048/0/ff489f98/0/" alt="site stats"
-referrerPolicy="no-referrer-when-downgrade"></a></div></noscript>
-<!-- End of Statcounter Code -->
-<a href="https://statcounter.com/p13046048/?guest=1" class="stat">Statistiques du site</a>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="robots" content="index, follow">
-    <meta name="google-site-verification" content="lqSP6fhb1mMxSYLmhjajfFqSEkYxitxmn74fJB29Cnw" />
-    <meta name="msvalidate.01" content="1A06709B0DC4C1E52E626BFBEA0AACB4" />
-    
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-    <link rel="stylesheet" href="polisecu.css">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Politique de confidentialité - Lumesys</title>
+<meta charset="UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>
+Politique de confidentialité — Lumesys
+</title>
+
+
+<link rel="stylesheet" href="policonf.css">
+
+
 </head>
+
+
 <body>
-    <header>
-        <h1>Politique de confidentialité</h1>
-    </header>
-
-    <p id="status">Non connecté</p>
-<button id="loginBtn">Se connecter</button>
-<button id="logoutBtn">Se déconnecter</button>
-
-<script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-app.js";
-  import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
-  import { getFirestore, doc, setDoc, getDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
-
-  // === Initialisation Firebase ===
-  const firebaseConfig = {
-    apiKey: "AIzaSyAClwRQe3g4Cg9CAsn28l_sAihwlMQtGUI",
-    authDomain: "lumina-analytics.firebaseapp.com",
-    projectId: "lumina-analytics",
-    storageBucket: "lumina-analytics.appspot.com",
-    messagingSenderId: "239329398532",
-    appId: "1:239329398532:web:2f68b196df0c4e6400ca51",
-    measurementId: "G-J7LLPRXLJH"
-  };
-
-  const app = initializeApp(firebaseConfig);
-  const auth = getAuth(app);
-  const provider = new GoogleAuthProvider();
-  const db = getFirestore(app);
-
-  const loginBtn = document.getElementById("loginBtn");
-  const logoutBtn = document.getElementById("logoutBtn");
-  const status = document.getElementById("status");
-
-  // === Fonction pour récupérer la localisation ===
-  async function getUserLocation() {
-    try {
-      const response = await fetch("https://ipapi.co/json/");
-      const data = await response.json();
-      return {
-        pays: data.country_name,
-        ville: data.city,
-        region: data.region,
-        ip: data.ip
-      };
-    } catch (e) {
-      console.error("Erreur localisation:", e);
-      return { pays: "Inconnu", ville: "Inconnue", region: "Inconnue", ip: "Inconnue" };
-    }
-  }
-
-  // === Fonction overlay connexion ===
-  function showOverlay() {
-    if (document.getElementById("overlayConnexion")) return;
-
-    const overlay = document.createElement('div');
-    overlay.id = "overlayConnexion";
-    overlay.style.cssText = `
-      position:fixed; top:0; left:0; width:100%; height:100%; 
-      background: rgba(0,0,0,0.85); display:flex; flex-direction:column; 
-      justify-content:center; align-items:center; color:white; z-index:9999;
-    `;
-    overlay.innerHTML = `
-      <h2>Connexion requise</h2>
-      <p>Vous avez atteint votre limite. Veuillez vous connecter ou quitter.</p>
-      <button id="loginBtnOverlay">Se connecter</button>
-      <button id="quitBtnOverlay">Quitter</button>
-    `;
-    document.body.appendChild(overlay);
-
-    document.getElementById('loginBtnOverlay').addEventListener('click', () => {
-      signInWithPopup(auth, provider).catch(e => console.error(e));
-    });
-    document.getElementById('quitBtnOverlay').addEventListener('click', () => {
-      document.body.removeChild(overlay);
-      window.location.href = 'https://www.google.com';
-    });
-  }
-
-  // === Supprimer overlay s'il existe ===
-  function removeOverlay() {
-    const overlay = document.getElementById("overlayConnexion");
-    if (overlay) overlay.remove();
-  }
-
-  // === Gestion visites ===
-  const pageKey = "visites_" + window.location.pathname;
-  const MAX_VISITES = 2;
-  let visites = parseInt(localStorage.getItem(pageKey)) || 0;
-  visites++;
-  localStorage.setItem(pageKey, visites);
-
-  // === Gestion téléchargements ===
-  const downloadKey = "telechargements_gratuits";
-  const MAX_DOWNLOADS = 3;
-  let downloads = parseInt(localStorage.getItem(downloadKey)) || 0;
-
-  document.querySelectorAll('a[target="_blank"]').forEach(link => {
-    link.addEventListener('click', (e) => {
-      onAuthStateChanged(auth, (user) => {
-        if (!user && downloads >= MAX_DOWNLOADS) {
-          e.preventDefault();
-          showOverlay();
-        } else {
-          downloads++;
-          localStorage.setItem(downloadKey, downloads);
-        }
-      });
-    });
-  });
-
-  // === Suivi état connexion avec nombreConnexions et badge ===
-  onAuthStateChanged(auth, async (user) => {
-    if (user) {
-      status.innerText = `✅ Connecté : ${user.displayName}`;
-      loginBtn.style.display = "none";
-      logoutBtn.style.display = "inline";
-      removeOverlay();
-
-      // 🔹 Récupérer localisation
-      const loc = await getUserLocation();
-
-      // 🔹 Récupérer l'ancien doc utilisateur s'il existe
-      const userRef = doc(db, "utilisateurs", user.email);
-      const userSnap = await getDoc(userRef);
-      let nombreConnexions = 1; // par défaut première connexion
-      let badge = "Nouveau";
-
-      if (userSnap.exists()) {
-        const data = userSnap.data();
-        nombreConnexions = (data.nombreConnexions || 0) + 1;
-
-        // Définition du badge selon règles
-        if (nombreConnexions >= 50) badge = "Contributeur";
-        else if (nombreConnexions >= 10) badge = "Fidèle";
-        else badge = "Nouveau";
-      }
-
-      // 🔹 Mise à jour Firestore
-      await setDoc(userRef, {
-        nom: user.displayName,
-        email: user.email,
-        photo: user.photoURL,
-        derniereConnexion: serverTimestamp(),
-        localisation: loc,
-        nombreConnexions,
-        badge
-      }, { merge: true });
-
-      console.log("Utilisateur enregistré :", user.email, loc, nombreConnexions, badge);
-
-    } else {
-      status.innerText = "❌ Non connecté";
-      loginBtn.style.display = "inline";
-      logoutBtn.style.display = "none";
-
-      if (visites > MAX_VISITES || downloads >= MAX_DOWNLOADS) {
-        showOverlay();
-      }
-    }
-  });
-
-  // === Connexion / Déconnexion ===
-  loginBtn.addEventListener("click", () => {
-    signInWithPopup(auth, provider).catch(e => console.error(e));
-  });
-
-  logoutBtn.addEventListener("click", () => {
-    signOut(auth).catch(e => console.error(e));
-  });
-</script>
 
 
-    <main>
-    
-    <p class="loi">Si vous êtes le titulaire des droits d'auteur d'une œuvre publiée sur notre site et que vous souhaitez qu'elle soit retirée, veuillez nous contacter au :00223 76-85-66-31.<br /> Nous retirons le contenu concerné dès réception de votre demande.</p>
-    <p>Cette politique de confidentialité décrit comment <strong>Lumesys</strong> collecte, utilise et protège les informations que vous nous fournissez lorsque vous utilisez notre site web <a href="index.html" class="site">Lumesys</a>.</p>
+<!-- ==============================
+     BARRE DE PROGRESSION
+================================ -->
 
-    <h2>1. Informations que nous collectons</h2>
-    <p>Nous pouvons collecter les informations suivantes :</p>
-    <ul>
-        <li>Nom et prénom</li>
-        <li>Informations de contact, y compris l'adresse e-mail</li>
-        <li>Données d'utilisation du site</li>
-        <li>les coordonnées GPS</li>
-        <li>L'adresse IP ainsi que la résolution des ecrans des visiteur du site</li>
-    </ul>
+<div class="reading-progress">
+    <div id="progress-bar"></div>
+</div>
 
-    <h2>2. Utilisation des informations</h2>
-    <p>Nous utilisons les informations que nous collectons pour :</p>
-    <ul>
-        <li>Améliorer l'expérience utilisateur</li>
-        <li>Personnaliser les services que nous offrons</li>
-        <li>Envoyer des informations promotionnelles et des mises à jour</li>
-    </ul>
 
-    <h2>3. Sécurité</h2>
-    <p>Nous nous engageons à protéger vos informations personnelles. Nous avons mis en place des mesures de sécurité pour empêcher l'accès non autorisé à ces données.</p>
 
-    <h2>4. Cookies</h2>
-    <p>Notre site utilise des cookies pour améliorer la navigation et offrir des services personnalisés.</p>
 
-    <h2>5. Partage des informations</h2>
-    <p>Nous ne vendons, n'échangeons ni ne louons vos informations personnelles à des tiers, sauf dans les cas requis par la loi.</p>
+<!-- ==============================
+     EN-TÊTE
+================================ -->
 
-    <h2>6. Modifications de la politique de confidentialité</h2>
-    <p>Nous nous réservons le droit de modifier cette politique de confidentialité à tout moment. Toutes les modifications seront mises à jour sur cette page.</p>
 
-    <p>Dernière mise à jour : 23 février 2024</p>
-    <footer>
-         <div class="social-icons">
-         <!-- Bouton WhatsApp -->
-<a href="https://wa.me/22376856631?text=Bonjour!%20Je%20souhaite%20en%20savoir%20plus%20sur%20votre%20site%20web."
-   target="_blank"
-   class="social-button whatsapp-button"
-   aria-label="Contactez-nous sur WhatsApp">
-  <img src="icone/wa.png" alt="WhatsApp" />
-</a>
+<header class="site-header">
 
-<!-- Bouton Facebook -->
-<a href="https://web.facebook.com/ibrahimdjime.diakite.3"
-   target="_blank"
-   class="social-button facebook-button"
-   aria-label="Partager sur Facebook">
-  <img src="icone/facebook.png" alt="Facebook" />
-</a>
 
-<!-- Bouton Twitter -->
-<a href="https://twitter.com/DiakitIbra19810"
-   target="_blank"
-   class="social-button twitter-button"
-   aria-label="Partager sur Twitter">
-  <img src="icone/x.png" alt="Twitter" />
-</a>
+<div class="logo">
 
-<!-- Bouton Instagram -->
-<a href="https://www.instagram.com/ibrahim_djime_diakite"
-   target="_blank"
-   class="social-button instagram-button"
-   aria-label="Voir Instagram">
-  <img src="icone/insta.png" alt="Instagram" />
-</a>
+    <img
+        src="logo/Lumesys1.png"
+        alt="Lumesys">
 
-<!-- Bouton TikTok -->
-<a href="https://www.tiktok.com/@ibradiak0"
-   target="_blank"
-   class="social-button tiktok-button"
-   aria-label="Partager sur TikTok">
-  <img src="icone/tiktok.png" alt="TikTok" />
-</a>
-        </div>
-        <p>&copy; 2025 Ibrahim Djimé Diakité. Tous droits réservés.</p>
-    </footer>
+    <span>Lumesys</span>
+
+</div>
+
+
+
+<button id="menu-button" 
+        aria-label="Ouvrir le menu">
+
+☰
+
+</button>
+
+
+</header>
+
+
+
+
+
+<!-- ==============================
+     CONTENEUR PRINCIPAL
+================================ -->
+
+<div class="page-layout">
+
+
+
+
+
+<!-- ==============================
+     CONTENU PRINCIPAL
+================================ -->
+
+
+<main class="privacy-content">
+
+
+
+
+
+<section class="hero-section" id="introduction">
+
+
+<h1>
+Politique de confidentialité
+</h1>
+
+
+<p class="update-date">
+
+Dernière mise à jour : Juillet 2026
+
+</p>
+
+
+
+<p>
+
+Chez Lumesys, nous accordons une importance particulière à la
+protection de vos informations personnelles et à la transparence
+dans l'utilisation des technologies numériques.
+
+</p>
+
+
+<p>
+
+Cette politique explique simplement quelles informations peuvent être
+collectées lorsque vous utilisez notre plateforme, pourquoi elles sont
+utilisées, comment elles sont protégées et quels sont vos droits.
+
+</p>
+
+
+
+<p>
+
+Lumesys est conçu pour permettre aux utilisateurs d'accéder à des
+ressources numériques, de créer un espace personnel, de télécharger
+des contenus et de bénéficier progressivement de nouveaux services
+comme la personnalisation, la communication entre utilisateurs et
+la marketplace.
+
+</p>
+
+
+
+</section>
+
+
+
+
+
+
+
+
+
+<section id="objet">
+
+
+<h2>
+1. Pourquoi cette politique existe
+</h2>
+
+
+
+<p>
+
+L'objectif de cette politique est de vous permettre de comprendre
+comment vos informations sont traitées avant, pendant et après votre
+utilisation de Lumesys.
+
+</p>
+
+
+
+<p>
+
+Nous appliquons une approche basée sur trois principes essentiels :
+
+</p>
+
+
+
+<ul>
+
+
+<li>
+<strong>Transparence :</strong>
+vous informer clairement sur les données utilisées.
+</li>
+
+
+<li>
+<strong>Sécurité :</strong>
+mettre en place des mesures adaptées pour protéger vos informations.
+</li>
+
+
+<li>
+<strong>Contrôle :</strong>
+vous permettre de gérer vos données et vos choix.
+</li>
+
+
+</ul>
+
+
+<p>
+
+Cette politique concerne les visiteurs du site, les utilisateurs
+créant un compte ainsi que toute personne utilisant les services
+proposés par Lumesys.
+
+</p>
+
+
+
+</section>
+
+
+
+
+
+
+
+
+
+<section id="responsable">
+
+
+<h2>
+2. Responsable du traitement des informations
+</h2>
+
+
+
+<p>
+
+Le responsable du traitement des informations collectées via
+Lumesys est l'équipe responsable de la plateforme.
+
+</p>
+
+
+
+<p>
+
+Pour toute question concernant la confidentialité, la sécurité ou
+l'utilisation de vos données, vous pouvez nous contacter via les
+moyens de communication indiqués sur notre page de contact.
+
+</p>
+
+
+
+<p>
+
+Lumesys s'engage à traiter les informations personnelles dans le
+respect des principes applicables à la protection des données,
+notamment les exigences relatives à la vie privée dans l'environnement
+numérique malien et international.
+
+</p>
+
+
+
+</section>
+
+
+
+
+
+
+
+
+
+<section id="collecte">
+
+
+<h2>
+3. Les informations que nous pouvons recueillir
+</h2>
+
+
+
+
+<p>
+
+Afin de fournir un service fiable et adapté à vos besoins,
+Lumesys peut recueillir différentes catégories d'informations.
+
+Ces informations peuvent provenir directement de vous ou être
+générées automatiquement lors de votre utilisation de la plateforme.
+
+</p>
+
+
+
+
+
+
+
+<h3>
+3.1 Informations fournies directement par vous
+</h3>
+
+
+
+<p>
+
+Lorsque vous créez un compte ou utilisez certaines fonctionnalités,
+vous pouvez choisir de fournir certaines informations.
+
+</p>
+
+
+
+<ul>
+
+
+<li>
+Nom ou identifiant associé à votre profil.
+</li>
+
+
+<li>
+Adresse électronique utilisée pour la connexion ou la communication.
+</li>
+
+
+<li>
+Numéro de téléphone lorsque cette méthode d'authentification est choisie.
+</li>
+
+
+<li>
+Informations nécessaires à l'utilisation de certains services.
+</li>
+
+
+<li>
+Contenus ou informations que vous envoyez volontairement.
+</li>
+
+
+</ul>
+
+
+
+<p>
+
+Vous restez responsable des informations que vous choisissez de
+publier ou de partager volontairement sur Lumesys.
+
+</p>
+
+<p>
+
+Le numéro de téléphone fourni pour compléter un profil est enregistré
+dans un document privé accessible uniquement au compte concerné. Il
+n'est pas publié dans les profils publics. Si la recherche téléphonique
+sécurisée est activée, elle compare le numéro exact au moyen d'un index
+HMAC et ne renvoie que l'identifiant du compte correspondant. Cette
+fonction de découverte est facultative et ne vérifie pas la possession
+du numéro par SMS. Les numéros enregistrés par les anciens parcours
+doivent être migrés avant que cette protection soit complète pour tous
+les comptes.
+
+</p>
+
+<p>
+
+La localisation de profil n'est demandée qu'avec votre accord. Vous pouvez
+saisir une ville manuellement ou autoriser une position GPS; les coordonnées
+GPS précises restent privées. Seuls le pays, la région et la ville que
+vous choisissez de partager peuvent apparaître sur le profil public.
+Vous pouvez désactiver ou supprimer cette localisation depuis les
+paramètres de profil de la messagerie. Les localisations des anciens
+profils doivent également être transférées avant que cette suppression
+soit effective pour tous les comptes.
+
+</p>
+
+
+
+
+
+
+
+<h3>
+3.2 Informations provenant de services de connexion externes
+</h3>
+
+
+
+<p>
+
+Si vous choisissez d'utiliser un service de connexion externe,
+comme une connexion proposée par Google, certaines informations
+nécessaires à votre identification peuvent être transmises selon
+les autorisations que vous acceptez.
+
+</p>
+
+
+
+<p>
+
+Ces informations peuvent notamment inclure :
+
+</p>
+
+
+<ul>
+
+
+<li>
+Votre nom associé au compte externe.
+</li>
+
+
+<li>
+Votre adresse électronique.
+</li>
+
+
+<li>
+Votre image de profil publique lorsque celle-ci est disponible.
+</li>
+
+
+</ul>
+
+
+</section>
+
+
+
+
+
+
+
+
+
+<section id="automatique">
+
+
+<h2>
+4. Informations recueillies automatiquement lors de votre utilisation
+</h2>
+
+
+
+<p>
+
+Comme la majorité des plateformes numériques, Lumesys recueille
+certaines informations techniques nécessaires au fonctionnement,
+à la sécurité et à l'amélioration du service.
+
+</p>
+
+
+
+<p>
+
+Ces informations ne permettent pas toujours de vous identifier
+directement. Elles servent principalement à assurer une meilleure
+expérience utilisateur et à protéger la plateforme contre les usages
+abusifs.
+
+</p>
+
+
+
+
+<p>
+
+Elles peuvent comprendre :
+
+</p>
+
+
+
+
+<ul>
+
+
+<li>
+Type d'appareil utilisé.
+</li>
+
+
+<li>
+Système d'exploitation.
+</li>
+
+
+<li>
+Navigateur internet.
+</li>
+
+
+<li>
+Langue préférée.
+</li>
+
+
+<li>
+Date et heure de connexion.
+</li>
+
+
+<li>
+Pages consultées et interactions générales avec le site.
+</li>
+
+
+<li>
+Informations techniques nécessaires au diagnostic des erreurs.
+</li>
+
+
+</ul>
+
+
+
+
+
+<p>
+
+Certaines informations techniques peuvent également être utilisées
+pour détecter des comportements anormaux, prévenir les attaques
+informatiques et renforcer la sécurité générale de Lumesys.
+
+</p>
+
+
+
+</section>
+
+
+
+
+
+
+
+
+
+<section id="services-techniques">
+
+
+<h2>
+5. Les technologies utilisées pour faire fonctionner Lumesys
+</h2>
+
+
+
+<p>
+
+Pour proposer un service moderne, sécurisé et évolutif, Lumesys
+s'appuie sur différents outils techniques spécialisés.
+
+</p>
+
+
+
+<p>
+
+Ces services ne remplacent pas Lumesys et ne contrôlent pas vos
+données à notre place. Ils fournissent uniquement certaines
+infrastructures nécessaires au fonctionnement de la plateforme.
+
+</p>
+
+
+
+
+
+
+
+<h3>
+Firebase
+</h3>
+
+
+
+<p>
+
+Firebase est une infrastructure technique utilisée par Lumesys pour
+certaines fonctions essentielles comme la gestion des comptes,
+l'authentification des utilisateurs, la synchronisation de données
+nécessaires au fonctionnement des services et la sécurité technique.
+
+</p>
+
+
+
+<p>
+
+Les informations traitées par Firebase sont utilisées uniquement
+dans le cadre des fonctionnalités proposées par Lumesys.
+
+</p>
+
+
+
+
+
+
+
+<h3>
+Google Analytics
+</h3>
+
+
+
+<p>
+
+Google Analytics peut être utilisé afin de comprendre l'utilisation
+globale de Lumesys.
+
+</p>
+
+
+
+<p>
+
+Cet outil permet notamment d'observer :
+
+</p>
+
+
+
+<ul>
+
+
+<li>
+Les pages les plus consultées.
+</li>
+
+
+<li>
+Les tendances générales de fréquentation.
+</li>
+
+
+<li>
+Les améliorations possibles de l'expérience utilisateur.
+</li>
+
+
+</ul>
+
+
+
+
+
+<h3>
+Google Tag Manager
+</h3>
+
+
+
+<p>
+
+Google Tag Manager permet de gérer certains composants techniques
+liés au fonctionnement et à l'analyse du site sans modifier directement
+chaque élément du code principal.
+
+</p>
+
+
+
+
+
+<h3>
+StatCounter
+</h3>
+
+
+
+<p>
+
+StatCounter peut être utilisé pour obtenir des statistiques générales
+sur la fréquentation de Lumesys et mieux comprendre l'évolution de
+notre audience.
+
+</p>
+
+
+
+
+</section>
+<!-- ==============================
+     PARTIE 2
+================================ -->
+
+
+
+<section id="finalites">
+
+
+<h2>
+6. Pourquoi Lumesys utilise vos informations
+</h2>
+
+
+
+<p>
+
+Les informations collectées par Lumesys ne sont pas utilisées au hasard.
+Chaque utilisation répond à un objectif précis lié au fonctionnement,
+à l'amélioration ou à la sécurité de nos services.
+
+</p>
+
+
+
+<h3>
+6.1 Fournir et améliorer nos services
+</h3>
+
+
+
+<p>
+
+Vos informations peuvent être utilisées afin de permettre le bon
+fonctionnement de Lumesys et de vous fournir les fonctionnalités
+auxquelles vous avez choisi d'accéder.
+
+</p>
+
+
+<ul>
+
+<li>
+Créer et gérer votre compte utilisateur.
+</li>
+
+
+<li>
+Permettre l'accès aux ressources numériques.
+</li>
+
+
+<li>
+Gérer vos téléchargements et interactions avec la plateforme.
+</li>
+
+
+<li>
+Améliorer la stabilité et les performances du site.
+</li>
+
+
+</ul>
+
+
+
+
+
+<h3>
+6.2 Assurer la sécurité de la plateforme
+</h3>
+
+
+
+<p>
+
+Certaines informations techniques peuvent être utilisées afin de
+détecter, prévenir et limiter les comportements susceptibles de
+nuire au fonctionnement normal de Lumesys.
+
+</p>
+
+
+
+Cela peut inclure :
+
+<ul>
+
+<li>
+La détection d'activités inhabituelles.
+</li>
+
+<li>
+La prévention des accès frauduleux.
+</li>
+
+<li>
+La protection contre les attaques informatiques.
+</li>
+
+<li>
+La limitation des abus affectant les autres utilisateurs.
+</li>
+
+</ul>
+
+
+
+
+</section>
+
+
+
+
+
+
+
+
+
+<section id="personnalisation">
+
+
+<h2>
+7. Personnalisation des contenus et recommandations
+</h2>
+
+
+
+<p>
+
+Lumesys a pour objectif de proposer une expérience adaptée aux besoins
+de chaque utilisateur.
+
+</p>
+
+
+
+<p>
+
+Avec votre utilisation de la plateforme, certains éléments peuvent être
+utilisés afin de mieux comprendre vos préférences générales et vous
+présenter des contenus susceptibles de vous intéresser.
+
+</p>
+
+
+
+<p>
+
+Ces fonctionnalités peuvent concerner notamment :
+
+</p>
+
+
+
+<ul>
+
+<li>
+La suggestion de ressources éducatives.
+</li>
+
+
+<li>
+La mise en avant de contenus similaires.
+</li>
+
+
+<li>
+L'amélioration des résultats de recherche.
+</li>
+
+
+<li>
+La présentation de fonctionnalités adaptées à votre utilisation.
+</li>
+
+
+</ul>
+
+
+
+<p>
+
+Lorsque ces fonctionnalités seront développées, Lumesys veillera à
+maintenir un équilibre entre personnalisation et respect de la vie
+privée.
+
+</p>
+
+
+
+</section>
+
+
+
+
+
+
+
+
+
+<section id="messagerie">
+
+
+<h2>
+8. Communications et fonctionnalités d'échange
+</h2>
+
+
+
+<p>
+
+Lumesys pourra proposer progressivement des fonctionnalités permettant
+aux utilisateurs d'échanger entre eux ou de communiquer avec certains
+services de la plateforme.
+
+</p>
+
+
+
+<p>
+
+Dans ce contexte, certaines informations nécessaires au fonctionnement
+des échanges pourront être traitées, notamment :
+
+</p>
+
+
+
+<ul>
+
+
+<li>
+Informations de profil nécessaires à l'identification.
+</li>
+
+
+<li>
+Messages envoyés volontairement par les utilisateurs.
+</li>
+
+
+<li>
+Informations techniques nécessaires au transport et à la sécurité
+des communications.
+</li>
+
+
+</ul>
+
+
+
+
+<p>
+
+Les utilisateurs doivent utiliser ces fonctionnalités dans le respect
+des autres personnes et ne doivent pas transmettre de contenus
+illégaux, frauduleux ou portant atteinte aux droits d'autrui.
+
+</p>
+
+
+
+</section>
+
+
+
+
+
+
+
+
+
+<section id="marketplace">
+
+
+<h2>
+9. Services commerciaux et marketplace
+</h2>
+
+
+
+<p>
+
+Lumesys pourra intégrer dans son évolution une marketplace permettant
+à certains utilisateurs ou partenaires de proposer des ressources,
+services ou contenus numériques.
+
+</p>
+
+
+
+<p>
+
+Dans le cadre de ces fonctionnalités, certaines informations pourront
+être nécessaires afin de :
+
+</p>
+
+
+
+<ul>
+
+
+<li>
+Créer un espace vendeur ou professionnel.
+</li>
+
+
+<li>
+Gérer les transactions ou demandes associées.
+</li>
+
+
+<li>
+Assurer le suivi des services proposés.
+</li>
+
+
+<li>
+Maintenir un environnement sécurisé pour les utilisateurs.
+</li>
+
+
+</ul>
+
+
+
+
+<p>
+
+Les modalités spécifiques liées aux paiements, commissions ou services
+commerciaux feront l'objet de conditions particulières lorsque ces
+fonctionnalités seront disponibles.
+
+</p>
+
+
+
+</section>
+
+
+
+
+
+
+
+
+
+<section id="communications-utilisateur">
+
+
+<h2>
+10. Communications envoyées aux utilisateurs
+</h2>
+
+
+
+<p>
+
+Lumesys peut utiliser certains moyens de communication afin de vous
+transmettre des informations importantes concernant votre utilisation
+de la plateforme.
+
+</p>
+
+
+
+Ces communications peuvent concerner :
+
+<ul>
+
+
+<li>
+La sécurité de votre compte.
+</li>
+
+
+<li>
+Les modifications importantes du service.
+</li>
+
+
+<li>
+Les nouvelles fonctionnalités.
+</li>
+
+
+<li>
+Les informations nécessaires au fonctionnement de votre compte.
+</li>
+
+
+</ul>
+
+
+
+
+<p>
+
+Lorsque cela est applicable, vous pourrez gérer vos préférences de
+communication selon les options proposées par Lumesys.
+
+</p>
+
+
+
+</section>
+
+
+
+
+
+
+
+
+
+<section id="partage">
+
+
+<h2>
+11. Partage des informations
+</h2>
+
+
+
+<p>
+
+Lumesys considère vos informations personnelles comme des éléments
+confidentiels.
+
+</p>
+
+
+
+<p>
+
+Nous ne vendons pas vos informations personnelles à des entreprises
+tierces.
+
+</p>
+
+
+
+<p>
+
+Certaines informations peuvent cependant être traitées par des
+prestataires techniques lorsque cela est nécessaire au fonctionnement
+des services.
+
+</p>
+
+
+
+
+Cela peut concerner :
+
+<ul>
+
+
+<li>
+Les fournisseurs d'hébergement.
+</li>
+
+
+<li>
+Les services d'authentification.
+</li>
+
+
+<li>
+Les outils d'analyse technique.
+</li>
+
+
+<li>
+Les fournisseurs nécessaires aux fonctionnalités proposées.
+</li>
+
+
+</ul>
+
+
+
+<p>
+
+Ces partenaires interviennent uniquement pour fournir les services
+nécessaires et doivent respecter leurs propres obligations de sécurité
+et de confidentialité.
+
+</p>
+
+
+
+</section>
+
+
+
+
+
+
+
+
+
+<section id="autorites">
+
+
+<h2>
+12. Demandes officielles, obligations légales et autorités compétentes
+</h2>
+
+
+
+<p>
+
+Dans certaines situations prévues par la loi, Lumesys peut être amené
+à communiquer certaines informations aux autorités compétentes.
+
+</p>
+
+
+
+<p>
+
+Cela peut notamment intervenir lorsqu'une demande officielle valide
+est présentée dans le cadre :
+
+</p>
+
+
+
+<ul>
+
+
+<li>
+D'une procédure judiciaire.
+</li>
+
+
+<li>
+D'une enquête légalement autorisée.
+</li>
+
+
+<li>
+D'une obligation réglementaire.
+</li>
+
+
+<li>
+De la protection des utilisateurs, des services ou des droits de
+Lumesys.
+</li>
+
+
+</ul>
+
+
+
+
+<p>
+
+Lumesys ne fournit pas volontairement les informations personnelles
+des utilisateurs à des tiers pour des usages commerciaux.
+
+</p>
+
+
+
+</section>
+
+
+
+
+
+
+
+
+
+<section id="cybersecurite">
+
+
+<h2>
+13. Sécurité informatique et lutte contre les usages abusifs
+</h2>
+
+
+
+<p>
+
+La sécurité numérique constitue une priorité pour Lumesys.
+
+</p>
+
+
+
+<p>
+
+Nous mettons en œuvre des mesures raisonnables afin de protéger les
+informations contre les accès non autorisés, les pertes accidentelles,
+les modifications abusives ou les attaques informatiques.
+
+</p>
+
+
+
+
+Ces mesures peuvent inclure :
+
+<ul>
+
+
+<li>
+Protection des comptes utilisateurs.
+</li>
+
+
+<li>
+Contrôle des accès aux données.
+</li>
+
+
+<li>
+Surveillance des activités techniques inhabituelles.
+</li>
+
+
+<li>
+Amélioration continue des mécanismes de sécurité.
+</li>
+
+
+</ul>
+
+
+
+
+<p>
+
+Lumesys respecte les principes de prévention liés à la sécurité
+numérique et à la lutte contre les actes de cybercriminalité prévus
+dans le cadre juridique applicable au Mali ainsi que les bonnes
+pratiques internationales en matière de cybersécurité.
+
+</p>
+
+
+
+<p>
+
+Toute tentative d'accès frauduleux, d'exploitation abusive,
+d'interruption volontaire du service ou d'utilisation illégale de
+la plateforme pourra faire l'objet de mesures appropriées,
+conformément aux lois applicables.
+
+</p>
+
+
+
+</section>
+<!-- ==============================
+     PARTIE 3
+================================ -->
+
+
+
+
+
+<section id="hebergement">
+
+
+<h2>
+14. Hébergement des données et transferts internationaux
+</h2>
+
+
+
+<p>
+
+Pour assurer la disponibilité et la fiabilité de Lumesys, certaines
+données peuvent être hébergées ou traitées par des fournisseurs
+technologiques situés dans différents pays.
+
+</p>
+
+
+
+<p>
+
+Ces prestataires peuvent être utilisés pour fournir des services
+essentiels comme :
+
+</p>
+
+
+
+<ul>
+
+
+<li>
+L'infrastructure serveur.
+</li>
+
+
+<li>
+Le stockage sécurisé.
+</li>
+
+
+<li>
+L'authentification des utilisateurs.
+</li>
+
+
+<li>
+Les outils techniques nécessaires au fonctionnement du site.
+</li>
+
+
+</ul>
+
+
+
+
+<p>
+
+Lorsque des données sont traitées en dehors du Mali, Lumesys veille
+à choisir des fournisseurs présentant des garanties raisonnables en
+matière de sécurité et de protection des informations.
+
+</p>
+
+
+
+</section>
+
+
+
+
+
+
+
+
+
+<section id="cookies">
+
+
+<h2>
+15. Cookies et technologies similaires
+</h2>
+
+
+
+<p>
+
+Les cookies sont de petits fichiers enregistrés temporairement sur
+votre appareil lorsqu'un site internet est consulté.
+
+</p>
+
+
+
+<p>
+
+Ils permettent notamment à un service numérique de fonctionner
+correctement, de mémoriser certaines préférences et d'améliorer
+l'expérience utilisateur.
+
+</p>
+
+
+
+
+<p>
+
+Sur Lumesys, les cookies peuvent être utilisés pour :
+
+</p>
+
+
+
+
+<ul>
+
+
+<li>
+Maintenir certaines fonctionnalités techniques.
+</li>
+
+
+<li>
+Améliorer la rapidité et la stabilité du site.
+</li>
+
+
+<li>
+Comprendre l'utilisation générale de la plateforme.
+</li>
+
+
+<li>
+Améliorer les contenus proposés.
+</li>
+
+
+</ul>
+
+
+
+
+<p>
+
+Vous pouvez généralement contrôler ou supprimer les cookies depuis
+les paramètres de votre navigateur.
+
+</p>
+
+
+
+</section>
+
+
+
+
+
+
+
+
+
+<section id="conservation">
+
+
+<h2>
+16. Durée de conservation des informations
+</h2>
+
+
+
+<p>
+
+Lumesys conserve les informations uniquement pendant la période
+nécessaire aux objectifs pour lesquels elles ont été collectées.
+
+</p>
+
+
+
+
+<table class="data-table">
+
+
+<thead>
+
+<tr>
+
+<th>
+Type d'information
+</th>
+
+
+<th>
+Durée générale de conservation
+</th>
+
+
+</tr>
+
+</thead>
+
+
+
+<tbody>
+
+
+<tr>
+
+<td>
+Informations du compte utilisateur
+</td>
+
+<td>
+Pendant la durée d'utilisation du compte
+</td>
+
+</tr>
+
+
+
+<tr>
+
+<td>
+Informations liées aux services utilisés
+</td>
+
+<td>
+Pendant la durée nécessaire au fonctionnement du service
+</td>
+
+</tr>
+
+
+
+<tr>
+
+<td>
+Informations techniques de sécurité
+</td>
+
+<td>
+Durée limitée adaptée aux besoins de protection
+</td>
+
+</tr>
+
+
+
+<tr>
+
+<td>
+Demandes de suppression ou support
+</td>
+
+<td>
+Durée nécessaire au traitement administratif
+</td>
+
+</tr>
+
+
+</tbody>
+
+
+</table>
+
+
+
+
+<p>
+
+Certaines informations peuvent être conservées plus longtemps lorsque
+cela est nécessaire pour respecter une obligation légale ou protéger
+les droits de Lumesys et de ses utilisateurs.
+
+</p>
+
+
+
+</section>
+
+
+
+
+
+
+
+
+
+<section id="droits">
+
+
+<h2>
+17. Vos droits concernant vos informations
+</h2>
+
+
+
+<p>
+
+Lumesys reconnaît l'importance pour chaque utilisateur de garder le
+contrôle sur ses informations personnelles.
+
+</p>
+
+
+
+<p>
+
+Selon les règles applicables dans votre pays, vous pouvez notamment
+demander :
+
+</p>
+
+
+
+
+<ul>
+
+
+<li>
+L'accès aux informations associées à votre compte.
+</li>
+
+
+<li>
+La correction d'informations incorrectes.
+</li>
+
+
+<li>
+La suppression de certaines données.
+</li>
+
+
+<li>
+Des explications sur l'utilisation de vos informations.
+</li>
+
+
+<li>
+La limitation de certains traitements lorsque cela est applicable.
+</li>
+
+
+</ul>
+
+
+
+
+<p>
+
+Pour exercer vos droits, vous pouvez contacter Lumesys en indiquant
+clairement votre demande.
+
+</p>
+
+
+
+</section>
+
+
+
+
+
+
+
+
+
+<section id="suppression">
+
+
+<h2>
+18. Suppression du compte et des données
+</h2>
+
+
+
+<p>
+
+Vous pouvez demander la suppression de votre compte et des informations
+associées.
+
+</p>
+
+
+
+<p>
+
+Après réception d'une demande valide, Lumesys procédera aux actions
+nécessaires dans un délai raisonnable.
+
+</p>
+
+
+
+
+<p>
+
+Certaines informations peuvent toutefois être conservées lorsque leur
+maintien est nécessaire :
+
+</p>
+
+
+
+<ul>
+
+
+<li>
+Pour respecter une obligation légale.
+</li>
+
+
+<li>
+Pour prévenir une fraude ou un abus.
+</li>
+
+
+<li>
+Pour conserver des preuves nécessaires à la protection des droits.
+</li>
+
+
+</ul>
+
+
+
+</section>
+
+
+
+
+
+
+
+
+
+<section id="cadre-malien">
+
+
+<h2>
+19. Respect du cadre juridique malien et international
+</h2>
+
+
+
+<p>
+
+Lumesys est développé dans le respect des principes fondamentaux liés
+à la protection des utilisateurs dans l'environnement numérique.
+
+</p>
+
+
+
+<p>
+
+La plateforme tient compte notamment :
+
+</p>
+
+
+
+<ul>
+
+
+<li>
+Des règles applicables au Mali concernant les technologies numériques.
+</li>
+
+
+<li>
+Des principes de protection des données personnelles.
+</li>
+
+
+<li>
+Des dispositions relatives à la sécurité informatique et à la lutte
+contre les actes de cybercriminalité.
+</li>
+
+
+<li>
+Des bonnes pratiques internationales utilisées par les plateformes
+numériques modernes.
+</li>
+
+
+</ul>
+
+
+
+
+<p>
+
+Les utilisateurs doivent également respecter les lois applicables lors
+de leur utilisation de Lumesys.
+
+</p>
+
+
+
+<p>
+
+Toute utilisation frauduleuse, tentative d'intrusion, manipulation
+des systèmes, diffusion de contenus illégaux ou atteinte aux droits
+d'autres personnes peut entraîner des mesures appropriées.
+
+</p>
+
+
+
+</section>
+
+
+
+
+
+
+
+
+
+<section id="responsabilite">
+
+
+<h2>
+20. Limitation de responsabilité concernant la sécurité numérique
+</h2>
+
+
+
+<p>
+
+Lumesys met en œuvre des mesures raisonnables afin de protéger ses
+services et les informations confiées par ses utilisateurs.
+
+</p>
+
+
+
+<p>
+
+Cependant, aucun service numérique ne peut garantir une sécurité
+absolue contre tous les risques existants dans l'environnement
+informatique.
+
+</p>
+
+
+
+<p>
+
+Lumesys recommande aux utilisateurs :
+
+</p>
+
+
+
+<ul>
+
+
+<li>
+D'utiliser un mot de passe suffisamment sécurisé.
+</li>
+
+
+<li>
+De protéger leurs moyens de connexion.
+</li>
+
+
+<li>
+De ne pas partager volontairement leurs informations sensibles.
+</li>
+
+
+<li>
+De signaler toute activité suspecte.
+</li>
+
+
+</ul>
+
+
+
+</section>
+
+
+
+
+
+
+
+
+
+<section id="modifications">
+
+
+<h2>
+21. Modification de cette politique
+</h2>
+
+
+
+<p>
+
+Lumesys peut modifier cette politique afin de prendre en compte
+l'évolution des services, des technologies utilisées ou des obligations
+juridiques applicables.
+
+</p>
+
+
+
+<p>
+
+La date de dernière mise à jour sera toujours indiquée en début de
+document.
+
+</p>
+
+
+
+<p>
+
+Lorsque des modifications importantes affectent significativement
+les utilisateurs, Lumesys pourra mettre en place des moyens
+d'information adaptés.
+
+</p>
+
+
+
+</section>
+
+
+
+
+
+
+
+
+
+<section id="contact">
+
+
+<h2>
+22. Contact
+</h2>
+
+
+
+<p>
+
+Pour toute question concernant cette politique de confidentialité,
+la gestion de vos informations ou vos droits, vous pouvez contacter
+Lumesys via les moyens officiels disponibles sur la plateforme.
+
+</p>
+
+
+
+<p>
+
+Nous nous efforçons de répondre aux demandes relatives à la
+confidentialité dans un délai raisonnable.
+
+</p>
+
+
+
+</section>
+
+
+
+
+
+
+
+
+
+<section id="annexe-donnees">
+
+
+<h2>
+Annexe 1 — Catégories générales d'informations traitées
+</h2>
+
+
+
+<ul>
+
+
+<li>
+Informations de compte et d'identification.
+</li>
+
+
+<li>
+Informations techniques liées à l'utilisation du service.
+</li>
+
+
+<li>
+Données nécessaires aux fonctionnalités utilisées.
+</li>
+
+
+<li>
+Informations fournies volontairement par l'utilisateur.
+</li>
+
+
+<li>
+Données nécessaires à la sécurité et à l'amélioration du service.
+</li>
+
+
+</ul>
+
+
+
+</section>
+
+
+
+
+
+
+
+
+
+<section id="annexe-services">
+
+
+<h2>
+Annexe 2 — Principaux services techniques utilisés
+</h2>
+
+
+
+<table class="data-table">
+
+
+<thead>
+
+<tr>
+
+<th>
+Service
+</th>
+
+
+<th>
+Utilisation possible
+</th>
+
+
+</tr>
+
+</thead>
+
+
+
+<tbody>
+
+
+<tr>
+
+<td>
+Firebase
+</td>
+
+<td>
+Gestion technique des comptes, authentification et services applicatifs.
+</td>
+
+</tr>
+
+
+
+<tr>
+
+<td>
+Google Analytics
+</td>
+
+<td>
+Analyse générale de l'utilisation du site.
+</td>
+
+</tr>
+
+
+
+<tr>
+
+<td>
+Google Tag Manager
+</td>
+
+<td>
+Gestion technique de certains outils du site.
+</td>
+
+</tr>
+
+
+
+<tr>
+
+<td>
+StatCounter
+</td>
+
+<td>
+Statistiques générales de fréquentation.
+</td>
+
+</tr>
+
+
+</tbody>
+
+
+</table>
+
+
+
+</section>
+
+
+
+
+
+
+
+<footer class="privacy-footer">
+
+
+<p>
+
+© Lumesys — Tous droits réservés.
+
+</p>
+
+
+<p>
+
+Politique de confidentialité | Conditions d'utilisation
+
+</p>
+
+
+</footer>
+
+
+
+
+
+
 </main>
-<script>
-// Gestion des cookies pour Lumesys
 
-// Fonction générique pour définir et récupérer des cookies
-function setCookie(name, value, type = "session") {
-    if (type === "session") {
-        sessionStorage.setItem(name, value);
-    } else {
-        localStorage.setItem(name, value);
-    }
-}
 
-function getCookie(name, type = "session") {
-    return type === "session" ? sessionStorage.getItem(name) : localStorage.getItem(name);
-}
 
-// Initialisation des cookies par type
 
-// 1. Cookies de session : informations de session utilisateur
-function initializeSessionCookies() {
-    setCookie("userSession", "active");
-    console.log("Session de l'utilisateur :", getCookie("userSession"));
-}
 
-// 2. Cookies de préférences : langue et thème de l'utilisateur
-function initializePreferenceCookies() {
-    setCookie("language", "fr", "persistent"); // Exemple : français par défaut
-    setCookie("theme", "dark", "persistent");  // Exemple : thème sombre par défaut
-    console.log("Langue :", getCookie("language", "persistent"));
-    console.log("Thème :", getCookie("theme", "persistent"));
-}
+<!-- ==============================
+     MENU LATERAL
+================================ -->
 
-// 3. Cookies d'analyse : suivi des visites pour analyse du trafic
-function initializeAnalyticsCookies() {
-    let visits = getCookie("siteVisits", "persistent");
-    visits = visits ? parseInt(visits) + 1 : 1;
-    setCookie("siteVisits", visits, "persistent");
-    console.log("Nombre de visites :", visits);
-}
 
-// 4. Cookies publicitaires : ciblage basé sur les intérêts de l'utilisateur
-function initializeAdCookies() {
-    const interests = ["tech", "art"];
-    setCookie("adInterests", interests.join(","), "persistent");
-    console.log("Intérêts publicitaires :", getCookie("adInterests", "persistent"));
-}
+<aside class="sidebar" id="sidebar">
 
-// 5. Cookies de réseaux sociaux : session de partage et interaction sociale
-function initializeSocialCookies() {
-    setCookie("socialLoggedIn", "true", "persistent");
-    console.log("Session de réseaux sociaux :", getCookie("socialLoggedIn", "persistent"));
-}
 
-// 6. Cookies de performance : mesure du temps de chargement des pages
-function initializePerformanceCookies() {
-    window.onload = function () {
-        const loadTime = window.performance.timing.domContentLoadedEventEnd - window.performance.timing.navigationStart;
-        setCookie("pageLoadTime", loadTime, "persistent");
-        console.log("Temps de chargement de la page :", loadTime, "ms");
-    };
-}
+<h3>
+Sommaire
+</h3>
 
-// Fonction principale pour initialiser tous les cookies
-function initializeAllCookies() {
-    initializeSessionCookies();
-    initializePreferenceCookies();
-    initializeAnalyticsCookies();
-    initializeAdCookies();
-    initializeSocialCookies();
-    initializePerformanceCookies();
-}
 
-// Exécution de l'initialisation des cookies
-initializeAllCookies();
 
-</script>
+<nav>
+
+
+<a href="#introduction">
+Introduction
+</a>
+
+
+<a href="#objet">
+Pourquoi cette politique
+</a>
+
+
+<a href="#collecte">
+Informations collectées
+</a>
+
+
+<a href="#services-techniques">
+Technologies utilisées
+</a>
+
+
+<a href="#finalites">
+Utilisation des informations
+</a>
+
+
+<a href="#messagerie">
+Communications
+</a>
+
+
+<a href="#marketplace">
+Marketplace
+</a>
+
+
+<a href="#partage">
+Partage des données
+</a>
+
+
+<a href="#cybersecurite">
+Sécurité
+</a>
+
+
+<a href="#cookies">
+Cookies
+</a>
+
+
+<a href="#droits">
+Vos droits
+</a>
+
+
+<a href="#suppression">
+Suppression
+</a>
+
+
+<a href="#cadre-malien">
+Cadre juridique
+</a>
+
+
+<a href="#contact">
+Contact
+</a>
+
+
+</nav>
+
+
+
+</aside>
+
+
+
+
+
+
+</div>
+
+
+
+
+<script src="policonf.js"></script>
+
+
+
 </body>
+
 </html>
