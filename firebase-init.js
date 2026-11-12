@@ -1,0 +1,1 @@
+export { app, auth, db, provider } from "./firebase/client/firebase-init.js";
