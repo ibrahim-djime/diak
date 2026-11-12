@@ -20,12 +20,23 @@ document.addEventListener("DOMContentLoaded", async () => {
     doc,
     getDoc,
     setDoc,
-    serverTimestamp
+    serverTimestamp,
+    deleteField
   } = await import("https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js");
+  const { ensurePrivateProfile } = await import("./profile-onboarding.js");
 
   /* =========================
      FIREBASE INIT
   ========================= */
+  async function signInSmart(auth, provider) {
+  try {
+    await signInWithPopup(auth, provider);
+  } catch (error) {
+    console.warn("Popup bloquée ou refusée, redirection vers login.html", error.code);
+    window.location.href = "/login.html";
+  }
+}
+
   const firebaseConfig = {
     apiKey: "AIzaSyAClwRQe3g4Cg9CAsn28l_sAihwlMQtGUI",
     authDomain: "lumina-analytics.firebaseapp.com",
@@ -80,8 +91,10 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     document.body.appendChild(overlay);
 
-    document.getElementById("loginBtnOverlay").onclick =
-      () => signInWithPopup(auth, provider);
+    document.getElementById("loginBtnOverlay").onclick = () => {
+        signInSmart(auth, provider);
+    };
+
 
     document.getElementById("quitBtnOverlay").onclick =
       () => window.location.href = "https://www.google.com";
@@ -98,31 +111,15 @@ document.addEventListener("DOMContentLoaded", async () => {
     link.addEventListener("click", (e) => {
       if (!auth.currentUser && downloads >= MAX_DOWNLOADS) {
         e.preventDefault();
+        e.stopImmediatePropagation();
         showOverlay();
+        return false;
       } else {
         downloads++;
         localStorage.setItem(downloadKey, downloads);
       }
     });
   });
-
-  /* =========================
-     GEOLOCALISATION IP
-  ========================= */
-  async function getUserLocation() {
-    try {
-      const r = await fetch("https://ipapi.co/json/");
-      const d = await r.json();
-      return {
-        pays: d.country_name,
-        ville: d.city,
-        region: d.region,
-        ip: d.ip
-      };
-    } catch {
-      return { pays: "Inconnu", ville: "Inconnue", region: "Inconnue", ip: "Inconnue" };
-    }
-  }
 
   /* =========================
      DOM PROFIL
@@ -158,8 +155,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   profilPays.textContent =
     data.localisation?.pays ? `Pays : ${data.localisation.pays}` : "";
 
-  profilTelephone.textContent =
-    data.numero ? `Téléphone : ${data.numero}` : "";
+  profilTelephone.textContent = "";
 
   profilPhoto.src = data.photo || user.photoURL || "";
  }
@@ -177,48 +173,6 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
 
   /* =========================
-     FORM PROFIL OBLIGATOIRE
-  ========================= */
-  function demandeInfosProfil(ref, user) {
-    if (document.getElementById("formProfil")) return;
-
-    const div = document.createElement("div");
-    div.id = "formProfil";
-    div.style.cssText = `
-      position:fixed; inset:0;
-      background:rgba(0,0,0,.85);
-      display:flex; justify-content:center; align-items:center;
-      z-index:9999; color:white;
-    `;
-
-    div.innerHTML = `
-      <div style="background:#111;padding:20px;border-radius:8px;">
-        <h2>Compléter votre profil</h2>
-        <input id="numeroUser" placeholder="Numéro (+223)">
-        <select id="sexeUser">
-          <option value="">Sexe</option>
-          <option value="Homme">Homme</option>
-          <option value="Femme">Femme</option>
-        </select>
-        <button id="validerProfil">Valider</button>
-      </div>
-    `;
-
-    document.body.appendChild(div);
-
-    document.getElementById("validerProfil").onclick = async () => {
-      const numero = numeroUser.value.trim();
-      const sexe = sexeUser.value.trim();
-      if (!numero || !sexe) return alert("Champs requis");
-
-      await setDoc(ref, { numero, sexe }, { merge: true });
-      const snap = await getDoc(ref);
-      afficherProfil(snap.data(), user);
-      div.remove();
-    };
-  }
-
-  /* =========================
      AUTH PRINCIPALE
   ========================= */
   onAuthStateChanged(auth, async (user) => {
@@ -227,17 +181,28 @@ document.addEventListener("DOMContentLoaded", async () => {
       logoutBtn.style.display = "inline-block";
       removeOverlay();
 
-      const ref = doc(db, "utilisateurs", user.email);
-      const snap = await getDoc(ref);
-      const loc = await getUserLocation();
+      const email = String(user.email).toLowerCase();
+      const ref = doc(db, "utilisateurs", email);
+      const publicRef = doc(db, "public_profiles", email);
+      const [snap, publicSnap] = await Promise.all([getDoc(ref), getDoc(publicRef)]);
+      const privateProfile = await ensurePrivateProfile({
+        user,
+        db,
+        userData: snap.exists() ? snap.data() : {},
+        publicData: publicSnap.exists() ? publicSnap.data() : {}
+      });
+      const loc = {
+        pays: privateProfile.locationCountry || "",
+        ville: privateProfile.locationCity || "",
+        region: privateProfile.locationRegion || ""
+      };
 
       let data = {
         nom: user.displayName,
         email: user.email,
-        photo: user.photoURL,
+        photo: (publicSnap.exists() && publicSnap.data().photo) || user.photoURL,
         nombreConnexions: 1,
-        badge: "Nouveau",
-        localisation: loc
+        badge: "Nouveau"
       };
 
       if (snap.exists()) {
@@ -247,16 +212,45 @@ document.addEventListener("DOMContentLoaded", async () => {
         else if (data.nombreConnexions >= 10) data.badge = "Fidèle";
       }
 
+      const profileData = {
+        ...data,
+        sexe: privateProfile.sexe || "",
+        localisation: loc
+      };
+      delete data.numero;
+      delete data.telephone;
+      delete data.localisation;
+      delete data.sexe;
+
       await setDoc(ref, {
         ...data,
+        numero: deleteField(),
+        telephone: deleteField(),
+        localisation: deleteField(),
+        sexe: deleteField(),
         derniereConnexion: serverTimestamp()
       }, { merge: true });
 
-      afficherProfil(data, user);
+      await setDoc(publicRef, {
+        uid: user.uid,
+        email,
+        prenom: data.nom ? String(data.nom).split(" ")[0] : "",
+        nom: data.nom || "",
+        sexe: deleteField(),
+        ville: loc.ville,
+        region: loc.region,
+        pays: loc.pays,
+        photo: profileData.photo || "",
+        telephone: deleteField(),
+        numero: deleteField(),
+        latitude: deleteField(),
+        longitude: deleteField(),
+        localisation: deleteField(),
+        ip: deleteField(),
+        updatedAt: serverTimestamp()
+      }, { merge: true });
 
-      if (!data.numero || !data.sexe) {
-        demandeInfosProfil(ref, user);
-      }
+      afficherProfil(profileData, user);
 
     } else {
       loginBtn.style.display = "inline-block";
@@ -268,10 +262,11 @@ document.addEventListener("DOMContentLoaded", async () => {
       }
     }
   });
-
-  loginBtn.onclick = () => signInWithPopup(auth, provider);
+  
+  loginBtn.onclick = () => signInSmart(auth, provider);
   logoutBtn.onclick = () => signOut(auth);
 
   console.log("=== Script fusionné prêt ===");
 
 });
+
