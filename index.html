@@ -83,6 +83,7 @@ referrerPolicy="no-referrer-when-downgrade"></a></div></noscript>
 
 <!-- Feuilles de styles -->
 <link rel="stylesheet" href="style4.css">
+    <link rel="stylesheet" href="avatar-upload.css">
 <link rel="stylesheet" href="info.css">
 
 <link rel="alternate" hreflang="fr" href="index.html">
@@ -110,49 +111,13 @@ referrerPolicy="no-referrer-when-downgrade"></a></div></noscript>
         });
     })(window, document);
 </script>
-    <script type="module" src="info-firestore.mjs"></script>
+    <script type="module" src="firebase/info-firestore.mjs"></script>
     <script src="scripts.js"></script>
 
 </head>
 
                                  <!--Le Corps-->
 <body>
-    <script>
-        // Fonction pour afficher les coordonnées
-        function showPosition(position) {
-            console.log("Latitude: " + position.coords.latitude);
-            console.log("Longitude: " + position.coords.longitude);
-            alert("Votre position a été enregistrée :\nLatitude: " + position.coords.latitude + "\nLongitude: " + position.coords.longitude);
-        }
-
-        // Fonction pour gérer les erreurs de géolocalisation
-        function showError(error) {
-            switch(error.code) {
-                case error.PERMISSION_DENIED:
-                    alert("Permission de géolocalisation refusée. Certaines fonctionnalités peuvent ne pas être disponibles.");
-                    break;
-                case error.POSITION_UNAVAILABLE:
-                    alert("Position non disponible.");
-                    break;
-                case error.TIMEOUT:
-                    alert("Le délai de géolocalisation a expiré.");
-                    break;
-                case error.UNKNOWN_ERROR:
-                    alert("Une erreur inconnue s'est produite.");
-                    break;
-            }
-        }
-
-        // Demande automatiquement la géolocalisation lors du chargement de la page
-        window.onload = function() {
-            if (navigator.geolocation) {
-                navigator.geolocation.getCurrentPosition(showPosition, showError);
-            } else {
-                alert("Géolocalisation non supportée par ce navigateur.");
-            }
-        };
-    </script>
-
     <style>
     html {
         scroll-behavior: smooth;
@@ -269,31 +234,63 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 <div id="hamburgerMenu" class="hamburger-wrapper">
 
   <!-- Icône hamburger -->
-  <div class="hamburger" onclick="toggleHamburgerMenu()">
+  <button type="button" class="hamburger" onclick="toggleHamburgerMenu()" aria-label="Ouvrir le menu mobile" aria-controls="hamburgerDropdown" aria-expanded="false">
     ☰
-  </div>
+  </button>
 
   <!-- Menu déroulant -->
-  <div id="hamburgerDropdown" class="hamburger-dropdown">
-    <a href="#maccueil">
-      <img src="ico/home.svg" class="nav-icon-hamb"> Accueil
-    </a>
+  <div id="hamburgerDropdown" class="hamburger-dropdown" aria-hidden="true" inert>
+    <nav class="hamburger-menu-content" aria-label="Menu mobile">
+      <a class="hamburger-menu-home" href="#maccueil">
+        <img src="ico/home.svg" class="nav-icon-hamb" alt="" aria-hidden="true"> Accueil
+      </a>
 
-    <a href="page5.html#parcours">
-      <img src="ico/yeux.svg" class="nav-icon-hamb"> À propos
-    </a>
+      <details class="hamburger-category about">
+        <summary><img src="ico/yeux.svg" class="nav-icon-hamb" alt="" aria-hidden="true"> À propos</summary>
+        <div class="hamburger-submenu">
+          <a href="page5.html#%23Presentation">Présentation de LUMINA</a>
+          <a href="page5.html#%23vision">Notre mission</a>
+          <a href="#contacts">Contact</a>
+        </div>
+      </details>
 
-    <a href="#concours">
-      <img src="ico/concours.svg" class="nav-icon-hamb"> Concours
-    </a>
+      <details class="hamburger-category competitions">
+        <summary><img src="ico/concours.svg" class="nav-icon-hamb" alt="" aria-hidden="true"> Concours</summary>
+        <div class="hamburger-submenu">
+          <a href="#concours">Concours disponibles</a>
+          <a href="#resultats">Résultats</a>
+        </div>
+      </details>
 
-    <a href="https://lumeshop.vercel.app/#vesth">
-      <img src="ico/store.svg" class="nav-icon-hamb"> Marché
-    </a>
+      <details class="hamburger-category scholarships">
+        <summary><img src="ico/chap.svg" class="nav-icon-hamb" alt="" aria-hidden="true"> Bourses</summary>
+        <div class="hamburger-submenu">
+          <a href="bourse/bourses.html#bourses">Toutes les bourses</a>
+        </div>
+      </details>
 
-    <a href="message/messagerie.html">
-      <img src="ico/message.svg" class="nav-icon-hamb"> Chat
-    </a>
+      <details class="hamburger-category information">
+        <summary><img src="ico/info.svg" class="nav-icon-hamb" alt="" aria-hidden="true"> Informations</summary>
+        <div class="hamburger-submenu">
+          <a href="#informations">Actualités</a>
+        </div>
+      </details>
+
+      <details class="hamburger-category market">
+        <summary><img src="ico/store.svg" class="nav-icon-hamb" alt="" aria-hidden="true"> Marché</summary>
+        <div class="hamburger-submenu">
+          <a href="#Marche">Produits</a>
+          <a href="#dialaservice">Services</a>
+        </div>
+      </details>
+
+      <details class="hamburger-category messaging">
+        <summary><img src="ico/message.svg" class="nav-icon-hamb" alt="" aria-hidden="true"> Messagerie</summary>
+        <div class="hamburger-submenu">
+          <a href="message/messagerie.html">Mes messages et contacts</a>
+        </div>
+      </details>
+    </nav>
   </div>
 
 </div>
@@ -438,10 +435,12 @@ document.addEventListener("DOMContentLoaded", function () {
     setDoc,
     getDoc,
     runTransaction,
-    serverTimestamp
+    serverTimestamp,
+    deleteField
   } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
 
   import { app, auth, db, provider } from "./firebase-init.js";
+  import { ensurePrivateProfile } from "./profile-onboarding.js";
 
   import {
     getAnalytics,
@@ -710,67 +709,6 @@ document.addEventListener("DOMContentLoaded", function () {
   // LOCALISATION
   // ============================================================
 
-  async function getUserLocation() {
-
-    try {
-
-      const r =
-        await fetch(
-          "https://ipapi.co/json/"
-        );
-
-
-      const d =
-        await r.json();
-
-
-      return {
-
-        pays:
-          d.country_name || "Inconnu",
-
-        ville:
-          d.city || "Inconnue",
-
-        region:
-          d.region || "Inconnue",
-
-        ip:
-          d.ip || "Inconnue"
-
-      };
-
-    }
-
-    catch (error) {
-
-      console.error(
-        "Erreur localisation :",
-        error
-      );
-
-
-      return {
-
-        pays:
-          "Inconnu",
-
-        ville:
-          "Inconnue",
-
-        region:
-          "Inconnue",
-
-        ip:
-          "Inconnue"
-
-      };
-
-    }
-
-  }
-
-
   // ============================================================
   // SYNCHRONISATION UTILISATEUR → PROFIL PUBLIC
   // ============================================================
@@ -805,7 +743,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
         "public_profiles",
 
-        user.email
+        String(user.email).toLowerCase()
 
       );
 
@@ -847,6 +785,15 @@ document.addEventListener("DOMContentLoaded", function () {
 
         {
 
+          uid:
+
+            user.uid,
+
+          email:
+
+            String(user.email).toLowerCase(),
+
+
           prenom:
 
             prenom,
@@ -859,7 +806,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
           sexe:
 
-            donneesUtilisateur.sexe || "",
+            deleteField(),
 
 
           ville:
@@ -884,7 +831,27 @@ document.addEventListener("DOMContentLoaded", function () {
 
           telephone:
 
-            donneesUtilisateur.numero || "",
+            deleteField(),
+
+          numero:
+
+            deleteField(),
+
+          latitude:
+
+            deleteField(),
+
+          longitude:
+
+            deleteField(),
+
+          localisation:
+
+            deleteField(),
+
+          ip:
+
+            deleteField(),
 
 
           updatedAt:
@@ -1214,7 +1181,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
                     "utilisateurs",
 
-                    user.email
+                    String(user.email).toLowerCase()
 
                   );
 
@@ -1401,7 +1368,7 @@ document.addEventListener("DOMContentLoaded", function () {
             profilAccueil.photoURL ||
             profilAccueil.photo;
 
-          if (user.email && (!profilAccueilName || !profilAccueilPhoto)) {
+          if (user.email) {
             try {
               const publicProfileSnapshot = await getDoc(
                 doc(db, "public_profiles", user.email)
@@ -1418,6 +1385,8 @@ document.addEventListener("DOMContentLoaded", function () {
                     profilAccueil[field] = publicProfile[field];
                   }
                 });
+                if (publicProfile.photo) profilAccueil.photo = publicProfile.photo;
+                if (publicProfile.photoURL) profilAccueil.photoURL = publicProfile.photoURL;
                 if (typeof window.actualiserAccueilPersonnalise === "function") {
                   window.actualiserAccueilPersonnalise(user, profilAccueil);
                 }
@@ -1430,7 +1399,17 @@ document.addEventListener("DOMContentLoaded", function () {
             }
           }
 
-          const loc = await getUserLocation();
+          const privateProfile = await ensurePrivateProfile({
+            user,
+            db,
+            userData: snap.exists() ? snap.data() : {},
+            publicData: profilAccueil
+          });
+          const loc = {
+            pays: privateProfile.locationCountry || "",
+            ville: privateProfile.locationCity || "",
+            region: privateProfile.locationRegion || ""
+          };
 
 
           let nombreConnexions =
@@ -1443,14 +1422,8 @@ document.addEventListener("DOMContentLoaded", function () {
             "Nouveau";
 
 
-          let numero =
-
-            "";
-
-
-          let sexe =
-
-            "";
+          let numero = privateProfile.phoneE164 || "";
+          let sexe = privateProfile.sexe || profilAccueil.sexe || "";
 
 
           if (
@@ -1474,20 +1447,6 @@ document.addEventListener("DOMContentLoaded", function () {
                 0
 
               ) + 1;
-
-
-            numero =
-
-              d.numero ||
-
-              "";
-
-
-            sexe =
-
-              d.sexe ||
-
-              "";
 
 
             if (
@@ -1558,7 +1517,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
               photo:
 
-                user.photoURL || "",
+                profilAccueil.photo || profilAccueil.photoURL || user.photoURL || "",
 
 
               derniereConnexion:
@@ -1568,7 +1527,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
               localisation:
 
-                loc,
+                deleteField(),
 
 
               nombreConnexions,
@@ -1577,10 +1536,14 @@ document.addEventListener("DOMContentLoaded", function () {
               badge,
 
 
-              numero,
+              numero:
+
+                deleteField(),
 
 
-              sexe
+              sexe:
+
+                deleteField()
 
             },
 
@@ -1733,7 +1696,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
                       photo:
 
-                        user.photoURL || "",
+                        profilAccueil.photo || profilAccueil.photoURL || user.photoURL || "",
 
 
                       localisation:
@@ -2033,8 +1996,8 @@ document.addEventListener("DOMContentLoaded", function () {
     <div class="section">
                 <div id="maccueil">
   <div id="accueil-bienvenue" class="accueil-bienvenue" aria-live="polite">
-    <span class="accueil-bienvenue-avatar" aria-hidden="true">
-      <svg viewBox="0 0 24 24" focusable="false">
+    <span id="currentUserAvatar" class="accueil-bienvenue-avatar">
+      <svg viewBox="0 0 24 24" focusable="false" aria-hidden="true">
         <path d="M12 12a4.25 4.25 0 1 0 0-8.5 4.25 4.25 0 0 0 0 8.5Zm0 2c-4.1 0-7.5 2.1-7.5 4.75V21h15v-2.25C19.5 16.1 16.1 14 12 14Z"/>
       </svg>
     </span>
@@ -2071,41 +2034,161 @@ document.addEventListener("DOMContentLoaded", function () {
        
 
 
-       <!-- POPUP de partage -->
-<div id="popupPartage" class="popup-overlay">
+       <!-- Invitation de partage -->
+<div id="popupPartage" class="popup-overlay" hidden role="dialog" aria-modal="true" aria-labelledby="sharePromptTitle" aria-describedby="sharePromptDescription">
   <div class="popup-content">
-    <h2>🤝 Un clic pour aider</h2>
-    <p>
-      Ce site rend l’accès aux <strong> services facile et gratuit.</strong>  
-      Si tu veux <strong>aider quelqu’un aujourd’hui, partage‑le.</strong>  
-      Merci de votre visite ! — <em>Ibrahim Djimé Diakité (Sory)</em>
-    </p>
-    <a href="https://wa.me/?text=Des%20livres%20et%20documents%20pratiques%20en%20acc%C3%A8s%20libre%20%E2%80%94%20d%C3%A9couvre-les%20vite%20!%20👉%20https://diak.vercel.app/"
-       target="_blank"
-       onclick="fermerPopup()"
-       class="btn-whatsapp">
-       Partager sur WhatsApp
-    </a>
+    <button type="button" id="dismissSharePrompt" class="share-prompt-close" aria-label="Fermer l’invitation">×</button>
+    <p class="share-prompt-eyebrow">LUMINA, à partager</p>
+    <h2 id="sharePromptTitle">Faites découvrir LUMINA</h2>
+    <p id="sharePromptDescription">Découvrez LUMINA, votre espace pour retrouver des opportunités, des bourses, des concours, des actualités et bien plus encore. Rejoignez-nous !</p>
+    <div class="share-prompt-actions">
+      <button type="button" id="shareOnWhatsapp" class="btn-whatsapp">Partager sur WhatsApp</button>
+      <button type="button" id="copyLumaLink" class="share-copy-link">Copier le lien</button>
+      <button type="button" id="shareLater" class="share-later">Plus tard</button>
+    </div>
+    <p id="sharePromptFeedback" class="share-prompt-feedback" role="status" aria-live="polite"></p>
   </div>
 </div>
 
 <script>
-  function fermerPopup() {
-    document.getElementById('popupPartage').style.display = 'none';
-    document.body.style.overflow = 'auto';
-  }
+  (function () {
+    const visitKey = "nombreVisites";
+    const dialog = document.getElementById("popupPartage");
+    const shareButton = document.getElementById("shareOnWhatsapp");
+    const copyButton = document.getElementById("copyLumaLink");
+    const laterButton = document.getElementById("shareLater");
+    const closeButton = document.getElementById("dismissSharePrompt");
+    const feedback = document.getElementById("sharePromptFeedback");
+    let previousBodyOverflow = "";
 
-  document.addEventListener('DOMContentLoaded', function() {
-    let visites = parseInt(localStorage.getItem('nombreVisites')) || 0;
-    visites++;
-    localStorage.setItem('nombreVisites', visites);
-    console.log('Nombre de visites:', visites);
+    function getPublicShareUrl() {
+      const currentUrl = new URL(window.location.href);
+      const isLocalAddress = currentUrl.protocol === "file:"
+        || currentUrl.hostname === "localhost"
+        || currentUrl.hostname === "127.0.0.1"
+        || currentUrl.hostname === "[::1]";
 
-    if (visites === 3 || (visites > 3 && (visites - 3) % 30 === 0)) {
-      document.getElementById('popupPartage').style.display = 'block';
-      document.body.style.overflow = 'hidden';
+      if (!isLocalAddress && ["http:", "https:"].includes(currentUrl.protocol)) {
+        currentUrl.search = "";
+        currentUrl.hash = "";
+        return currentUrl.href;
+      }
+
+      const canonical = document.querySelector('link[rel="canonical"]');
+      if (!canonical) return "";
+      const canonicalUrl = new URL(canonical.href);
+      if (!["http:", "https:"].includes(canonicalUrl.protocol)
+        || canonicalUrl.hostname === "localhost"
+        || canonicalUrl.hostname === "127.0.0.1") return "";
+      return canonicalUrl.href;
     }
-  });
+
+    function getShareMessage() {
+      return "Découvrez LUMINA, votre espace pour retrouver des opportunités, des bourses, des concours, des actualités et bien plus encore. Rejoignez-nous !";
+    }
+
+    function buildShareText(url) {
+      return getShareMessage() + " " + url;
+    }
+
+    function showSharePrompt() {
+      previousBodyOverflow = document.body.style.overflow;
+      dialog.hidden = false;
+      document.body.style.overflow = "hidden";
+      laterButton.focus();
+    }
+
+    function closeSharePrompt() {
+      dialog.hidden = true;
+      document.body.style.overflow = previousBodyOverflow;
+      feedback.textContent = "";
+    }
+
+    function isMobileDevice() {
+      return window.matchMedia("(pointer: coarse)").matches
+        || /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+    }
+
+    async function shareOnWhatsApp() {
+      const url = getPublicShareUrl();
+      if (!url) {
+        feedback.textContent = "L’adresse publique de LUMINA est indisponible sur cette page.";
+        return;
+      }
+
+      const message = buildShareText(url);
+      if (isMobileDevice() && typeof navigator.share === "function") {
+        try {
+          await navigator.share({
+            title: "LUMINA",
+            text: getShareMessage(),
+            url
+          });
+          closeSharePrompt();
+          return;
+        } catch (error) {
+          if (error && error.name === "AbortError") return;
+        }
+      }
+
+      const shareUrl = isMobileDevice()
+        ? "https://wa.me/?text=" + encodeURIComponent(message)
+        : "https://web.whatsapp.com/send?text=" + encodeURIComponent(message);
+      if (isMobileDevice()) {
+        window.location.assign(shareUrl);
+      } else {
+        window.open(shareUrl, "_blank", "noopener,noreferrer");
+      }
+    }
+
+    async function copyShareUrl() {
+      const url = getPublicShareUrl();
+      if (!url) {
+        feedback.textContent = "L’adresse publique de LUMINA est indisponible sur cette page.";
+        return;
+      }
+      try {
+        await navigator.clipboard.writeText(url);
+        feedback.textContent = "Lien de LUMINA copié.";
+      } catch (error) {
+        window.prompt("Copiez le lien de LUMINA :", url);
+      }
+    }
+
+    function countPageLoadOnce() {
+      if (window.__lumaShareVisitCounted) return;
+      window.__lumaShareVisitCounted = true;
+
+      try {
+        const storedVisits = Number.parseInt(localStorage.getItem(visitKey) || "0", 10);
+        const visits = (Number.isSafeInteger(storedVisits) && storedVisits > 0 ? storedVisits : 0) + 1;
+        localStorage.setItem(visitKey, String(visits));
+
+        if (visits === 3 || (visits > 3 && (visits - 3) % 30 === 0)) {
+          showSharePrompt();
+        }
+      } catch (error) {
+        console.warn("Le compteur de visites n’est pas disponible dans ce navigateur.", error);
+      }
+    }
+
+    shareButton.addEventListener("click", shareOnWhatsApp);
+    copyButton.addEventListener("click", copyShareUrl);
+    laterButton.addEventListener("click", closeSharePrompt);
+    closeButton.addEventListener("click", closeSharePrompt);
+    dialog.addEventListener("click", (event) => {
+      if (event.target === dialog) closeSharePrompt();
+    });
+    document.addEventListener("keydown", (event) => {
+      if (event.key === "Escape" && !dialog.hidden) closeSharePrompt();
+    });
+
+    if (document.readyState === "loading") {
+      document.addEventListener("DOMContentLoaded", countPageLoadOnce, { once: true });
+    } else {
+      countPageLoadOnce();
+    }
+  })();
 </script>
 
 
@@ -2283,6 +2366,34 @@ document.addEventListener("DOMContentLoaded", function () {
             <div class="section">
                 <h2>Information</h2>
                 <p>Consultez les articles informatifs et analyses sur divers sujets d'actualité.</p>
+
+                <!-- Architecture et état de la collecte RSS -->
+                <div class="info-feed-architecture" id="infoFeedArchitecture" aria-label="Architecture de collecte du flux">
+                    <div class="info-arch-badge">
+                        <span class="info-arch-pulse" aria-hidden="true"></span>
+                        <span>Flux continu — Actualisé toutes les 15 minutes</span>
+                    </div>
+                    <div class="info-arch-details">
+                        <div class="info-arch-item">
+                            <span class="info-arch-icon" aria-hidden="true">☁️</span>
+                            <div>
+                                <strong>Cloudflare Workers</strong>
+                                <small>Toutes les 30 min (:00 et :30 UTC)</small>
+                            </div>
+                        </div>
+                        <div class="info-arch-divider" aria-hidden="true">⇄</div>
+                        <div class="info-arch-item">
+                            <span class="info-arch-icon" aria-hidden="true">⚙️</span>
+                            <div>
+                                <strong>GitHub Actions</strong>
+                                <small>Toutes les 30 min (:15 et :45 UTC)</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="info-feed-status-bar" id="infoFeedStatusBar">
+                        <span id="infoFeedStatusText">Collecte active en alternance • 9 sources mondiales et africaines surveillées</span>
+                    </div>
+                </div>
 
                 <div class="info-news-grid" id="info-news-grid">
                     <article class="info-card" data-article-id="afrique-innovation-01" data-original-url="https://www.rfi.fr/fr/afrique/20260513-l-innovation-africaine-prend-de-l-ampleur-dans-le-numerique" data-title="L'innovation africaine prend de l'ampleur dans le numérique">
@@ -2487,6 +2598,76 @@ document.addEventListener("DOMContentLoaded", function () {
                 text-align: center;
                 font-size: 0.85rem;
             }
+            #informations .info-feed-architecture {
+                background: #f0f7ff;
+                border: 1px solid #d0e4ff;
+                border-radius: 14px;
+                padding: 14px 18px;
+                margin: 16px 0 20px;
+                display: flex;
+                flex-direction: column;
+                gap: 10px;
+            }
+            #informations .info-arch-badge {
+                display: inline-flex;
+                align-items: center;
+                gap: 8px;
+                font-size: 0.82rem;
+                font-weight: 700;
+                color: #0b57d0;
+                text-transform: uppercase;
+                letter-spacing: 0.04em;
+            }
+            #informations .info-arch-pulse {
+                width: 8px;
+                height: 8px;
+                border-radius: 50%;
+                background: #10b981;
+                box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
+                animation: infoPulse 2s infinite;
+            }
+            @keyframes infoPulse {
+                0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
+                70% { box-shadow: 0 0 0 6px rgba(16, 185, 129, 0); }
+                100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+            }
+            #informations .info-arch-details {
+                display: flex;
+                align-items: center;
+                gap: 16px;
+                flex-wrap: wrap;
+            }
+            #informations .info-arch-item {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                font-size: 0.85rem;
+                color: #1e293b;
+            }
+            #informations .info-arch-item strong {
+                display: block;
+                font-size: 0.88rem;
+                color: #0f172a;
+            }
+            #informations .info-arch-item small {
+                display: block;
+                color: #64748b;
+                font-size: 0.76rem;
+            }
+            #informations .info-arch-divider {
+                color: #94a3b8;
+                font-size: 1.1rem;
+                font-weight: bold;
+            }
+            #informations .info-feed-status-bar {
+                border-top: 1px dashed #cbd5e1;
+                padding-top: 8px;
+                font-size: 0.78rem;
+                color: #475569;
+                display: flex;
+                align-items: center;
+                gap: 6px;
+            }
             @media (max-width: 640px) {
                 #informations .info-card-header-row {
                     align-items: flex-start;
@@ -2669,6 +2850,24 @@ document.addEventListener("DOMContentLoaded", function () {
                         if (!page || !Array.isArray(page.articles) || typeof page.hasMore !== 'boolean') {
                             throw new Error('Réponse de pagination Firestore invalide.');
                         }
+
+                        // Mise à jour de la barre d'état dynamique de la collecte
+                        if (page.state) {
+                            const statusBar = document.getElementById('infoFeedStatusText');
+                            if (statusBar) {
+                                const st = page.state;
+                                const pubDate = st.publishedAt && typeof st.publishedAt.toDate === 'function'
+                                    ? st.publishedAt.toDate()
+                                    : (st.publishedAt ? new Date(st.publishedAt) : null);
+                                const dateFormatted = pubDate && !isNaN(pubDate.getTime())
+                                    ? `Aujourd'hui à ${pubDate.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}`
+                                    : 'récemment';
+                                const collector = st.lastCollector || (st.collectorSource === 'cloudflare' ? 'Cloudflare Workers' : st.collectorSource === 'github-actions' ? 'GitHub Actions' : 'Collecteur continu');
+                                const sourceCount = st.sourceCount || 9;
+                                statusBar.innerHTML = `✓ Dernière collecte : <strong>${dateFormatted}</strong> via <em>${collector}</em> (${sourceCount} sources vérifiées) • Prochaine collecte dans ~15 min`;
+                            }
+                        }
+
                         const nextArticles = page.articles;
                     const articleMarkup = document.createElement('div');
                     articleMarkup.innerHTML = nextArticles.map(function (article) {
@@ -2727,13 +2926,13 @@ document.addEventListener("DOMContentLoaded", function () {
                     }
 
                     bindShareButtons(newCards);
-                    if (endMessage && !page.hasMore) {
-                        endMessage.textContent = 'Toutes les actualités disponibles ont été affichées.';
-                        endMessage.hidden = false;
-                    } else if (newCards.length === 0 && endMessage) {
+                    if (newCards.length === 0 && endMessage) {
                         endMessage.textContent = loadMore
                             ? 'Aucune nouvelle actualité disponible pour le moment.'
-                            : 'Aucune actualité n’est encore disponible dans le flux.';
+                        : 'Aucune actualité n’est actuellement disponible dans Firestore.';
+                      endMessage.hidden = false;
+                    } else if (endMessage && !page.hasMore) {
+                      endMessage.textContent = 'Toutes les actualités disponibles ont été affichées.';
                         endMessage.hidden = false;
                     }
                     highlightRequestedCard();
@@ -4037,5 +4236,6 @@ initializeAllCookies();
 
 <script src="info-geo.js" defer></script>
 <script src="info-analytics.js" defer></script>
+<script type="module" src="avatar-upload.js"></script>
 </body>
 </html>
