@@ -563,25 +563,29 @@ header.navbar { /* Sélecteur de l’en-tête avec classe navbar */
 
 /* === ICÔNE HAMBURGER === */
 .hamburger {
-  font-size: 5vw;
+  appearance: none;
+  border: 0;
+  min-width: 48px;
+  min-height: 48px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-family: Arial, sans-serif;
+  font-size: clamp(24px, 5vw, 36px);
+  line-height: 1;
   font-weight: bold;
   cursor: pointer;
-  padding: 2vw 2vw;
-  width: fit-content;
-  background: linear-gradient(270deg,
-      #4a4a4a, 
-      #2c3e50,
-      #cddef3,
-      #345678,
-      #4a4a4a
-    );
-  background-size: 400% 400%;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  animation: textGradientMove 10s ease-in-out infinite;
+  padding: 8px;
+  color: #183d5a;
+  -webkit-text-fill-color: currentColor;
+  background: transparent;
+  border-radius: 12px;
   z-index: 1000000;
   position: relative;
+  touch-action: manipulation;
 }
+.hamburger:hover { background: rgba(255,255,255,0.65); }
+.hamburger:focus-visible { outline: 3px solid #2478bd; outline-offset: 2px; }
 
 /* Animation icône */
 @keyframes textGradientMove {
@@ -597,11 +601,14 @@ header.navbar { /* Sélecteur de l’en-tête avec classe navbar */
   position: fixed;
   top: 0;
   right: -100%;                /* caché à droite */
-  width: 100vw;
+  width: 100%;
+  max-width: 100%;
   height: 100vh;
-  background: #ffffff;          /* fond blanc */
-  padding-top: 80px;            /* espace en haut */
-  gap: 25px;
+  height: 100dvh;
+  box-sizing: border-box;
+  background-color: #ffffff;
+  animation: lumaMenuColorCycle 180s ease-in-out infinite;
+  padding-top: 72px;            /* espace pour la commande de fermeture */
   z-index: 999999;              /* au-dessus de tout */
   overflow-y: auto;             /* scroll si nécessaire */
   transition: right 0.4s ease-in-out;
@@ -614,35 +621,145 @@ header.navbar { /* Sélecteur de l’en-tête avec classe navbar */
   right: 0;
 }
 
-/* Liens à l'intérieur */
-.hamburger-dropdown a {
+/* Contenu du panneau */
+.hamburger-menu-content {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  min-height: 100%;
+  padding: 0 20px 24px;
+  box-sizing: border-box;
+}
+
+.hamburger-menu-content a,
+.hamburger-category > summary {
   display: flex;
   align-items: center;
-  gap: 3vw;                     /* conserve ton espacement icône-texte */
+  gap: 14px;
+  width: 100%;
+  min-height: 52px;
+  box-sizing: border-box;
   text-decoration: none;
-  padding: 3vw 0;
-  font-size: 4vw;
+  padding: 10px 12px;
+  font-size: 17px;
   color: #0f3464;
   font-weight: bold;
-  border-bottom: 1px solid #eee; /* séparation visuelle */
+}
+
+.hamburger-menu-home {
+  margin-bottom: 8px;
+  border-bottom: 1px solid #e8edf2;
+}
+
+.hamburger-category {
+  margin: 4px 0;
+  overflow: hidden;
+  border: 1px solid rgba(47,93,131,0.12);
+  border-radius: 12px;
+  background: rgba(255,255,255,0.68);
+  box-shadow: 0 2px 8px rgba(27,65,91,0.035);
+  transition: background-color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.hamburger-category[open] {
+  border-color: rgba(36,120,189,0.24);
+  background: rgba(255,255,255,0.88);
+  box-shadow: 0 5px 16px rgba(27,65,91,0.07);
+}
+
+.hamburger-category > summary {
+  list-style: none;
+  cursor: pointer;
+  touch-action: manipulation;
+}
+
+.hamburger-category > summary::-webkit-details-marker {
+  display: none;
+}
+
+.hamburger-category > summary::marker { content: ""; }
+
+.hamburger-category > summary::after {
+  content: "⌄";
+  margin-left: auto;
+  color: #718096;
+  font-size: 20px;
+  font-weight: 400;
+  transition: transform 0.2s ease;
+}
+
+.hamburger-category[open] > summary::after {
+  transform: rotate(180deg);
+}
+
+.hamburger-submenu {
+  display: grid;
+  gap: 2px;
+  padding: 0 0 10px 34px;
+}
+
+.hamburger-submenu a {
+  min-height: 44px;
+  padding: 9px 12px;
+  border-radius: 8px;
+  color: #41566c;
+  font-size: 15px;
+  font-weight: 500;
+  transition: background-color 0.16s ease, color 0.16s ease, transform 0.16s ease;
+}
+
+.hamburger-category[open] .hamburger-submenu {
+  animation: lumaSubmenuEnter 0.2s ease-out both;
+}
+
+.hamburger-submenu a:hover,
+.hamburger-submenu a:focus-visible {
+  color: #123b5e;
+  background: rgba(217,235,250,0.75);
+  outline: none;
+  transform: translateX(2px);
+}
+
+.hamburger-menu-content a:hover,
+.hamburger-menu-content a:focus-visible,
+.hamburger-category > summary:hover,
+.hamburger-category > summary:focus-visible {
+  background: #f1f7fb;
+  outline: none;
 }
 
 /* Icône des liens */
 .nav-icon-hamb {
-  width: 6vw;
-  height: 6vw;
+  width: 24px;
+  height: 24px;
+  flex: 0 0 24px;
   filter: invert(20%) sepia(50%) saturate(600%) hue-rotate(180deg);
 }
 
-/* Bouton X pour fermer menu (ajout via CSS) */
-.hamburger-dropdown::before {
-  content: "✕";
-  position: absolute;
-  top: 20px;
-  right: 20px;
-  font-size: 32px;
-  cursor: pointer;
-  z-index: 1000001;
+.hamburger-category.about .nav-icon-hamb { filter: invert(37%) sepia(75%) saturate(1090%) hue-rotate(184deg); }
+.hamburger-category.competitions .nav-icon-hamb { filter: invert(49%) sepia(81%) saturate(1384%) hue-rotate(337deg); }
+.hamburger-category.scholarships .nav-icon-hamb { filter: invert(51%) sepia(62%) saturate(511%) hue-rotate(90deg); }
+.hamburger-category.information .nav-icon-hamb { filter: invert(46%) sepia(51%) saturate(734%) hue-rotate(12deg); }
+.hamburger-category.market .nav-icon-hamb { filter: invert(41%) sepia(53%) saturate(855%) hue-rotate(279deg); }
+.hamburger-category.messaging .nav-icon-hamb { filter: invert(42%) sepia(66%) saturate(750%) hue-rotate(146deg); }
+
+@keyframes lumaMenuColorCycle {
+  0%, 100% { background-color: #ffffff; }
+  33% { background-color: #edf6ff; }
+  66% { background-color: #eff8f1; }
+}
+
+@keyframes lumaSubmenuEnter {
+  from { opacity: 0; transform: translateY(-4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hamburger-dropdown { animation: none; background-color: #ffffff; }
+  .hamburger-category,
+  .hamburger-category > summary::after,
+  .hamburger-submenu a { transition: none; }
+  .hamburger-category[open] .hamburger-submenu { animation: none; }
 }
 
 
@@ -1812,6 +1929,15 @@ border-radius: 10px;
   z-index: 10000;
   text-align: center;
 }
+.popup-overlay[hidden] { display: none !important; }
+.popup-overlay:not([hidden]) {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  box-sizing: border-box;
+  overflow-y: auto;
+}
 
 .popup-content {
   background: white;
@@ -1832,6 +1958,56 @@ border-radius: 10px;
   font-size: 16px;
   margin-top: 15px;
 }
+
+#popupPartage .popup-content {
+  position: relative;
+  width: min(460px, 100%);
+  max-width: 460px;
+  margin: auto;
+  padding: 32px 26px 24px;
+  box-sizing: border-box;
+  border: 1px solid #e5edf2;
+  border-radius: 16px;
+  box-shadow: 0 20px 60px rgba(24,61,90,0.22);
+}
+
+.share-prompt-close {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 40px;
+  height: 40px;
+  border: 0;
+  border-radius: 50%;
+  color: #506577;
+  background: #f1f5f8;
+  font-size: 24px;
+  cursor: pointer;
+}
+.share-prompt-close:focus-visible,
+.share-prompt-actions button:focus-visible { outline: 3px solid #2478bd; outline-offset: 2px; }
+.share-prompt-eyebrow { margin: 0 0 8px; color: #2478bd; font-size: 12px; font-weight: 700; text-transform: uppercase; }
+#popupPartage h2 { margin: 0 0 12px; color: #183d5a; font-size: 24px; }
+#popupPartage #sharePromptDescription { margin: 0; color: #506577; line-height: 1.55; }
+.share-prompt-actions { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin-top: 20px; }
+#popupPartage .btn-whatsapp,
+.share-copy-link,
+.share-later {
+  min-height: 44px;
+  margin: 0;
+  border: 1px solid transparent;
+  border-radius: 10px;
+  padding: 10px 14px;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 650;
+  cursor: pointer;
+}
+#popupPartage .btn-whatsapp { color: #fff; background: #16834b; }
+#popupPartage .btn-whatsapp:hover { background: #116d3e; }
+.share-copy-link { color: #194f79; border-color: #c8d8e4; background: #f5f9fc; }
+.share-later { color: #596c7a; border-color: transparent; background: transparent; }
+.share-prompt-feedback { min-height: 20px; margin: 10px 0 0; color: #376548; font-size: 13px; }
 
 
 
