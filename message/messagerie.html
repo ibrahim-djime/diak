@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="theme-color" content="#8ecae6">
+        <title>Lumesys | Messagerie</title>
+    <link rel="icon" href="../logo/Lumesys.png" type="image/png">
+    <link rel="stylesheet" href="messagerie.css">
+    <link rel="stylesheet" href="../avatar-upload.css">
+</head>
+<body>
+    <!-- Fond atmosphérique -->
+    <div class="sky-background" aria-hidden="true">
+        <div class="sun-glow"></div>
+        <div class="cloud cloud-one"></div>
+        <div class="cloud cloud-two"></div>
+        <div class="cloud cloud-three"></div>
+    </div>
+
+    <main class="lumina-messenger" aria-label="Messagerie Lumesys">
+        <!-- Barre latérale -->
+        <aside class="sidebar" aria-label="Contacts et conversations">
+            <div class="brand-header">
+                <a class="brand-logo" href="../index.html" aria-label="Retour à Lumesys">
+                    <img src="../logo/Lumesys1.png" alt="Lumesys">
+                </a>
+                <div>
+                    <h1>Lumesys</h1>
+                    <span>Messages privés</span>
+                </div>
+            </div>
+
+            <div class="current-user-card" aria-label="Profil connecté">
+                <div class="current-user-avatar-wrap">
+                    <div class="current-user-avatar" id="currentUserAvatar" aria-hidden="true">?</div>
+                    <span class="unread-badge" id="unreadBadge" hidden aria-live="polite" aria-label="Messages non lus">0</span>
+                </div>
+                <div class="current-user-info">
+                    <strong id="currentUserName">Chargement…</strong>
+                    <small id="currentUserEmail">Connexion…</small>
+                </div>
+            </div>
+            <div class="sidebar-private-settings" aria-label="Paramètres du profil privé">
+                <button type="button" class="private-settings-button" id="editPhoneSettings">Téléphone et visibilité</button>
+                <button type="button" class="private-settings-button" id="editLocationSettings">Localisation</button>
+            </div>
+
+            <nav class="messenger-navigation" aria-label="Affichage des conversations">
+                <button type="button" class="navigation-button active" id="showAllUsers" aria-pressed="true">
+                    <span aria-hidden="true">✦</span> Tous les utilisateurs
+                </button>
+                <button type="button" class="navigation-button" id="showRecentChats" aria-pressed="false">
+                    <span aria-hidden="true">◌</span> Conversations récentes
+                </button>
+                <button type="button" class="navigation-button" id="showRequests" aria-pressed="false">
+                    <span aria-hidden="true">✉</span> Demandes
+                    <span class="nav-counter" id="requestsCountBadge" hidden>0</span>
+                </button>
+            </nav>
+
+            <div class="search-box" id="searchBoxWrap">
+                <label class="sr-only" for="searchMode">Type de recherche</label>
+                <select id="searchMode" aria-label="Type de recherche">
+                    <option value="name">Nom ou e-mail</option>
+                    <option value="phone">Téléphone exact</option>
+                </select>
+                <label class="sr-only" for="searchCountry">Pays du numéro</label>
+                <select id="searchCountry" aria-label="Pays du numéro" hidden></select>
+                <div class="search-input-row">
+                    <label class="sr-only" for="searchInput">Rechercher une personne</label>
+                    <span class="search-icon" aria-hidden="true">⌕</span>
+                    <input type="search" id="searchInput" placeholder="Rechercher par nom, prénom ou e-mail…" autocomplete="off">
+                </div>
+                <button type="button" id="phoneSearchButton" hidden>Rechercher</button>
+                <p id="phoneSearchStatus" class="phone-search-status" role="status" aria-live="polite"></p>
+            </div>
+
+            <!-- Sous-onglets pour la vue Demandes -->
+            <div class="requests-subnav" id="requestsSubnav" hidden aria-label="Catégories de demandes">
+                <button type="button" class="subnav-btn active" id="subnavIncoming" aria-pressed="true">
+                    Reçues <span class="subnav-count" id="subnavIncomingCount" hidden>0</span>
+                </button>
+                <button type="button" class="subnav-btn" id="subnavSent" aria-pressed="false">
+                    Envoyées <span class="subnav-count" id="subnavSentCount" hidden>0</span>
+                </button>
+            </div>
+
+            <div class="contact-requests-panel" id="contactRequestsPanel" hidden>
+                <div id="incomingRequestsList" class="request-list"></div>
+                <div id="sentRequestsList" class="request-list" hidden></div>
+            </div>
+
+            <div class="contacts-list" id="contactsList" aria-live="polite">
+                <div class="loading-state">
+                    <div class="loader" aria-hidden="true"></div>
+                    <p>Chargement des utilisateurs…</p>
+                </div>
+            </div>
+
+            <div class="sidebar-footer">
+                <span aria-hidden="true">✦</span>
+                <span>Lumesys • Messagerie sécurisée</span>
+            </div>
+        </aside>
+
+        <!-- Zone de conversation -->
+        <section class="chat-section" aria-label="Conversation">
+            <div class="empty-conversation" id="emptyConversation">
+                <div class="empty-illustration" aria-hidden="true">
+                    <div class="floating-bubble bubble-one">✦</div>
+                    <div class="floating-bubble bubble-two">☁</div>
+                    <div class="chat-orbit">
+                        <div class="orbit-dot"></div>
+                        <div class="orbit-dot"></div>
+                        <div class="orbit-dot"></div>
+                        <div class="center-chat-icon">◌</div>
+                    </div>
+                </div>
+                <h2>Une conversation commence<br>toujours par un message.</h2>
+                <p>Choisissez une personne dans votre réseau pour commencer à échanger.</p>
+            </div>
+
+            <div class="active-chat" id="activeChat">
+                <header class="chat-header">
+                    <button type="button" class="mobile-back-button" id="mobileBackButton" aria-label="Retour à la liste">←</button>
+                    <div class="chat-user-avatar" id="chatUserAvatar" aria-hidden="true">?</div>
+                    <div class="chat-user-details">
+                        <h2 id="chatUserName">Utilisateur</h2>
+                        <span id="chatUserLocation">Conversation privée Lumesys</span>
+                    </div>
+                </header>
+
+                    <button type="button" class="pinned-message-banner" id="pinnedMessageBanner" hidden></button>
+
+                <div class="selection-toolbar" id="selectionToolbar" hidden></div>
+
+                <div class="messages-area" id="messagesArea" aria-live="polite" aria-label="Messages"></div>
+                <div class="message-loader" id="messageLoader" hidden>
+                    <div class="loader" aria-hidden="true"></div>
+                    <span>Chargement des messages précédents…</span>
+                </div>
+
+                <div class="reply-preview" id="replyPreview" hidden>
+                    <span class="reply-preview-author" id="replyPreviewAuthor">Réponse</span>
+                    <span class="reply-preview-text" id="replyPreviewText"></span>
+                    <button type="button" class="cancel-reply" id="cancelReplyButton" aria-label="Annuler la réponse">✕</button>
+                </div>
+
+                <p class="composer-status" id="composerStatus" role="status" aria-live="polite"></p>
+
+                <form class="message-composer" id="messageForm" autocomplete="off">
+                    <label class="sr-only" for="messageInput">Écrire un message</label>
+                    <textarea id="messageInput" placeholder="Écrire un message…" rows="1" maxlength="5000" disabled></textarea>
+                    <button type="submit" class="send-button" id="sendButton" title="Envoyer" aria-label="Envoyer le message" disabled>
+                        <span aria-hidden="true">➤</span>
+                    </button>
+                </form>
+            </div>
+        </section>
+    </main>
+
+    <!-- Menu d'actions des messages -->
+    <div class="context-menu" id="contextMenu" hidden role="menu" aria-label="Actions du message"></div>
+
+    <!-- Sélecteur de destinataire pour le transfert -->
+    <div class="modal-overlay" id="forwardModal" hidden role="dialog" aria-modal="true" aria-labelledby="forwardTitle">
+        <div class="modal-card">
+            <h3 id="forwardTitle">Transférer à…</h3>
+            <input type="search" id="forwardSearch" placeholder="Rechercher un destinataire…" autocomplete="off">
+            <div class="modal-list" id="forwardList"></div>
+            <button type="button" class="modal-confirm" id="forwardConfirm" disabled>Transférer</button>
+            <button type="button" class="modal-cancel" id="forwardCancel">Annuler</button>
+        </div>
+    </div>
+
+    <!-- Confirmation mobile pleine largeur -->
+    <div class="modal-overlay" id="confirmModal" hidden role="dialog" aria-modal="true" aria-labelledby="confirmText">
+        <div class="modal-card confirm-card">
+            <p id="confirmText">Confirmer cette action ?</p>
+            <div class="confirm-actions">
+                <button type="button" class="modal-cancel" id="confirmCancel">Annuler</button>
+                <button type="button" class="modal-danger" id="confirmOk">Confirmer</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast discret -->
+    <div class="toast" id="toast" hidden role="status" aria-live="polite"></div>
+
+    <script type="module" src="messagerie.js"></script>
+</body>
+</html>
