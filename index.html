@@ -476,6 +476,21 @@ document.addEventListener("DOMContentLoaded", function () {
   async function beginGoogleSignIn() {
     return signInWithPopup(auth, provider);
   }
+  function afficherErreurConnexionGoogle(error) {
+    const code = error && error.code ? error.code : "auth/unknown";
+    if (code === "auth/popup-closed-by-user" || code === "auth/cancelled-popup-request") {
+      return;
+    }
+
+    console.error("Connexion Google impossible:", error);
+    const messages = {
+      "auth/unauthorized-domain": "Ce domaine n'est pas autorisé dans Firebase Authentication. Ajoutez-le dans Authentication > Paramètres > Domaines autorisés.",
+      "auth/popup-blocked": "La fenêtre de connexion Google a été bloquée. Autorisez les fenêtres pop-up puis réessayez.",
+      "auth/network-request-failed": "La connexion au service Firebase a échoué. Vérifiez votre connexion Internet puis réessayez.",
+      "auth/operation-not-allowed": "La connexion Google n'est pas activée pour ce projet Firebase."
+    };
+    window.alert(messages[code] || "La connexion Google a échoué (" + code + "). Vérifiez votre compte Google puis réessayez.");
+  }
   window.InfoProfileStore = {
     ready: infoProfileAuthReady,
     getUser: async function () {
@@ -1019,9 +1034,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
         () => {
 
-          beginGoogleSignIn().catch(function (error) {
-            console.error("Connexion Google impossible:", error);
-          });
+          beginGoogleSignIn().catch(afficherErreurConnexionGoogle);
 
         }
 
@@ -1341,7 +1354,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
               "utilisateurs",
 
-              user.email
+              String(user.email).toLowerCase()
 
             );
 
@@ -1371,8 +1384,8 @@ document.addEventListener("DOMContentLoaded", function () {
           if (user.email) {
             try {
               const publicProfileSnapshot = await getDoc(
-                doc(db, "public_profiles", user.email)
-              );
+                    doc(db, "public_profiles", String(user.email).toLowerCase())
+                  );
               if (publicProfileSnapshot.exists()) {
                 const publicProfile = publicProfileSnapshot.data();
                 profilAccueil = Object.assign(
@@ -1804,11 +1817,14 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
           console.error(
-
-            "Erreur générale connexion :",
-
+            "Authentification Firebase réussie, mais synchronisation Firestore échouée :",
             error
-
+          );
+          const firestoreCode = error && error.code ? error.code : "firestore/unknown";
+          window.alert(
+            firestoreCode === "permission-denied"
+              ? "Vous êtes connecté à Firebase, mais Firestore a refusé l'accès au profil (permission-denied)."
+              : "Vous êtes connecté à Firebase, mais la synchronisation du profil a échoué (" + firestoreCode + ")."
           );
 
         }
@@ -1923,9 +1939,7 @@ document.addEventListener("DOMContentLoaded", function () {
     "click",
 
     () => {
-      beginGoogleSignIn().catch(function (error) {
-        console.error("Connexion Google impossible:", error);
-      });
+      beginGoogleSignIn().catch(afficherErreurConnexionGoogle);
     }
 
   );
