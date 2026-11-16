@@ -1,0 +1,33 @@
+{
+  "indexes": [
+    {
+      "collectionGroup": "info_articles",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "lastPromotedAt",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "publishedAt",
+          "order": "DESCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "info_articles",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "promotionCount",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "publishedAt",
+          "order": "DESCENDING"
+        }
+      ]
+    }
+  ],
+  "fieldOverrides": []
+}

@@ -1,0 +1,47 @@
+rules_version = '2';
+
+// =========================================================
+// LUMESYS — Storage : photos de profil
+// Chemin : profile_photos/{uid}/avatar_{timestamp}.{jpg|png|webp}
+// Lecture publique (les avatars sont affichés partout dans l'app),
+// écriture/suppression réservées au propriétaire authentifié.
+// =========================================================
+
+service firebase.storage {
+  match /b/{bucket}/o {
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(uid) {
+      return isSignedIn() && request.auth.uid == uid;
+    }
+
+    function isImage() {
+      return request.resource.contentType.matches('image/(jpeg|png|webp)');
+    }
+
+    function underLimit() {
+      return request.resource.size > 0 && request.resource.size <= 5 * 1024 * 1024;
+    }
+
+    match /profile_photos/{uid}/{fileName} {
+      allow read: if isSignedIn();
+
+      allow create, update:
+        if isOwner(uid)
+        && isImage()
+        && underLimit()
+        && fileName.matches('avatar_[0-9]+\\.(jpg|jpeg|png|webp)');
+
+      allow delete:
+        if isOwner(uid);
+    }
+
+    // Tout le reste est refusé par défaut.
+    match /{allPaths=**} {
+      allow read, write: if false;
+    }
+  }
+}

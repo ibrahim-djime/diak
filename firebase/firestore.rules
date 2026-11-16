@@ -1,0 +1,415 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function currentEmail() {
+      return request.auth.token.email;
+    }
+
+    function isUserDocumentOwner(userKey) {
+      return isSignedIn() && (
+        request.auth.uid == userKey
+        || (
+          currentEmail() != null
+        && currentEmail().lower() == userKey.lower()
+        )
+      );
+    }
+
+    match /utilisateurs/{userKey} {
+      allow read: if isUserDocumentOwner(userKey);
+      allow create, update: if isUserDocumentOwner(userKey);
+      allow delete: if false;
+    }
+
+    match /public_profiles/{userKey} {
+      allow read: if isSignedIn();
+      allow create, update: if isUserDocumentOwner(userKey)
+        && !request.resource.data.keys().hasAny([
+        'telephone', 'numero', 'sexe', 'latitude', 'longitude', 'localisation', 'ip'
+        ])
+        && (!('photo' in request.resource.data) || request.resource.data.photo is string)
+        && (!('photoPath' in request.resource.data) || request.resource.data.photoPath is string)
+        && (!('photoUpdatedAt' in request.resource.data)
+          || request.resource.data.photoUpdatedAt == request.time
+          || (resource != null && request.resource.data.photoUpdatedAt == resource.data.photoUpdatedAt));
+      allow delete: if false;
+    }
+
+    match /private_profiles/{userId} {
+      allow read: if isSignedIn() && request.auth.uid == userId;
+      allow create, update: if isSignedIn()
+        && request.auth.uid == userId
+        && request.resource.data.keys().hasOnly([
+        'phoneE164', 'phoneCountry', 'phoneStatus', 'phoneLookupEnabled', 'phoneUpdatedAt',
+        'sexe', 'locationSource', 'locationUpdatedAt', 'locationCountry', 'locationRegion',
+        'locationCity', 'latitude', 'longitude', 'accuracyMeters', 'locationSharingEnabled',
+        'lastUpdatedAt', 'legacyPhoneCandidates'
+        ])
+        && (!('phoneE164' in request.resource.data)
+        || (request.resource.data.phoneE164 is string
+          && request.resource.data.phoneE164.matches('^\\+[1-9][0-9]{7,14}$')))
+        && (!('phoneCountry' in request.resource.data)
+        || (request.resource.data.phoneCountry is string
+          && request.resource.data.phoneCountry.matches('^[A-Z]{2}$')))
+        && (!('phoneStatus' in request.resource.data)
+        || request.resource.data.phoneStatus == 'pending')
+        && (!('phoneUpdatedAt' in request.resource.data)
+        || request.resource.data.phoneUpdatedAt == request.time
+        || (resource != null && request.resource.data.phoneUpdatedAt == resource.data.phoneUpdatedAt))
+        && (!('phoneLookupEnabled' in request.resource.data)
+        || request.resource.data.phoneLookupEnabled is bool)
+        && (!('legacyPhoneCandidates' in request.resource.data)
+        || (request.resource.data.legacyPhoneCandidates is list
+          && request.resource.data.legacyPhoneCandidates.size() <= 5))
+        && (!('locationSharingEnabled' in request.resource.data)
+        || request.resource.data.locationSharingEnabled is bool)
+        && (!('locationUpdatedAt' in request.resource.data)
+        || request.resource.data.locationUpdatedAt == request.time
+        || (resource != null && request.resource.data.locationUpdatedAt == resource.data.locationUpdatedAt))
+        && (!('locationSource' in request.resource.data)
+        || request.resource.data.locationSource in ['gps', 'manual', 'legacy'])
+        && (!('sexe' in request.resource.data)
+        || request.resource.data.sexe is string)
+        && (!('latitude' in request.resource.data)
+        || (request.resource.data.latitude is number
+          && request.resource.data.latitude >= -90
+          && request.resource.data.latitude <= 90))
+        && (!('longitude' in request.resource.data)
+        || (request.resource.data.longitude is number
+          && request.resource.data.longitude >= -180
+          && request.resource.data.longitude <= 180));
+      allow delete: if false;
+    }
+
+    match /users/{userId} {
+      allow read: if isSignedIn() && request.auth.uid == userId;
+      allow create, update: if isSignedIn() && request.auth.uid == userId;
+      allow delete: if false;
+    }
+
+    match /contact_requests/{requestId} {
+      function isRequestParticipant(docData) {
+        return isSignedIn()
+          && (
+            docData.senderUid == request.auth.uid
+            || (request.auth.token.email != null && docData.senderEmail.lower() == request.auth.token.email.lower())
+            || docData.recipientUid == request.auth.uid
+            || (request.auth.token.email != null && docData.recipientEmail.lower() == request.auth.token.email.lower())
+          );
+      }
+
+      allow get:
+        if isSignedIn()
+        && (
+          resource == null
+          || isRequestParticipant(resource.data)
+        );
+
+      allow list:
+        if isSignedIn()
+        && (
+          resource.data.senderUid == request.auth.uid
+          || (request.auth.token.email != null && resource.data.senderEmail.lower() == request.auth.token.email.lower())
+          || resource.data.recipientUid == request.auth.uid
+          || (request.auth.token.email != null && resource.data.recipientEmail.lower() == request.auth.token.email.lower())
+        );
+
+      allow create:
+        if isSignedIn()
+        && request.resource.data.senderUid == request.auth.uid
+        && (request.auth.token.email != null && request.resource.data.senderEmail.lower() == request.auth.token.email.lower())
+        && request.resource.data.recipientEmail is string
+        && request.resource.data.recipientEmail.lower() != request.auth.token.email.lower()
+        && request.resource.data.status == 'pending'
+        && request.resource.data.initialMessage is string
+        && request.resource.data.initialMessage.size() > 0
+        && request.resource.data.initialMessage.size() <= 5000
+        && request.resource.data.createdAt == request.time
+        && request.resource.data.updatedAt == request.time;
+
+      allow update:
+        if isSignedIn()
+        && (
+          // Le destinataire peut accepter ou refuser la demande en attente
+          (
+            (resource.data.recipientUid == request.auth.uid || (request.auth.token.email != null && resource.data.recipientEmail.lower() == request.auth.token.email.lower()))
+            && resource.data.status == 'pending'
+            && request.resource.data.status in ['accepted', 'declined']
+            && request.resource.data.updatedAt == request.time
+            && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status', 'updatedAt'])
+            && request.resource.data.senderUid == resource.data.senderUid
+            && request.resource.data.recipientUid == resource.data.recipientUid
+            && request.resource.data.senderEmail == resource.data.senderEmail
+            && request.resource.data.recipientEmail == resource.data.recipientEmail
+            && request.resource.data.initialMessage == resource.data.initialMessage
+            && request.resource.data.createdAt == resource.data.createdAt
+          )
+          ||
+          // L'expéditeur peut annuler sa demande tant qu'elle est en attente
+          (
+            (resource.data.senderUid == request.auth.uid || (request.auth.token.email != null && resource.data.senderEmail.lower() == request.auth.token.email.lower()))
+            && resource.data.status == 'pending'
+            && request.resource.data.status == 'cancelled'
+            && request.resource.data.updatedAt == request.time
+            && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status', 'updatedAt'])
+            && request.resource.data.senderUid == resource.data.senderUid
+            && request.resource.data.recipientUid == resource.data.recipientUid
+            && request.resource.data.senderEmail == resource.data.senderEmail
+            && request.resource.data.recipientEmail == resource.data.recipientEmail
+            && request.resource.data.initialMessage == resource.data.initialMessage
+            && request.resource.data.createdAt == resource.data.createdAt
+          )
+        );
+
+      allow delete: if false;
+    }
+
+    match /chats/{chatId} {
+      function participantEmails(data) {
+        return data.participants is list
+          && data.participants.size() == 2
+          && data.participants[0] is string
+          && data.participants[1] is string
+          && data.participants[0] != data.participants[1];
+      }
+
+      function isChatParticipant(data) {
+        return isSignedIn()
+          && (
+            (data.participantUids is list && request.auth.uid in data.participantUids)
+            || (request.auth.token.email != null && data.participants is list && (
+              request.auth.token.email in data.participants
+              || request.auth.token.email.lower() in data.participants
+            ))
+          );
+      }
+
+      function isChatParticipantForRequest() {
+        return isSignedIn()
+          && (
+            (request.resource.data.participantUids is list && request.auth.uid in request.resource.data.participantUids)
+            || (request.auth.token.email != null && request.resource.data.participants is list && (
+              request.auth.token.email in request.resource.data.participants
+              || request.auth.token.email.lower() in request.resource.data.participants
+            ))
+          );
+      }
+
+        function isValidPinnedMessageChange() {
+          let changed = request.resource.data.diff(resource.data).affectedKeys();
+          return !changed.hasAny(['pinnedMessageId', 'pinnedBy', 'pinnedAt'])
+            || (
+              request.resource.data.get('pinnedMessageId', null) == null
+              ? !request.resource.data.keys().hasAny(['pinnedBy', 'pinnedAt'])
+              : request.resource.data.pinnedBy == request.auth.uid
+                && request.resource.data.pinnedAt == request.time
+                && exists(/databases/$(database)/documents/chats/$(chatId)/messages/$(request.resource.data.pinnedMessageId))
+                && get(/databases/$(database)/documents/chats/$(chatId)/messages/$(request.resource.data.pinnedMessageId)).data.get('deletedForEveryone', false) == false
+            );
+        }
+
+      allow get: if isSignedIn() && (resource == null || isChatParticipant(resource.data));
+
+      allow list: if isSignedIn() && isChatParticipant(resource.data);
+
+      allow create:
+        if isSignedIn()
+        && isChatParticipantForRequest()
+        && participantEmails(request.resource.data)
+        && request.resource.data.dernierMessage is string
+        && request.resource.data.createdAt == request.time
+        && request.resource.data.updatedAt == request.time;
+
+      allow update:
+        if isSignedIn()
+        && isChatParticipant(resource.data)
+        && request.resource.data.participants == resource.data.participants
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly([
+          'dernierMessage', 'updatedAt', 'unreadCount', 'lastReadAt', 'participantUids',
+          'pinnedMessageId', 'pinnedBy', 'pinnedAt'
+        ])
+        && request.resource.data.updatedAt == request.time
+        && request.resource.data.dernierMessage is string
+        && isValidPinnedMessageChange();
+
+      allow delete: if false;
+
+      match /messages/{messageId} {
+        function isMessageParticipant() {
+          return isSignedIn()
+            && (
+              (get(/databases/$(database)/documents/chats/$(chatId)).data.participantUids is list && request.auth.uid in get(/databases/$(database)/documents/chats/$(chatId)).data.participantUids)
+              || (request.auth.token.email != null && get(/databases/$(database)/documents/chats/$(chatId)).data.participants is list && (
+                request.auth.token.email in get(/databases/$(database)/documents/chats/$(chatId)).data.participants
+                || request.auth.token.email.lower() in get(/databases/$(database)/documents/chats/$(chatId)).data.participants
+              ))
+            );
+        }
+
+        function isMessageAuthor(data) {
+          return isSignedIn()
+            && data.senderUid == request.auth.uid
+            && request.auth.token.email != null
+            && data.senderId is string
+            && data.senderId.lower() == request.auth.token.email.lower();
+        }
+
+        function validOwnReactionUpdate() {
+          let oldReactions = resource.data.get('reactions', {});
+          let newReactions = request.resource.data.get('reactions', {});
+          let myReactions = newReactions.get(request.auth.uid, {});
+          return newReactions is map
+            && !resource.data.get('deletedForEveryone', false)
+            && newReactions.diff(oldReactions).affectedKeys().hasOnly([request.auth.uid])
+            && myReactions is map
+            && myReactions.keys().hasOnly(['❤️', '😂', '👍', '😮', '😢', '🔥', '🙏']);
+        }
+
+        allow get, list: if isMessageParticipant();
+
+        allow create:
+          if isMessageParticipant()
+          && request.resource.data.keys().hasOnly([
+            'senderId', 'senderUid', 'text', 'replyTo', 'createdAt', 'forwarded'
+          ])
+          && request.resource.data.text is string
+          && request.resource.data.text.size() > 0
+          && request.resource.data.text.size() <= 5000
+          && request.resource.data.createdAt == request.time
+          && request.resource.data.senderUid == request.auth.uid
+          && (!request.resource.data.keys().hasAny(['forwarded']) || request.resource.data.forwarded == true)
+          && (
+            (request.resource.data.senderUid == request.auth.uid)
+            || (request.auth.token.email != null && (
+              request.resource.data.senderId == request.auth.token.email
+              || request.resource.data.senderId.lower() == request.auth.token.email.lower()
+            ))
+          );
+
+        allow update:
+          if isMessageParticipant()
+          && (
+            (
+              isMessageAuthor(resource.data)
+              && !resource.data.get('deletedForEveryone', false)
+              && request.resource.data.diff(resource.data).affectedKeys().hasAll(['text', 'edited', 'editedAt'])
+              && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['text', 'edited', 'editedAt'])
+              && request.resource.data.text is string
+              && request.resource.data.text.size() > 0
+              && request.resource.data.text.size() <= 5000
+              && request.resource.data.edited == true
+              && request.resource.data.editedAt == request.time
+            )
+            || (
+              isMessageAuthor(resource.data)
+              && !resource.data.get('deletedForEveryone', false)
+              && request.resource.data.diff(resource.data).affectedKeys().hasAll(['text', 'deletedForEveryone', 'deletedAt'])
+              && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['text', 'deletedForEveryone', 'deletedAt'])
+              && request.resource.data.text == ''
+              && request.resource.data.deletedForEveryone == true
+              && request.resource.data.deletedAt == request.time
+            )
+            || (
+              request.resource.data.diff(resource.data).affectedKeys().hasOnly(['hiddenFor'])
+              && request.resource.data.diff(resource.data).affectedKeys().hasAll(['hiddenFor'])
+              && request.resource.data.hiddenFor is list
+              && request.resource.data.hiddenFor.hasAll(resource.data.get('hiddenFor', []))
+              && request.resource.data.hiddenFor.size() == resource.data.get('hiddenFor', []).size() + 1
+              && !(request.auth.uid in resource.data.get('hiddenFor', []))
+              && request.auth.uid in request.resource.data.hiddenFor
+            )
+            || (
+              request.resource.data.diff(resource.data).affectedKeys().hasOnly(['reactions'])
+              && request.resource.data.diff(resource.data).affectedKeys().hasAll(['reactions'])
+              && validOwnReactionUpdate()
+            )
+          );
+        allow delete: if false;
+      }
+    }
+
+    match /bourses_auto/{bourseId} {
+      allow get, list: if true;
+      allow create, update, delete: if false;
+    }
+
+    match /info_articles/{articleId} {
+      allow get, list: if true;
+      allow create, update, delete: if false;
+    }
+
+    match /info_feed_state/{stateId} {
+      allow get, list: if true;
+      allow create, update, delete: if false;
+    }
+
+    match /info_sources/{sourceId} {
+      allow get, list: if true;
+      allow create, update, delete: if false;
+    }
+
+    match /info_analytics/{analyticsId} {
+      allow get, list: if false;
+      allow create, update, delete: if false;
+    }
+
+    match /info_article_stats/{statId} {
+      allow get, list: if true;
+      allow create, update, delete: if false;
+    }
+
+    match /info_topic_stats/{statId} {
+      allow get, list: if true;
+      allow create, update, delete: if false;
+    }
+
+    match /info_visitor_profiles/{profileId} {
+      allow get, list:
+        if isSignedIn() && request.auth.uid == profileId;
+
+      allow create, update:
+        if isSignedIn() && request.auth.uid == profileId;
+
+      allow delete:
+        if false;
+    }
+
+    match /info_visitor_sessions/{sessionId} {
+      allow get, list:
+        if isSignedIn() && request.auth.uid == resource.data.visitorId;
+
+      allow create:
+        if isSignedIn() && request.resource.data.visitorId == request.auth.uid;
+
+      allow update:
+        if isSignedIn()
+        && request.auth.uid == resource.data.visitorId
+        && request.resource.data.visitorId == request.auth.uid;
+
+      allow delete:
+        if false;
+    }
+
+    match /info_visitor_events/{eventId} {
+      allow get, list:
+        if isSignedIn() && request.auth.uid == resource.data.visitorId;
+
+      allow create:
+        if isSignedIn() && request.resource.data.visitorId == request.auth.uid;
+
+      allow update, delete:
+        if false;
+    }
+
+    match /{document=**} {
+      allow read, write:
+        if false;
+    }
+  }
+}
