@@ -409,7 +409,7 @@ document.addEventListener("DOMContentLoaded", function () {
   </div>
 
   
-<div id="liaisons">
+<div id="liaisons" hidden>
   <button id="loginBtn">Connexion via Google</button>
   <button id="logoutBtn">Se déconnecter</button>
 </div>
@@ -1335,6 +1335,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
           "inline-block";
 
+        document.getElementById("liaisons").hidden = false;
+
 
         removeOverlay();
 
@@ -1845,6 +1847,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
           "none";
 
+        document.getElementById("liaisons").hidden = false;
+
 
         window.InfoProfileStore.ready.then(function (profileUser) {
           if (!profileUser && (visites > MAX_VISITES || downloads >= MAX_DOWNLOADS)) showOverlay();
@@ -2051,14 +2055,11 @@ document.addEventListener("DOMContentLoaded", function () {
        <!-- Invitation de partage -->
 <div id="popupPartage" class="popup-overlay" hidden role="dialog" aria-modal="true" aria-labelledby="sharePromptTitle" aria-describedby="sharePromptDescription">
   <div class="popup-content">
-    <button type="button" id="dismissSharePrompt" class="share-prompt-close" aria-label="Fermer l’invitation">×</button>
-    <p class="share-prompt-eyebrow">LUMINA, à partager</p>
-    <h2 id="sharePromptTitle">Faites découvrir LUMINA</h2>
-    <p id="sharePromptDescription">Découvrez LUMINA, votre espace pour retrouver des opportunités, des bourses, des concours, des actualités et bien plus encore. Rejoignez-nous !</p>
+    <p class="share-prompt-eyebrow">Lumesys, à partager</p>
+    <h2 id="sharePromptTitle">Faites découvrir Lumesys</h2>
+    <p id="sharePromptDescription">Découvrez Lumesys, votre espace pour retrouver des opportunités, des bourses, des concours, des actualités et bien plus encore. Rejoignez-nous !</p>
     <div class="share-prompt-actions">
       <button type="button" id="shareOnWhatsapp" class="btn-whatsapp">Partager sur WhatsApp</button>
-      <button type="button" id="copyLumaLink" class="share-copy-link">Copier le lien</button>
-      <button type="button" id="shareLater" class="share-later">Plus tard</button>
     </div>
     <p id="sharePromptFeedback" class="share-prompt-feedback" role="status" aria-live="polite"></p>
   </div>
@@ -2069,9 +2070,6 @@ document.addEventListener("DOMContentLoaded", function () {
     const visitKey = "nombreVisites";
     const dialog = document.getElementById("popupPartage");
     const shareButton = document.getElementById("shareOnWhatsapp");
-    const copyButton = document.getElementById("copyLumaLink");
-    const laterButton = document.getElementById("shareLater");
-    const closeButton = document.getElementById("dismissSharePrompt");
     const feedback = document.getElementById("sharePromptFeedback");
     let previousBodyOverflow = "";
 
@@ -2098,7 +2096,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     function getShareMessage() {
-      return "Découvrez LUMINA, votre espace pour retrouver des opportunités, des bourses, des concours, des actualités et bien plus encore. Rejoignez-nous !";
+      return "Découvrez Lumesys, votre espace pour retrouver des opportunités, des bourses, des concours, des actualités et bien plus encore. Rejoignez-nous !";
     }
 
     function buildShareText(url) {
@@ -2109,7 +2107,7 @@ document.addEventListener("DOMContentLoaded", function () {
       previousBodyOverflow = document.body.style.overflow;
       dialog.hidden = false;
       document.body.style.overflow = "hidden";
-      laterButton.focus();
+      shareButton.focus();
     }
 
     function closeSharePrompt() {
@@ -2123,7 +2121,7 @@ document.addEventListener("DOMContentLoaded", function () {
         || /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
     }
 
-    async function shareOnWhatsApp() {
+    function shareOnWhatsApp() {
       const url = getPublicShareUrl();
       if (!url) {
         feedback.textContent = "L’adresse publique de LUMINA est indisponible sur cette page.";
@@ -2131,20 +2129,6 @@ document.addEventListener("DOMContentLoaded", function () {
       }
 
       const message = buildShareText(url);
-      if (isMobileDevice() && typeof navigator.share === "function") {
-        try {
-          await navigator.share({
-            title: "LUMINA",
-            text: getShareMessage(),
-            url
-          });
-          closeSharePrompt();
-          return;
-        } catch (error) {
-          if (error && error.name === "AbortError") return;
-        }
-      }
-
       const shareUrl = isMobileDevice()
         ? "https://wa.me/?text=" + encodeURIComponent(message)
         : "https://web.whatsapp.com/send?text=" + encodeURIComponent(message);
@@ -2152,20 +2136,6 @@ document.addEventListener("DOMContentLoaded", function () {
         window.location.assign(shareUrl);
       } else {
         window.open(shareUrl, "_blank", "noopener,noreferrer");
-      }
-    }
-
-    async function copyShareUrl() {
-      const url = getPublicShareUrl();
-      if (!url) {
-        feedback.textContent = "L’adresse publique de LUMINA est indisponible sur cette page.";
-        return;
-      }
-      try {
-        await navigator.clipboard.writeText(url);
-        feedback.textContent = "Lien de LUMINA copié.";
-      } catch (error) {
-        window.prompt("Copiez le lien de LUMINA :", url);
       }
     }
 
@@ -2187,9 +2157,6 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     shareButton.addEventListener("click", shareOnWhatsApp);
-    copyButton.addEventListener("click", copyShareUrl);
-    laterButton.addEventListener("click", closeSharePrompt);
-    closeButton.addEventListener("click", closeSharePrompt);
     dialog.addEventListener("click", (event) => {
       if (event.target === dialog) closeSharePrompt();
     });
